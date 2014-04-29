@@ -9,3 +9,4 @@ argparse>=1.2.1
 wordnik==2.1.1
 wolframalpha==1.0.2
 nltk==2.0.4
+changes==0.4.0
