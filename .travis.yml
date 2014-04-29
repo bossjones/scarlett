@@ -1,0 +1,8 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+before_install:
+  - sudo apt-get install swig
+install: pip install --allow-all-external -r requirements.txt
+script: python tests/test_scarlett.py unit
