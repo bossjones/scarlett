@@ -1,1 +1,11 @@
 wheel==0.22.0
+requests>=0.8
+duckduckgo2>=0.21
+feedparser>=5.1.2
+python-forecastio>=0.1
+yolk>=0.4.3
+pyserial>=2.7
+argparse>=1.2.1
+wordnik==2.1.1
+wolframalpha==1.0.2
+nltk==2.0.4

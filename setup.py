@@ -32,13 +32,6 @@ setup(
                  'scarlett'},
     include_package_data=True,
     install_requires=[
-      "requests >= 0.8",
-      "duckduckgo2 >= 0.21",
-      "feedparser >= 5.1.2",
-      "python-forecastio >= 0.1",
-      "yolk >= 0.4.3",
-      "pyserial >= 2.7",
-      "argparse >= 1.2.1"
     ],
     license="BSD",
     zip_safe=False,
