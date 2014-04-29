@@ -15,9 +15,11 @@ scarlett
 S.C.A.R.L.E.T.T is Tony Darks artificially programmed intelligent computer. It is programmed to speak with a female voice in a British accent.
 
 * Free software: BSD license
-* Documentation: http://scarlett.rtfd.org.
+* Documentation: https://readthedocs.org/projects/scarlett/.
 
 Features
 --------
 
 * TODO
+
+REFACTOR EVERYTHING FROM PRIVATE REPO. This might take some time guys.
