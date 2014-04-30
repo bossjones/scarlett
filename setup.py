@@ -4,6 +4,8 @@
 import os
 import sys
 
+from scarlett import __version__ as version
+
 
 try:
     from setuptools import setup
@@ -21,7 +23,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='scarlett',
-    version='0.1.0',
+    version = __version__,
     description='S.C.A.R.L.E.T.T is Tony Darks artificially programmed intelligent computer. It is programmed to speak with a female voice in a British accent.',
     long_description=readme + '\n\n' + history,
     author='Malcolm Jones',
