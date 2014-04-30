@@ -7,8 +7,10 @@ import sys
 
 try:
     from setuptools import setup
+    extra = dict(test_suite="tests.test.suite", include_package_data=True)
 except ImportError:
     from distutils.core import setup
+    extra = {}
 
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
@@ -46,4 +48,5 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     test_suite='tests',
+**extra
 )
