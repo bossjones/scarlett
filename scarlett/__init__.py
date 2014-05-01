@@ -30,6 +30,7 @@ UserAgent = 'Scarlett/%s Python/%s %s/%s' % (
 )
 config = Config()
 
+
 def init_logging():
     for file in ScarlettConfigLocations:
         try:
@@ -39,6 +40,7 @@ def init_logging():
 
 
 class NullHandler(logging.Handler):
+
     def emit(self, record):
         pass
 

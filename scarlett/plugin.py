@@ -38,9 +38,12 @@ The actual interface is duck typed.
 """
 
 import glob
-import imp, os.path
+import imp
+import os.path
+
 
 class Plugin(object):
+
     """Base class for all plugins."""
 
     capability = []
@@ -54,6 +57,7 @@ class Plugin(object):
                 return False
         return True
 
+
 def get_plugin(cls, requested_capability=None):
     if not requested_capability:
         requested_capability = []
@@ -63,18 +67,20 @@ def get_plugin(cls, requested_capability=None):
             result.append(handler)
     return result
 
+
 def _import_module(filename):
     (path, name) = os.path.split(filename)
     (name, ext) = os.path.splitext(name)
 
     (file, filename, data) = imp.find_module(name, [path])
     try:
-      return imp.load_module(name, file, filename, data)
+        return imp.load_module(name, file, filename, data)
     finally:
-      if file:
-        file.close()
+        if file:
+            file.close()
 
 _plugin_loaded = False
+
 
 def load_plugins(config):
     global _plugin_loaded
@@ -87,4 +93,3 @@ def load_plugins(config):
     directory = config.get('Plugin', 'plugin_directory')
     for file in glob.glob(os.path.join(directory, '*.py')):
         _import_module(file)
-

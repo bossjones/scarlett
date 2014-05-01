@@ -1,4 +1,6 @@
-import StringIO, os, re
+import StringIO
+import os
+import re
 import warnings
 import ConfigParser
 import scarlett
@@ -7,11 +9,11 @@ import scarlett
 # os.path.expanduser() will fail. Attempt to detect this case and use a
 # no-op expanduser function in this case.
 try:
-  os.path.expanduser('~')
-  expanduser = os.path.expanduser
+    os.path.expanduser('~')
+    expanduser = os.path.expanduser
 except (AttributeError, ImportError):
-  # This is probably running on App Engine.
-  expanduser = (lambda x: x)
+    # This is probably running on App Engine.
+    expanduser = (lambda x: x)
 
 # By default we use two locations for the scarlett configurations,
 # /etc/scarlett.cfg and ~/.scarlett (which works on Windows and Unix).
@@ -38,8 +40,9 @@ class Config(ConfigParser.SafeConfigParser):
     def __init__(self, path=None, fp=None, do_load=True):
         # We don't use ``super`` here, because ``ConfigParser`` still uses
         # old-style classes.
-        ConfigParser.SafeConfigParser.__init__(self, {'working_dir' : '/mnt/pyami',
-                                                      'debug' : '0'})
+        ConfigParser.SafeConfigParser.__init__(
+            self, {
+                'working_dir': '/mnt/pyami', 'debug': '0'})
         if do_load:
             if path:
                 self.load_from_path(path)
@@ -141,4 +144,3 @@ class Config(ConfigParser.SafeConfigParser):
         s = StringIO.StringIO()
         self.write(s)
         print s.getvalue()
-

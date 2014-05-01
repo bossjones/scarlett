@@ -6,7 +6,5 @@ NULL_CHAR = '\x00'
 MAGIC_RES_STRING = '%sRES' % NULL_CHAR
 MAGIC_REQ_STRING = '%sREQ' % NULL_CHAR
 
-## def get_command_name(cmd_type):
-##     return SCARLETT_COMMAND_TO_NAME.get(cmd_type, cmd_type)
-
-
+# def get_command_name(cmd_type):
+# return SCARLETT_COMMAND_TO_NAME.get(cmd_type, cmd_type)

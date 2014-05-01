@@ -8,11 +8,14 @@ scarlett_logger = logging.getLogger(__name__)
 # NOTE: All of this needs to be updated to conform to current Scarlett commander function
 #
 
+
 class ScarlettCommandHandler(object):
+
     """A command handler manages the state which we should be in given a certain stream of commands
 
     ScarlettCommandHandler does no I/O and only understands sending/receiving commands
     """
+
     def __init__(self, connection_manager=None):
         self.connection_manager = connection_manager
 
@@ -52,15 +55,19 @@ class ScarlettCommandHandler(object):
 
         scarlett_command_name = get_command_name(cmd_type)
         if bool(scarlett_command_name == cmd_type) or not scarlett_command_name.startswith('SCARLETT_COMMAND_'):
-            unknown_command_msg = 'Could not handle command: %r - %r' % (scarlett_command_name, cmd_args)
+            unknown_command_msg = 'Could not handle command: %r - %r' % (
+                scarlett_command_name, cmd_args)
             scarlett_logger.error(unknown_command_msg)
             raise ValueError(unknown_command_msg)
 
-        recv_command_function_name = scarlett_command_name.lower().replace('scarlett_command_', 'recv_')
+        recv_command_function_name = scarlett_command_name.lower().replace(
+            'scarlett_command_',
+            'recv_')
 
         cmd_callback = getattr(self, recv_command_function_name, None)
         if not cmd_callback:
-            missing_callback_msg = 'Could not handle command: %r - %r' % (get_command_name(cmd_type), cmd_args)
+            missing_callback_msg = 'Could not handle command: %r - %r' % (
+                get_command_name(cmd_type), cmd_args)
             scarlett_logger.error(missing_callback_msg)
             raise UnknownCommandError(missing_callback_msg)
 
@@ -71,4 +78,6 @@ class ScarlettCommandHandler(object):
 
     def recv_error(self, error_code, error_text):
         """When we receive an error from the server, notify the connection manager that we have a scarlett error"""
-        return self.connection_manager.on_scarlett_error(error_code, error_text)
+        return self.connection_manager.on_scarlett_error(
+            error_code,
+            error_text)
