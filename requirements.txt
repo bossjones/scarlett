@@ -23,3 +23,6 @@ PyYAML>=3.10
 pep8==1.5.6
 autopep8==1.0.1
 git-pylint-commit-hook==2.0.3
+responses==0.2.0
+pyechonest==8.0.1
+pylast==0.5.11
