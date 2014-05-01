@@ -28,5 +28,4 @@ pyechonest==8.0.1
 pylast==0.5.11
 enum34==0.9.23
 colorama==0.3.1
-flake8==2.1.0
 coveralls==0.4.1
