@@ -21,16 +21,31 @@ if sys.argv[-1] == "publish":
 readme = open("README.rst").read()
 history = open("HISTORY.rst").read().replace(".. :changelog:", "")
 
+# Might use this later
+# try:
+#     here = os.path.abspath(os.path.dirname(__file__))
+# except:
+#     pass
+
+# def read_requirements(filename):
+#     content = open(os.path.join(here, filename)).read()
+#     requirements = map(lambda r: r.strip(), content.splitlines())
+#     return requirements
+
+
+# requirements = read_requirements('requirements.txt')
+# test_requirements = read_requirements('test-requirements.txt')
+
 setup(
     name="scarlett",
-    version = "0.1.0",
+    version="0.1.0",
     description="S.C.A.R.L.E.T.T is Tony Darks artificially programmed intelligent computer. It is programmed to speak with a female voice in a British accent.",
     long_description=readme + "\n\n" + history,
     author="Malcolm Jones",
     author_email="@bossjones",
     url="https://github.com/bossjones/scarlett/",
     packages=[
-        "scarlett","scarlett.core"
+        "scarlett", "scarlett.core"
     ],
     package_dir={"scarlett":
                  "scarlett"},
@@ -38,7 +53,7 @@ setup(
     install_requires=[
     ],
     license="BSD",
-    platforms = "Posix; MacOS X",
+    platforms="Posix; MacOS X",
     zip_safe=False,
     keywords="scarlett",
     classifiers=[
@@ -49,5 +64,5 @@ setup(
         "Programming Language :: Python :: 2.7",
     ],
     test_suite="tests",
-#**extra
+    #**extra
 )
