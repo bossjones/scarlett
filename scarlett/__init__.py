@@ -11,7 +11,8 @@ import sys
 import logging
 import logging.config
 import urlparse
-#from scarlett.errors
+import scarlett.errors
+import pprint
 
 __author__ = 'Malcolm Jones'
 __email__ = '@bossjones'
