@@ -80,5 +80,10 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
+@staticmethod
+def log(msg):
+    d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
+    print '[' + d + '] ' + msg
+
 
 scarlett.plugin.load_plugins(config)
