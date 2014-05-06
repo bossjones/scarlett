@@ -80,6 +80,27 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
+def connect_pocketsphinx():
+    scarlett.log("connect_pocketsphinx")
+
+def connect_gearman():
+    scarlett.log("connect_gearman")
+
+def connect_forecastio():
+    scarlett.log("connect_forecastio")
+
+def connect_wordnik():
+    scarlett.log("connect_wordnik")    
+
+def connect_nltk():
+    scarlett.log("connect_nltk")
+
+def connect_hue():
+    scarlett.log("connect_hue")
+
+def connect_wa():
+    scarlett.log("connect_wa")
+
 @staticmethod
 def log(msg):
     d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
