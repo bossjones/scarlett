@@ -21,6 +21,17 @@ if sys.argv[-1] == "publish":
 readme = open("README.rst").read()
 history = open("HISTORY.rst").read().replace(".. :changelog:", "")
 
+static = {}
+
+for root, dirs, files in os.walk('static'):
+  for filename in files:
+    filepath = os.path.join(root, filename)
+
+    if root not in static:
+      static[root] = []
+
+    static[root].append(filepath)
+
 # Might use this later
 # try:
 #     here = os.path.abspath(os.path.dirname(__file__))
@@ -50,6 +61,7 @@ setup(
     package_dir={"scarlett":
                  "scarlett"},
     include_package_data=True,
+    data_files=static.items(),
     install_requires=[
     ],
     license="BSD",
