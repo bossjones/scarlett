@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import pygtk
+pygtk.require('2.0')
+import gtk
+import gobject
+import pygst
+pygst.require('0.10')
+gobject.threads_init()
+import gst
+import os
+import sys
+import time
+import getopt
+import tempfile
+import json
+import glob
+import scarlett
+from scarlett import Config
+#from pi.listener import Listener
+from scarlett.brain import Graycell
+
+
+if __name__ == '__main__':
+  # TODO: Add logic here to get config,
+  # then determin which plugins and brain,
+  # features to import
+  #from pi.cells import *
+  #from lib.monitors import *
+
+  # TODO: REFACTOR THIS TO LATER ON ALLOW FOR IN PLACE PLUGINS
+  extra_cells = os.environ['HOME'] + '/.scarlett/cells'
+  if os.path.exists(extra_cells) == False:
+    os.makedirs(extra_cells)
+
+  sys.path.append(extra_cells)
+  cell_files = [os.path.basename(x)[:-3] for x in glob.glob(extra_cells + "/*.py")]
+  map(__import__, cell_files)
+
+  scarlett.play('pi-listening')
+  ### REFACTOR: listener = Listener(gobject, gst)
+
+  gtk.main()
