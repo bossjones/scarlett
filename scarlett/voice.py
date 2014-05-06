@@ -29,7 +29,7 @@ class Voice:
 
   # best souning female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
   @staticmethod
-  def speak(text, speed=150):
+  def speak(self, text, speed=150):
     # lets add this back in later
     # NOTE: old command by josip ( mmj2f 8:55AM March 15, 2014 )
     # remove special characters first
@@ -39,14 +39,17 @@ class Voice:
     else:
       os.system('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))
   
-  def read(text):
+  @staticmethod
+  def greetings_play(self):
+    self.speak("Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands")
+
+  def read(self, text):
     self.speak(text, READING_SPEED)
   
   __PLAYER__ = gst.element_factory_make("playbin", "player")
-  def play(sound):
+  def play(self, sound):
     global __PLAYER__
     __PLAYER__.set_state(gst.STATE_NULL)
-  
     __PLAYER__ = gst.element_factory_make("playbin", "player")
     __PLAYER__.set_property('uri', 'file://%s/static/sounds/%s.wav' % (PWD, sound))
     __PLAYER__.set_state(gst.STATE_PLAYING)
