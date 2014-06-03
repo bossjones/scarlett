@@ -1,6 +1,6 @@
-from plugins import Plugin
+from features import Feature
 
-class PluginSpotify(Plugin):
+class FeatureHueLights(Feature):
 
     capability = []
 
@@ -9,17 +9,17 @@ class PluginSpotify(Plugin):
         :type host: string
         :param host: The host to which the request is being sent.
 
-        :type config: boto.pyami.Config 
+        :type config: boto.pyami.Config
         :param config: Boto configuration.
 
-        :type provider: boto.provider.Provider  
+        :type provider: boto.provider.Provider
         :param provider: Provider details.
 
         Raises:
             NotReadyToAuthenticate: if this handler is not willing to
                 authenticate for the given provider and config.
         """
-        pass
+        Feature.__init__(self, "hue")
 
     def add_auth(self, http_request):
         """Invoked to add authentication details to request.

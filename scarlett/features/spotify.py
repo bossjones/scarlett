@@ -1,10 +1,6 @@
-"""
-Defines an interface which all Auth handlers need to implement.
-"""
+from features import Feature
 
-from plugins import Plugin
-
-class PluginForecast(Plugin):
+class FeatureSpotify(Feature):
 
     capability = []
 
@@ -13,17 +9,17 @@ class PluginForecast(Plugin):
         :type host: string
         :param host: The host to which the request is being sent.
 
-        :type config: boto.pyami.Config 
+        :type config: boto.pyami.Config
         :param config: Boto configuration.
 
-        :type provider: boto.provider.Provider  
+        :type provider: boto.provider.Provider
         :param provider: Provider details.
 
         Raises:
             NotReadyToAuthenticate: if this handler is not willing to
                 authenticate for the given provider and config.
         """
-        pass
+        Feature.__init__(self, "spotify")
 
     def add_auth(self, http_request):
         """Invoked to add authentication details to request.
