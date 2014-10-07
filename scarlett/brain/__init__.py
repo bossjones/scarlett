@@ -8,7 +8,7 @@ import scarlett
 from voice import Voice
 import nltk
 
-class Brain:
+class Brain(object):
   def __init__(self, resp):
     self.resp  = resp.get('hypotheses', [])
     self.voice = Voice()

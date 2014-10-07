@@ -141,7 +141,7 @@ class GstListener(Listener):
         "menu": "1,77E14030,32",
         "pause": "1,77E17A30,32",
         "play": "1,77E17A30,32",
-        "circle button": "1,77E1BA30,32" 
+        "circle button": "1,77E1BA30,32"
       },
       "toshiba": {
         "channel up": "1,2FDD827,32",
@@ -179,7 +179,7 @@ class GstListener(Listener):
       "SPOTIFY SKIP FORWARD": "track back",
       "SPOTIFY SKIP BACK": "track forward",
     }
- 
+
     self.light_commands = {
       "TURN ON THE LIGHTS": "hue lights on",
       "TURN ON LIGHTS": "hue lights on",

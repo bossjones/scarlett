@@ -18,6 +18,7 @@ import glob
 import scarlett
 from scarlett import Config
 #from pi.listener import Listener
+from scarlett.listener.gstlistener import GstListener
 from scarlett.brain import Graycell
 
 
@@ -39,6 +40,8 @@ if __name__ == '__main__':
 
   scarlett.play('pi-listening')
   ### REFACTOR: listener = Listener(gobject, gst)
-  ### NEW ONE WILL BE 
+  ### NEW ONE WILL BE
+
+  listenser = GstListener("gst", gobject, gst)
 
   gtk.main()

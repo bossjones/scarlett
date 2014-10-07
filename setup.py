@@ -56,7 +56,11 @@ setup(
     author_email="@bossjones",
     url="https://github.com/bossjones/scarlett/",
     packages=[
-        "scarlett", "scarlett.core"
+        "scarlett",
+        "scarlett.brain",
+        "scarlett.core",
+        "scarlett.features",
+        "scarlett.listener"
     ],
     package_dir={"scarlett":
                  "scarlett"},

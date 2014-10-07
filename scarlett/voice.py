@@ -18,7 +18,7 @@ class Voice:
   def __init__(self, gobject, gst):
     self.keyword_identified = 0
 
-  # best souning female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
+  # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
   #@staticmethod
   def speak(self, text, speed=150):
     # lets add this back in later
@@ -29,14 +29,14 @@ class Voice:
       os.system('sudo espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))
     else:
       os.system('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))
-  
+
   #@staticmethod
   def greetings_play(self):
     self.speak("Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands")
 
   def read(self, text):
     self.speak(text, READING_SPEED)
-  
+
   __PLAYER__ = gst.element_factory_make("playbin", "player")
   #@staticmethod
   def play(self, sound):
