@@ -28,3 +28,9 @@ class FeatureTime(Feature):
         :param http_request: HTTP request that needs to be authenticated.
         """
         pass
+
+    def time_play(self,cmd):
+      #### REFACTOR pi_time = pi.TimeNow().activate(self,"dont matter","dont matter")
+      self.voice.speak("YOU KNOW WHAT TIME IT IS RIGHT NOW HOME BOY")
+      self.keyword_identified = 0
+      self.voice.play('pi-response')

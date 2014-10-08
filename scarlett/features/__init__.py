@@ -38,14 +38,11 @@ The actual interface is duck typed.
 
 """
 
-import scarlett
-import os.path
-
 class Feature(object):
 
     def __init__(self,name):
 
-        self.name = name
+        self.name   = name
 
     def getName(self):
 
@@ -54,3 +51,7 @@ class Feature(object):
     def __str__(self):
 
         return "Scarlett Feature is %s" % (self.name)
+
+    def general_play(self,cmd):
+      self.keyword_identified = 0
+      self.voice.play('pi-cancel')

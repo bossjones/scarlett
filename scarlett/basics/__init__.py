@@ -1,14 +1,6 @@
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
-import pygst
-pygst.require('0.10')
-gobject.threads_init()
-import gst
-from scarlett import *
+from scarlett import config
 
 class ScarlettBasics(object):
 
-    def __init__(self):
+    def __init__(self, config):
       self.config = config

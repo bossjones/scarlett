@@ -4,7 +4,15 @@
 Scarlett Client Utils
 """
 import os
-from scarlett.basics import *
+import pygtk
+pygtk.require('2.0')
+import gtk
+import gobject
+import pygst
+pygst.require('0.10')
+gobject.threads_init()
+import gst
+from scarlett import config
 
 # DISABLED 10/7/2014 # SUDO_ENABLED       = scarlett.config.getboolean('speech','sudo_enabled')
 # DISABLED 10/7/2014 # READING_SPEED      = 165
@@ -12,11 +20,11 @@ from scarlett.basics import *
 
 class Voice(ScarlettBasics):
 
-  def __init__(self, gobject, gst, config):
+  def __init__(self, config, gobject, gst):
     self.keyword_identified = 0
+    self.config             = config
     self.sudo_enabled       = self.config.getboolean('speech','sudo_enabled')
     self.reading_Speed      = 165
-    self.config             = config
 
   # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
   #@staticmethod

@@ -19,7 +19,7 @@ import scarlett
 from scarlett import Config
 #from pi.listener import Listener
 from scarlett.listener.gstlistener import GstListener
-from scarlett.brain import Graycell
+#from scarlett.brain import Graycell
 
 
 if __name__ == '__main__':

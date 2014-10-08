@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 from features import Feature
+#from phue import Bridge
 
 class FeatureHueLights(Feature):
 
@@ -28,3 +31,8 @@ class FeatureHueLights(Feature):
         :param http_request: HTTP request that needs to be authenticated.
         """
         pass
+
+    def light_play(self,cmd):
+        subprocess.call([cmd],shell=True)
+        self.keyword_identified = 0
+        self.voice.play('pi-response')

@@ -28,3 +28,8 @@ class FeatureSpotify(Feature):
         :param http_request: HTTP request that needs to be authenticated.
         """
         pass
+
+
+    def spotify_play(self,cmd):
+      self.keyword_identified = 0
+      self.voice.play('pi-response')

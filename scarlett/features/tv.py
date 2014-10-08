@@ -28,3 +28,10 @@ class FeatureTv(Feature):
         :param http_request: HTTP request that needs to be authenticated.
         """
         pass
+
+    def tv_play(self,cmd):
+      self.keyword_identified = 0
+      self.voice.play('pi-response')
+      #### REFACTOR # self.arduino.write(cmd)
+      self.time.sleep(2)
+

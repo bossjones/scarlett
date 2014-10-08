@@ -1,3 +1,4 @@
+import os
 _DEBUG_MODE_          = False
 DEFAULT_SCARLETT_PORT = 7272
 PWD                   = os.path.dirname(os.path.abspath(__file__ + '/..'))

@@ -1,5 +1,7 @@
 from scarlett.constants import *
 from scarlett.errors import ProtocolError
+from scarlett import config
+
 # Protocol specific constants
 NULL_CHAR        = '\x00'
 MAGIC_RES_STRING = '%sRES' % NULL_CHAR
@@ -8,10 +10,11 @@ MAGIC_REQ_STRING = '%sREQ' % NULL_CHAR
 # def get_command_name(cmd_type):
 # return SCARLETT_COMMAND_TO_NAME.get(cmd_type, cmd_type)
 class Command(object):
-  def __init__(self, keyword):
-    self.keyword = keyword
 
-  def check_cmd(command=''):
+  def __init__(self):
+    self.config = config
+
+  def check_cmd(self, command=''):
 
     if command in SPOTIFY_CMDS.keys():
         scarlett.log("** received %s, sending 'spotify %s'" % (command, SPOTIFY_CMDS[command]))
