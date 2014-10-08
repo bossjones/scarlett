@@ -44,7 +44,7 @@ class Config(ConfigParser.SafeConfigParser):
         # old-style classes.
         ConfigParser.SafeConfigParser.__init__(
             self, {
-                'working_dir': '/mnt/pyami', 'debug': '0'})
+                'working_dir': '/mnt/scarlett', 'debug': '0'})
         if do_load:
             if path:
                 self.load_from_path(path)

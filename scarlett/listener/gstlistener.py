@@ -1,22 +1,21 @@
-import scarlett
-from listener import Listener
+from scarlett import *
+#from listener import Listener
 #from commander import Commander
-from brain import Brain
+#from brain import Brain
 #from cells.time import TimeNow, DateNow
 import os
 import json
 import tempfile
 import subprocess
 import forecastio
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
-import pygst
-pygst.require('0.10')
-gobject.threads_init()
-import gst
-from scarlett import Voice
+# import pygtk
+# pygtk.require('2.0')
+# import gtk
+# import gobject
+# import pygst
+# pygst.require('0.10')
+# gobject.threads_init()
+# import gst
 
 class GstListener(Listener):
 
@@ -26,17 +25,16 @@ class GstListener(Listener):
     self.lis_type               = lis_type
     Listener.__init__(self, lis_type)
 
-    self.lat                = scarlett.config.get('forecastio','lat')
-    self.lng                = scarlett.config.get('forecastio','lng')
-    self.api_key            = scarlett.config.get('forecastio','api_key')
+    self.lat                = self.config.get('forecastio','lat')
+    self.lng                = self.config.get('forecastio','lng')
+    self.api_key            = self.config.get('forecastio','api_key')
     self.hmm                = "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
-    self.voice              = Voice()
 
-    ### REFACTOR # self.arduino = Commander( scarlett.config('ARDUINO_ENABLED') )
+    ### REFACTOR # self.arduino = Commander( self.config('ARDUINO_ENABLED') )
 
-    self.speech_system      = scarlett.config.get('speech','system')
+    self.speech_system      = self.config.get('speech','system')
 
-    self.pipeline = gst.parse_launch(' ! '.join(['alsasrc device=' + scarlett.config.get('audio','usb_input_device'),
+    self.pipeline = gst.parse_launch(' ! '.join(['alsasrc device=' + self.config.get('audio','usb_input_device'),
                                                   'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
                                                   'audioconvert',
                                                   'audioresample',
@@ -44,13 +42,13 @@ class GstListener(Listener):
                                                   'audioresample',
                                                   'audio/x-raw-int, rate=8000',
                                                   'vader name=vader auto-threshold=true',
-                                                  'pocketsphinx lm=' + scarlett.config.get('pocketsphinx','lm') + ' dict=' + scarlett.config.get('pocketsphinx','dict') + ' hmm=' + self.hmm + ' name=listener',
+                                                  'pocketsphinx lm=' + self.config.get('pocketsphinx','lm') + ' dict=' + self.config.get('pocketsphinx','dict') + ' hmm=' + self.hmm + ' name=listener',
                                                   'fakesink dump=1 t.']))
 
     listener = self.pipeline.get_by_name('listener')
     listener.connect('result', self.__result__)
     listener.set_property('configured', True)
-    print "KEYWORDS WE'RE LOOKING FOR: " + scarlett.config.get('scarlett','owner')
+    print "KEYWORDS WE'RE LOOKING FOR: " + self.config.get('scarlett','owner')
 
     bus = self.pipeline.get_bus()
     bus.add_signal_watch()
@@ -65,7 +63,7 @@ class GstListener(Listener):
 
   def result(self, hyp, uttid):
     """Forward result signals on the bus to the main thread."""
-    if hyp in scarlett.config.get('scarlett','keywords'):
+    if hyp in self.config.get('scarlett','keywords'):
       print "HYP-IS-SOMETHING: " + hyp + "\n\n\n"
       print "UTTID-IS-SOMETHING:" + uttid + "\n"
       self.failed = 0
@@ -74,7 +72,7 @@ class GstListener(Listener):
     else:
       self.failed += 1
       if self.failed > 4:
-        self.voice.speak( " %s , if you need me, just say my name." % (scarlett.config('scarlett_owner') ))
+        self.voice.speak( " %s , if you need me, just say my name." % (self.config('scarlett_owner') ))
         self.failed = 0
 
   def run_cmd(self, hyp, uttid):

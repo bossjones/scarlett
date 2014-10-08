@@ -1,5 +1,6 @@
 _DEBUG_MODE_          = False
 DEFAULT_SCARLETT_PORT = 7272
+PWD                   = os.path.dirname(os.path.abspath(__file__ + '/..'))
 
 PRIORITY_NONE = None
 PRIORITY_LOW  = 'LOW'
@@ -32,7 +33,7 @@ CMD_MASTER_LIST_HEX = {
     "menu": "1,77E14030,32",
     "pause": "1,77E17A30,32",
     "play": "1,77E17A30,32",
-    "circle button": "1,77E1BA30,32" 
+    "circle button": "1,77E1BA30,32"
   },
   "toshiba": {
     "channel up": "1,2FDD827,32",

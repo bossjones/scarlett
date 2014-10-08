@@ -6,13 +6,11 @@ import scarlett.plugin
 import datetime
 import os
 import platform
-import re
-import sys
 import logging
 import logging.config
-import urlparse
 import scarlett.errors
-import pprint
+from scarlett.commands import *
+#from scarlett.basics import Voice
 
 __author__ = 'Malcolm Jones'
 __email__ = '@bossjones'
@@ -28,8 +26,8 @@ UserAgent = 'Scarlett/%s Python/%s %s/%s' % (
     platform.system(),
     platform.release()
 )
-config = Config()
 
+config = Config()
 
 def init_logging():
     for file in ScarlettConfigLocations:
@@ -90,7 +88,7 @@ def connect_forecastio():
     scarlett.log("connect_forecastio")
 
 def connect_wordnik():
-    scarlett.log("connect_wordnik")    
+    scarlett.log("connect_wordnik")
 
 def connect_nltk():
     scarlett.log("connect_nltk")

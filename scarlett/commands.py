@@ -1,7 +1,5 @@
-import struct
-import scarlett
-from constants import *
-from errors import ProtocolError
+from scarlett.constants import *
+from scarlett.errors import ProtocolError
 # Protocol specific constants
 NULL_CHAR        = '\x00'
 MAGIC_RES_STRING = '%sRES' % NULL_CHAR
@@ -9,8 +7,8 @@ MAGIC_REQ_STRING = '%sREQ' % NULL_CHAR
 
 # def get_command_name(cmd_type):
 # return SCARLETT_COMMAND_TO_NAME.get(cmd_type, cmd_type)
-class Command():
-  def __init(self, keyword):
+class Command(object):
+  def __init__(self, keyword):
     self.keyword = keyword
 
   def check_cmd(command=''):
