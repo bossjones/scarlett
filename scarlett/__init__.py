@@ -9,8 +9,6 @@ import platform
 import logging
 import logging.config
 import scarlett.errors
-from scarlett.commands import *
-#from scarlett.basics import Voice
 
 __author__ = 'Malcolm Jones'
 __email__ = '@bossjones'
@@ -105,4 +103,4 @@ def log(msg):
     print '[' + d + '] ' + msg
 
 
-scarlett.plugin.load_plugins(config)
+# COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)

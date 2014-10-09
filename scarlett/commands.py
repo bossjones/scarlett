@@ -1,6 +1,6 @@
+import scarlett
 from scarlett.constants import *
 from scarlett.errors import ProtocolError
-from scarlett import config
 
 # Protocol specific constants
 NULL_CHAR        = '\x00'
@@ -12,7 +12,7 @@ MAGIC_REQ_STRING = '%sREQ' % NULL_CHAR
 class Command(object):
 
   def __init__(self):
-    self.config = config
+    self.config = scarlett.config
 
   def check_cmd(self, command=''):
 

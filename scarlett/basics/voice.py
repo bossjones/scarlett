@@ -3,6 +3,7 @@
 """
 Scarlett Client Utils
 """
+import scarlett
 import os
 import pygtk
 pygtk.require('2.0')
@@ -12,19 +13,24 @@ import pygst
 pygst.require('0.10')
 gobject.threads_init()
 import gst
-from scarlett import config
+from scarlett.basics import ScarlettBasics
+from scarlett.constants import *
 
 # DISABLED 10/7/2014 # SUDO_ENABLED       = scarlett.config.getboolean('speech','sudo_enabled')
 # DISABLED 10/7/2014 # READING_SPEED      = 165
 # DISABLED 10/7/2014 # PWD                = os.path.dirname(os.path.abspath(__file__ + '/..'))
 
+__PLAYER__ = gst.element_factory_make("playbin", "player")
+
 class Voice(ScarlettBasics):
 
-  def __init__(self, config, gobject, gst):
+  def __init__(self):
     self.keyword_identified = 0
-    self.config             = config
+    self.config             = scarlett.config
     self.sudo_enabled       = self.config.getboolean('speech','sudo_enabled')
     self.reading_Speed      = 165
+    ScarlettBasics.__init__(self)
+
 
   # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
   #@staticmethod
@@ -45,7 +51,6 @@ class Voice(ScarlettBasics):
   def read(self, text):
     self.speak(text, self.reading_Speed)
 
-  __PLAYER__ = gst.element_factory_make("playbin", "player")
   #@staticmethod
   def play(self, sound):
     global __PLAYER__

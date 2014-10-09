@@ -1,13 +1,13 @@
-from scarlett import *
-#from listener import Listener
-#from commander import Commander
-#from brain import Brain
-#from cells.time import TimeNow, DateNow
+import scarlett
+from scarlett.basics.voice import Voice
+from scarlett.commands import Command
+from scarlett.listener import Listener
+
+
 import os
 import json
 import tempfile
 import subprocess
-import forecastio
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -16,18 +16,16 @@ import pygst
 pygst.require('0.10')
 gobject.threads_init()
 import gst
-from scarlett.basics import Voice
-from scarlett.commands import Commander
 
 class GstListener(Listener):
 
-  def __init__(self, lis_type, gobject, gst):
+  def __init__(self, lis_type):
     self.failed                 = 0
     self.keyword_identified     = 0
     self.lis_type               = lis_type
     self.voice                  = Voice()
-    self.commander              = Commander()
-    self.config                 = config
+    self.commander              = Command()
+    self.config                 = scarlett.config
     Listener.__init__(self, lis_type)
 
     self.hmm                = "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
