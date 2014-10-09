@@ -1,4 +1,4 @@
-# #!/usr/bin/env python
+# !/usr/bin/env python
 
 # """
 # Scarlett Brain
@@ -17,7 +17,7 @@
 #     if len(self.resp) == 0:
 #       return False
 
-#     #scarlett_config=ScarlettConfig()
+# scarlett_config=ScarlettConfig()
 #     q = self.resp[0]['utterance']
 #     if q in ['nothing', 'cancel', 'no'] or len(q) <= 1:
 #       print " * Ignoring", q
