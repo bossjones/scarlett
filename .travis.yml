@@ -43,6 +43,13 @@ install:
     - make > /dev/null
     - make install > /dev/null
     - cd ..
+    # gstreamer
+    - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
+    - python -c 'import pygst'
+    - python -c 'import gst'
+    - travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+    - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio
+    - travis_retry sudo apt-get -qq install gstreamer0.10-alsa
 
 #install: pip install --allow-all-external -r requirements.txt
 
