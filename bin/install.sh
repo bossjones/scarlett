@@ -261,4 +261,10 @@ sudo adduser pi tty
 sudo apt-get install -y picocom
 sudo pip install -y ino;
 
-
+# here: http://stackoverflow.com/questions/9064289/installing-pygtk-in-virtualenv
+#### DO THIS IN VIRTUALENV # wget http://pypi.python.org/packages/source/P/PyGTK/pygtk-2.24.0.tar.bz2
+#### DO THIS IN VIRTUALENV # cd pygtk*
+#### DO THIS IN VIRTUALENV # export PKG_CONFIG_PATH=/home/PATH/TO/VIRT/lib/pkgconfig
+#### DO THIS IN VIRTUALENV # ./configure --prefix=/home/PATH/TO/VIRT/
+#### DO THIS IN VIRTUALENV # make
+#### DO THIS IN VIRTUALENV # make install

@@ -9,3 +9,4 @@ pyserial>=2.7
 #wolframalpha==1.0.2
 #nltk==2.0.4
 changes==0.6.0
+pygtk
