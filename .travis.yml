@@ -49,8 +49,10 @@ install:
     - travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
     - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio
     - travis_retry sudo apt-get -qq install gstreamer0.10-alsa
-    - python -c 'import pygst'
-    - python -c 'import gst'
+    #- python -c 'import pygst'
+    #- python -c 'import gst'
+    - pip install -r requirements_dev.txt --use-mirrors
+    - pip install -r requirements.txt --use-mirrors
 
 #install: pip install --allow-all-external -r requirements.txt
 
