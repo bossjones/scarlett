@@ -1,0 +1,2 @@
+pyechonest==8.0.1
+pylast==0.5.11

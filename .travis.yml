@@ -13,6 +13,74 @@ install:
     - travis_retry sudo apt-get update
     - travis_retry sudo apt-get install -qq bash-completion swig
     - travis_retry pip install tox sphinx
+    - travis_retry sudo apt-get install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+  # Environment setup
+    - export VIRT_ROOT=/home/travis/virtualenv/python$TRAVIS_PYTHON_VERSION
+    - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+  # PyCairo
+    - wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
+    - tar xf py2cairo-1.10.0.tar.bz2
+    - cd py2cairo-1.10.0
+    - ./waf configure --prefix=$VIRT_ROOT > /dev/null
+    - ./waf build > /dev/null
+    - ./waf install > /dev/null
+    - cd ..
+  # PyGobject
+    - wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2
+    - tar xf pygobject-2.28.6.tar.bz2
+    - cd pygobject-2.28.6
+    - ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
+    - make > /dev/null
+    - make install > /dev/null
+    - cd ..
+  # PyGtk
+    - wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
+    - tar xf pygtk-2.24.0.tar.bz2
+    - cd pygtk-2.24.0
+    - ./configure --prefix=$VIRT_ROOT > /dev/null
+    - make > /dev/null
+    - make install > /dev/null
+    - cd ..
+    # gstreamer
+    # notes https://gist.github.com/jegger/10003813
+    # try these? -  sudo apt-get install python python-pip python-setuptools python-gobject gobject-introspection \
+    #                   python-gst0.10 gstreamer0.10-plugins-base gir1.2-gstreamer-0.10 \
+    #                   gstreamer0.10-plugins-good gstreamer0.10-plugins-bad \
+    #                   gstreamer0.10-plugins-ugly
+    # Basic build tools - virtualenv prereqs:
+    # source: http://wiki.pitivi.org/wiki/Dependencies
+    - travis_retry sudo apt-get -qq install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+    # Stuff related to introspection, GTK, canvases, and various other dependencies:
+    # source: http://wiki.pitivi.org/wiki/Dependencies
+    - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
+    - travis_retry sudo apt-get -qq install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0 libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0 libgstrtspserver-0.10-dev libnice-dev
+    - travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+    - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio
+    - travis_retry sudo apt-get -qq install gstreamer0.10-alsa
+    - travis_retry sudo apt-get -qq install pavucontrol gstreamer0.10-pulseaudio pulseaudio
+    - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio libao4 libasound2-plugins libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg pulseaudio-utils
+    - travis_retry sudo apt-get -qq install bison
+    - travis_retry sudo apt-get -qq install autoconf automake bison build-essential libasound2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib python-simplejson
+    - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
+    - travis_retry sudo apt-get -qq install python2.7-dev
+    - travis_retry sudo apt-get -qq install bison
+    # PyGST
+    # source: http://wiki.pitivi.org/wiki/Dependencies
+    - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
+    - tar xvf gst-python-0.10.22.tar.bz2
+    - cd gst-python-0.10.22
+    #- PYGOBJECT_LIBS=$VIRT_ROOT/include/pygobject-3.0/ PYGOBJECT_CFLAGS=-I$VIRT_ROOT/include/pygobject-3.0/ ./configure --prefix=$VIRT_ROOT
+    #- PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./autogen.sh
+    #- LDFLAGS=-Wl,-m PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./configure
+    - ./configure --prefix=$VIRT_ROOT
+    - make > /dev/null
+    - make install > /dev/null
+    - cd ..
+    - python -c 'import pygst'
+    - python -c 'import gst'
+    - pip install -r requirements_dev.txt --use-mirrors
+    - pip install -r requirements.txt --use-mirrors
+    # run tests
     - "[ ! -z $COVERAGE ] && pip install coveralls || true"
     - pip install --allow-all-external -r requirements.txt
 

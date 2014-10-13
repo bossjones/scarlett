@@ -6,13 +6,9 @@ import scarlett.plugin
 import datetime
 import os
 import platform
-import re
-import sys
 import logging
 import logging.config
-import urlparse
 import scarlett.errors
-import pprint
 
 __author__ = 'Malcolm Jones'
 __email__ = '@bossjones'
@@ -28,6 +24,7 @@ UserAgent = 'Scarlett/%s Python/%s %s/%s' % (
     platform.system(),
     platform.release()
 )
+
 config = Config()
 
 
@@ -81,4 +78,38 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     log = logger
 
 
-scarlett.plugin.load_plugins(config)
+def connect_pocketsphinx():
+    scarlett.log("connect_pocketsphinx")
+
+
+def connect_gearman():
+    scarlett.log("connect_gearman")
+
+
+def connect_forecastio():
+    scarlett.log("connect_forecastio")
+
+
+def connect_wordnik():
+    scarlett.log("connect_wordnik")
+
+
+def connect_nltk():
+    scarlett.log("connect_nltk")
+
+
+def connect_hue():
+    scarlett.log("connect_hue")
+
+
+def connect_wa():
+    scarlett.log("connect_wa")
+
+
+@staticmethod
+def log(msg):
+    d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
+    print '[' + d + '] ' + msg
+
+
+# COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)

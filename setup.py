@@ -56,7 +56,11 @@ setup(
     author_email="@bossjones",
     url="https://github.com/bossjones/scarlett/",
     packages=[
-        "scarlett", "scarlett.core"
+        "scarlett",
+        "scarlett.brain",
+        "scarlett.core",
+        "scarlett.features",
+        "scarlett.listener"
     ],
     package_dir={"scarlett":
                  "scarlett"},
@@ -64,6 +68,7 @@ setup(
     data_files=static.items(),
     install_requires=[
     ],
+    scripts=['bin/scarlett','bin/scarlett_echo_client_test.py','bin/scarlett_worker_cb_test.py'],
     license="BSD",
     platforms="Posix; MacOS X",
     zip_safe=False,
