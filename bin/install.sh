@@ -7,6 +7,11 @@ git config --global user.email ${_GIT_EMAIL};
 git config --global github.user ${GIT_USER};
 git config --global github.token ${_GIT_TOKEN};
 
+# 10/13/2014 - get gstreamer dependencies -- SOURCE: http://wiki.pitivi.org/wiki/GStreamer_from_Git
+# apt-cache search --names-only '^(lib)?gstreamer\S*' | sed 's/\(.*\) -.*/\1 /' > dependencies
+# sudo apt-get build-dep `cat dependencies`
+
+
 # 3. check authentication:
 ssh -T git@github.com -o StrictHostKeyChecking=no
 

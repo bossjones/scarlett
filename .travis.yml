@@ -69,10 +69,9 @@ install:
     - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
     - tar xvf gst-python-0.10.22.tar.bz2
     - cd gst-python-0.10.22
-    - ./autogen.sh
     #- PYGOBJECT_LIBS=$VIRT_ROOT/include/pygobject-3.0/ PYGOBJECT_CFLAGS=-I$VIRT_ROOT/include/pygobject-3.0/ ./configure --prefix=$VIRT_ROOT
-    - PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./autogen.sh
-    - LDFLAGS=-Wl,-m PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./configure
+    #- PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./autogen.sh
+    #- LDFLAGS=-Wl,-m PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./configure
     - ./configure --prefix=$VIRT_ROOT
     - make > /dev/null
     - make install > /dev/null
