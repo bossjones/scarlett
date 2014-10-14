@@ -64,20 +64,31 @@ install:
     - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
     - travis_retry sudo apt-get -qq install python2.7-dev
     - travis_retry sudo apt-get -qq install bison
-    # PyGST
+  # PyGST
     # source: http://wiki.pitivi.org/wiki/Dependencies
     - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
     - tar xvf gst-python-0.10.22.tar.bz2
     - cd gst-python-0.10.22
-    #- PYGOBJECT_LIBS=$VIRT_ROOT/include/pygobject-3.0/ PYGOBJECT_CFLAGS=-I$VIRT_ROOT/include/pygobject-3.0/ ./configure --prefix=$VIRT_ROOT
-    #- PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./autogen.sh
-    #- LDFLAGS=-Wl,-m PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./configure
     - ./configure --prefix=$VIRT_ROOT
     - make > /dev/null
     - make install > /dev/null
     - cd ..
     - python -c 'import pygst'
     - python -c 'import gst'
+  # Pocketsphinx
+    - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
+    - tar -zxf sphinxbase-0.8.tar.gz
+    - cd sphinxbase-0.8
+    - ./configure
+    - make
+    - sudo make install
+    - cd ..
+    - git clone https://github.com/bossjones/bossjones-pocketsphinx.git
+    - cd bossjones-pocketsphinx
+    - ./configure
+    - make
+    - sudo make install
+    - cd ..
     - pip install -r requirements_dev.txt --use-mirrors
     - pip install -r requirements.txt --use-mirrors
     # run tests
