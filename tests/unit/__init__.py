@@ -22,8 +22,7 @@ class ScarlettTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        # this will skip the scarlett_test_init function
-        os.environ['SKIP_SCARLETT_INIT'] = '1'
+        pass
 
     """
     For the moment this isn't the best tearDown function,
@@ -32,7 +31,7 @@ class ScarlettTestCase(unittest.TestCase):
     """
 
     def tearDown(self):
-        del os.environ['SKIP_SCARLETT_INIT']
+        pass
 
     def assertExists(self, path):
         self.assertTrue(os.path.exists(path),

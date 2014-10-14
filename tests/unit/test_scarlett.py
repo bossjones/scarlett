@@ -3,7 +3,7 @@
 # Copyright 2014, Behanceops.
 
 import sys
-from tests.unit import ScarlettTestCase
+from tests.unit import unittest,ScarlettTestCase
 from nose.plugins.attrib import attr
 
 class ListenerTestCase(ScarlettTestCase):

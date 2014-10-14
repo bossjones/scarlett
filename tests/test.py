@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-test_scarlett
+test
 ----------------------------------
 
 Tests for `scarlett` module.
@@ -15,7 +15,7 @@ import unittest
 from nose.core import run
 import argparse
 
-from scarlett import scarlett
+import scarlett
 
 def main():
     description = ("Runs scarlett unit and/or integration tests. "
