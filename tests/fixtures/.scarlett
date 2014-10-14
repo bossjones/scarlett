@@ -1,0 +1,36 @@
+[scarlett]
+name = scarlett
+keywords = [ 'scarlett', 'SCARLETT' ]
+owner = "Hair Ron Jones"
+
+[features]
+enable=hue_lights,time
+
+[pocketsphinx]
+silprob = 0.1
+wip = 1e-4
+bestpath = 0
+
+[wordnik]
+api_key = BLAH
+
+[wolframalpha]
+app_id = BLAH
+
+[audio]
+usb_input_device=hw:1
+
+[forecastio]
+api_key = BLAH
+lat     = 40.7056308
+lng     = -73.9780034
+
+[arduino]
+arduino_port     = /dev/ttyACM0
+arduino_baudrate = 9600
+arduino_timeout  = 2
+arduino_enabled  = false
+
+[speech]
+system = flite
+sudo_enabled = false

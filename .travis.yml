@@ -15,8 +15,13 @@ install:
     - travis_retry pip install tox sphinx
     - travis_retry sudo apt-get install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
   # Environment setup
+    - export MAIN_DIR=$(pwd)
     - export VIRT_ROOT=/home/travis/virtualenv/python$TRAVIS_PYTHON_VERSION
     - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+    - export SCARLETT_CONFIG=$MAIN_DIR/tests/fixtures/.scarlett
+    - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
+    - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
+    - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
   # PyCairo
     - wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
     - tar xf py2cairo-1.10.0.tar.bz2
@@ -89,6 +94,7 @@ install:
     - make
     - sudo make install
     - cd ..
+    - sudo ldconfig
     - pip install -r requirements_dev.txt --use-mirrors
     - pip install -r requirements.txt --use-mirrors
     # run tests

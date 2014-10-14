@@ -11,12 +11,11 @@ class FeatureForecast(Feature):
     capability = []
 
     def __init__(self, name):
-
-        ## REFACTOR NEEDED # self.lat                = self.config.get('forecastio','lat')
-        ## REFACTOR NEEDED # self.lng                = self.config.get('forecastio','lng')
-        ## REFACTOR NEEDED # self.api_key            = self.config.get('forecastio','api_key')
-
-        self.voice = Voice()
+        self.config             = scarlett.config
+        self.lat                = self.config.get('forecastio','lat')
+        self.lng                = self.config.get('forecastio','lng')
+        self.api_key            = self.config.get('forecastio','api_key')
+        self.voice              = Voice()
 
         Feature.__init__(self, "forecast")
 
@@ -46,3 +45,5 @@ class FeatureForecast(Feature):
         print "Daily Summary: %s" % (by_day.summary)
         fio_day = "Daily Summary: %s" % (by_day.summary)
         self.voice.speak(fio_day)
+
+        return self.keyword_identified

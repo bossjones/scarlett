@@ -25,7 +25,7 @@ def main():
     parser.add_argument('-t', '--service-tests', action="append", default=[],
                         help="Run tests for a given service.  This will "
                         "run any test tagged with the specified value, "
-                        "e.g -t daemon -t client")
+                        "e.g -t listeners -t client")
     known_args, remaining_args = parser.parse_known_args()
     attribute_args = []
     for service_attribute in known_args.service_tests:
