@@ -106,10 +106,4 @@ def connect_wa():
     global log
     scarlett.log.info("connect_wa")
 
-# @staticmethod
-# def log(msg):
-#     d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
-#     print '[' + d + '] ' + msg
-
-
 # COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)

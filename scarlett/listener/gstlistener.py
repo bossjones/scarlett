@@ -66,7 +66,7 @@ class GstListener(Listener):
         listener = self.pipeline.get_by_name('listener')
         listener.connect('result', self.__result__)
         listener.set_property('configured', True)
-        print "KEYWORDS WE'RE LOOKING FOR: " + self.config.get('scarlett', 'owner')
+        scarlett.log.debug(Fore.YELLOW + "KEYWORDS WE'RE LOOKING FOR: " + self.config.get('scarlett', 'owner'))
 
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
@@ -82,8 +82,8 @@ class GstListener(Listener):
     def result(self, hyp, uttid):
         """Forward result signals on the bus to the main thread."""
         if hyp in self.config.get('scarlett', 'keywords'):
-            print "HYP-IS-SOMETHING: " + hyp + "\n\n\n"
-            print "UTTID-IS-SOMETHING:" + uttid + "\n"
+            scarlett.log.debug(Fore.YELLOW + "HYP-IS-SOMETHING: " + hyp + "\n\n\n")
+            scarlett.log.debug(Fore.YELLOW + "UTTID-IS-SOMETHING:" + uttid + "\n")
             self.failed = 0
             self.keyword_identified = 1
             self.voice.play('pi-listening')
@@ -96,7 +96,7 @@ class GstListener(Listener):
                 self.failed = 0
 
     def run_cmd(self, hyp, uttid):
-        print "KEYWORD IDENTIFIED BABY"
+        scarlett.log.debug(Fore.YELLOW + "KEYWORD IDENTIFIED BABY")
         self.check_cmd.commander(hyp)
 
     def listen(self, valve, vader):
@@ -109,31 +109,6 @@ class GstListener(Listener):
         self.voice.play('pi-cancel')
         valve.set_property('drop', False)
         self.pipeline.set_state(gst.STATE_PLAYING)
-
-# DISABLED 10/8/2014 #  # question - sound recording
-# DISABLED 10/8/2014 #  def answer(self, question):
-# DISABLED 10/8/2014 #    self.voice.play('pi-cancel')
-# DISABLED 10/8/2014 #
-# DISABLED 10/8/2014 #    print " * Contacting Google"
-# DISABLED 10/8/2014 #    destf = tempfile.mktemp(suffix='piresult')
-# DISABLED 10/8/2014 #    os.system('wget --post-file %s --user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7" --header="Content-Type: audio/x-flac; rate=16000" -O %s -q "https://www.google.com/speech-api/v1/recognize?client=chromium&lang=en-US"' % (question, destf))
-# DISABLED 10/8/2014 #    b = open(destf)
-# DISABLED 10/8/2014 #    result = b.read()
-# DISABLED 10/8/2014 #    b.close()
-# DISABLED 10/8/2014 #
-# DISABLED 10/8/2014 #    os.unlink(question)
-# DISABLED 10/8/2014 #    os.unlink(destf)
-# DISABLED 10/8/2014 #
-# DISABLED 10/8/2014 #    if len(result) == 0:
-# DISABLED 10/8/2014 #      print " * nop"
-# DISABLED 10/8/2014 #      self.voice.play('pi-cancel')
-# DISABLED 10/8/2014 #    else:
-# DISABLED 10/8/2014 #      brain = Brain(json.loads(result))
-# DISABLED 10/8/2014 #      if brain.think() == False:
-# DISABLED 10/8/2014 #        print " * nop2"
-# DISABLED 10/8/2014 #        self.voice.play('pi-cancel')
-# DISABLED 10/8/2014 #
-# DISABLED 10/8/2014 #    self.pipeline.set_state(gst.STATE_PLAYING)
 
     def get_hmm_full_path(self):
         if os.environ.get('SCARLETT_HMM'):

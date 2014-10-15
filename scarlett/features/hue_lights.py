@@ -44,7 +44,7 @@ class FeatureHueLights(Feature):
 
     def print_light_names(self):
         for l in self.lights:
-            print(l.name)
+            scarlett.log.debug(Fore.YELLOW + "" + (l.name))
 
     def light_play(self,cmd):
         self.keyword_identified = 0
