@@ -1,4 +1,5 @@
 import scarlett
+import time
 from features import *
 
 class FeatureTime(Feature):
@@ -6,6 +7,7 @@ class FeatureTime(Feature):
     capability = []
 
     def __init__(self, host, config, provider):
+        self.time = time
         Feature.__init__(self, "time")
 
     def add_auth(self, http_request):

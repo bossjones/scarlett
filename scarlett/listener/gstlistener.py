@@ -4,7 +4,12 @@ from scarlett.commands import Command
 from scarlett.listener import *
 
 import os
+import sys
+import time
+import getopt
+import tempfile
 import json
+import glob
 import tempfile
 import subprocess
 import pygtk
