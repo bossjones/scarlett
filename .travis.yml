@@ -126,7 +126,7 @@ install:
     - make
     - sudo make install
     - cd ..
-    - git clone https://github.com/bossjones/bossjones-pocketsphinx.git
+    - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
     - cd bossjones-pocketsphinx
     - ./configure
     - make
