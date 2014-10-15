@@ -31,7 +31,7 @@ if 'SCARLETT_CONFIG' in os.environ:
 # If there's a SCARLETT_PATH variable set, we use anything there
 # as the current configuration locations, split with colons
 elif 'SCARLETT_PATH' in os.environ:
-    scarlett.log("ENV SCARLETT_PATH is set")
+    scarlett.log.info("ENV SCARLETT_PATH is set")
     ScarlettConfigLocations = []
     for path in os.environ['SCARLETT_PATH'].split(":"):
         ScarlettConfigLocations.append(expanduser(path))

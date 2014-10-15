@@ -19,46 +19,46 @@ class Command(object):
     def check_cmd(self, command=''):
 
         if command in SPOTIFY_CMDS.keys():
-            scarlett.log(
+            scarlett.log.info(
                 "** received %s, sending 'spotify %s'" %
                 (command, SPOTIFY_CMDS[command]))
             # REFACTOR ### spotify_play(SPOTIFY_CMDS[command])
         elif command in LIGHT_CMDS.keys():
-            scarlett.log(
+            scarlett.log.info(
                 "** received %s, sending 'light %s'" %
                 (command, LIGHT_CMDS[command]))
             try:
-                scarlett.log("trying light chit")
+                scarlett.log.info("trying light chit")
                 # REFACTOR ### light_play(LIGHT_CMDS[command])
             except Exception as e:
-                scarlett.log(
+                scarlett.log.info(
                     "light exception b. \nCMD: %s \nException: %s" %
                     (command, e))
                 # REFACTOR ### general_play("cancel")
         elif command in TIME_CMDS.keys():
-            scarlett.log(
+            scarlett.log.info(
                 "** received %s, sending 'time %s'" %
                 (command, TIME_CMDS[command]))
             try:
                 # REFACTOR ### time_play(TIME_CMDS[command])
-                scarlett.log("I WOULD TELL THE TIME")
+                scarlett.log.info("I WOULD TELL THE TIME")
             except Exception as e:
-                scarlett.log(
+                scarlett.log.info(
                     "time exception b. \nCMD: %s \nException: %s" %
                     (command, e))
                 # REFACTOR ### general_play("cancel")
         elif command in GENERAL_CMDS.keys():
-            scarlett.log(
+            scarlett.log.info(
                 "** received %s, sending 'general command: %s'" %
                 (command, GENERAL_CMDS[command]))
             # REFACTOR ### general_play(GENERAL_CMDS[command])
         elif command in FORECAST_CMDS.keys():
-            scarlett.log(
+            scarlett.log.info(
                 "** received %s, sending 'forecast command: %s'" %
                 (command, FORECAST_CMDS[command]))
             # REFACTOR ### forecast_play(FORECAST_CMDS[command])
         elif command in tv_commands.keys():
-            scarlett.log(
+            scarlett.log.info(
                 "** received %s, sending 'tv command: %s'" %
                 (command, tv_commands[command]))
             # REFACTOR ### tv_play(tv_commands[command])
