@@ -3,11 +3,15 @@ language: python
 matrix:
     include:
         - python: 2.7
-          env: {TOX_ENV: py27, COVERAGE: 1}
+          env: {TOX_ENV: py27, COVERAGE: 1, GSTREAMER: 0.10}
 #        - python: 2.7
 #          env: {TOX_ENV: docs}
         - python: 2.7
           env: {TOX_ENV: flake8}
+
+# env:
+#   - GSTREAMER=0.10
+#   - GSTREAMER=1.0
 
 # Instructions to install gstreamer1.0
 ## env:
@@ -39,6 +43,7 @@ matrix:
 ##         libgstreamer-plugins-base1.0-dev
 ##
 install:
+    - sh -c "echo -e \"\e[31mGSTREAMER VERSION $GSTREAMER\e[39;\""
     - travis_retry sudo apt-get update
     - travis_retry sudo apt-get install -qq bash-completion swig
     - travis_retry pip install tox sphinx nose
@@ -98,6 +103,10 @@ install:
     - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
     - travis_retry sudo apt-get -qq install python2.7-dev
     - travis_retry sudo apt-get -qq install bison
+    - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
+    - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+    - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+
   # PyGST
     # source: http://wiki.pitivi.org/wiki/Dependencies
     - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
