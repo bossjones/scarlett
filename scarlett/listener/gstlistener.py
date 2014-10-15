@@ -1,7 +1,7 @@
 import scarlett
 from scarlett.basics.voice import Voice
 from scarlett.commands import Command
-from scarlett.listener import Listener
+from scarlett.listener import *
 
 import os
 import json
@@ -19,7 +19,7 @@ import gst
 class GstListener(Listener):
 
     def __init__(self, lis_type, override_parse=False):
-        scarlett.log.debug('Starting up GstListener')
+        scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
         self.failed = 0
         self.keyword_identified = 0
         self.lis_type = lis_type

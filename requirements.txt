@@ -11,3 +11,4 @@ pyserial>=2.7
 changes==0.6.0
 #pygtk
 ipython
+colorama==0.3.2

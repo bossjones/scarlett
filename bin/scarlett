@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import scarlett
+from scarlett.constants import *
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -23,6 +24,9 @@ from scarlett.listener.gstlistener import GstListener
 
 
 def main():
+    # Begin logging to standard out
+    scarlett.set_stream_logger('scarlett')
+    scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
     _voice = Voice()
     _voice.play('pi-listening')
     listenser = GstListener("gst")

@@ -1,3 +1,4 @@
+import scarlett
 from features import Feature
 
 class FeatureTv(Feature):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import scarlett
-from features import Feature
+from features import *
 #from phue import Bridge
 
 class FeatureHueLights(Feature):

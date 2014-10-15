@@ -13,7 +13,7 @@ import pygst
 pygst.require('0.10')
 gobject.threads_init()
 import gst
-from scarlett.basics import ScarlettBasics
+from scarlett.basics import *
 from scarlett.constants import *
 
 __PLAYER__ = gst.element_factory_make("playbin", "player")

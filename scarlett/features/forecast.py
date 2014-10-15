@@ -2,7 +2,8 @@
 Defines an interface which all Auth handlers need to implement.
 """
 
-from features import Feature
+import scarlett
+from features import *
 from scarlett.basics import Voice
 #import forecastio
 

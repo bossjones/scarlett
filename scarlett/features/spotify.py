@@ -1,4 +1,5 @@
-from features import Feature
+import scarlett
+from features import *
 
 class FeatureSpotify(Feature):
 

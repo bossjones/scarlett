@@ -13,6 +13,7 @@
 # included in all copies or substantial portions of the Software.
 
 import scarlett
+from scarlett.constants import *
 
 """
 Implements Feature related API. Allows for certain features
