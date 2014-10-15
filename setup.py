@@ -38,14 +38,14 @@ try:
 except:
     pass
 
-def read_requirements(filename):
-    content = open(os.path.join(here, filename)).read()
-    requirements = map(lambda r: r.strip(), content.splitlines())
-    return requirements
-
-
-requirements = read_requirements('requirements.txt')
-test_requirements = read_requirements('requirements_dev.txt')
+# def read_requirements(filename):
+#     content = open(os.path.join(here, filename)).read()
+#     requirements = map(lambda r: r.strip(), content.splitlines())
+#     return requirements
+#
+#
+# requirements = read_requirements('requirements.txt')
+# test_requirements = read_requirements('requirements_dev.txt')
 
 setup(
     name="scarlett",
