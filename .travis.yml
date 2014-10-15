@@ -150,4 +150,19 @@ script: tox -e $TOX_ENV
 after_success:
     - "[ ! -z $COVERAGE ] && coveralls || true"
 
+# SEND PACKAGE TO PYPI
+# after_success:
+#   # Test building deployable packages
+#   - pwd && cd src
+#   - python setup.py bdist_egg
+#   - python setup.py sdist
+#   - cd ..
+#   # Test installing the built packages
+#   - pwd && cd src/dist
+#   - pip install scarlett-*.tar.gz
+#   - echo "y" | pip uninstall scarlett
+#   - easy_install scarlett-*.egg
+#   - echo "y" | pip uninstall scarlett
+#   - cd ../..
+
 #script: python tests/test_scarlett.py unit

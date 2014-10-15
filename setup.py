@@ -4,7 +4,7 @@
 import os
 import sys
 
-#from scarlett import __version__ as version
+from scarlett import __version__ as version
 
 try:
     from setuptools import setup, find_packages
@@ -33,23 +33,23 @@ for root, dirs, files in os.walk('static'):
     static[root].append(filepath)
 
 # Might use this later
-# try:
-#     here = os.path.abspath(os.path.dirname(__file__))
-# except:
-#     pass
+try:
+    here = os.path.abspath(os.path.dirname(__file__))
+except:
+    pass
 
-# def read_requirements(filename):
-#     content = open(os.path.join(here, filename)).read()
-#     requirements = map(lambda r: r.strip(), content.splitlines())
-#     return requirements
+def read_requirements(filename):
+    content = open(os.path.join(here, filename)).read()
+    requirements = map(lambda r: r.strip(), content.splitlines())
+    return requirements
 
 
-# requirements = read_requirements('requirements.txt')
-# test_requirements = read_requirements('test-requirements.txt')
+requirements = read_requirements('requirements.txt')
+test_requirements = read_requirements('requirements_dev.txt')
 
 setup(
     name="scarlett",
-    version="0.1.0",
+    version=version,
     description="S.C.A.R.L.E.T.T is Tony Darks artificially programmed intelligent computer. It is programmed to speak with a female voice in a British accent.",
     long_description=readme + "\n\n" + history,
     author="Malcolm Jones",
