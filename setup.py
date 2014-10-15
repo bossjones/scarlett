@@ -57,7 +57,7 @@ setup(
     url="https://github.com/bossjones/scarlett/",
     packages=[
         "scarlett",
-        "scarlett.brain",
+        "scarlett.basics",
         "scarlett.core",
         "scarlett.features",
         "scarlett.listener"

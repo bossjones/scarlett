@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import scarlett
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -15,7 +16,6 @@ import getopt
 import tempfile
 import json
 import glob
-import scarlett
 #from pi.listener import Listener
 from scarlett.basics.voice import Voice
 from scarlett.listener.gstlistener import GstListener

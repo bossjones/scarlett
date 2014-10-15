@@ -63,7 +63,6 @@ def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
     logger.addHandler(fh)
     log = logger
 
-
 def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     global log
     if not format_string:
@@ -77,41 +76,35 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
-
-def connect_pocketsphinx():
+def connect_voice():
     global log
-    scarlett.log.info("connect_pocketsphinx")
-
-
-def connect_gearman():
-    global log
-    scarlett.log.info("connect_gearman")
-
+    scarlett.log.info("connect_voice")
+    from scarlett.basics import Voice
+    return Voice()
 
 def connect_forecastio():
     global log
     scarlett.log.info("connect_forecastio")
-
+    from scarlett.features import FeatureForecast
+    return FeatureForecast()
 
 def connect_wordnik():
     global log
     scarlett.log.info("connect_wordnik")
 
-
 def connect_nltk():
     global log
     scarlett.log.info("connect_nltk")
 
-
 def connect_hue():
     global log
     scarlett.log.info("connect_hue")
-
+    from scarlett.features import FeatureHueLights
+    return FeatureHueLights()
 
 def connect_wa():
     global log
     scarlett.log.info("connect_wa")
-
 
 # @staticmethod
 # def log(msg):

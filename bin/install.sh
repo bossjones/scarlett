@@ -274,6 +274,9 @@ sudo pip install -y ino;
 #### DO THIS IN VIRTUALENV # make
 #### DO THIS IN VIRTUALENV # make install
 
+# test using the python-espeak bindings
+# http://dodgyville.tumblr.com/post/25814402767/simple-python-espeak-example
+# sudo apt-get install espeak python-espeak
 
 # install in virtualenv
 export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv

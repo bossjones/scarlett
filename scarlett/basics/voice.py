@@ -16,13 +16,7 @@ import gst
 from scarlett.basics import ScarlettBasics
 from scarlett.constants import *
 
-# DISABLED 10/7/2014 # SUDO_ENABLED       = scarlett.config.getboolean('speech','sudo_enabled')
-# DISABLED 10/7/2014 # READING_SPEED      = 165
-# DISABLED 10/7/2014 # PWD                =
-# os.path.dirname(os.path.abspath(__file__ + '/..'))
-
 __PLAYER__ = gst.element_factory_make("playbin", "player")
-
 
 class Voice(ScarlettBasics):
 
@@ -32,6 +26,12 @@ class Voice(ScarlettBasics):
         self.sudo_enabled = self.config.getboolean('speech', 'sudo_enabled')
         self.reading_Speed = 165
         ScarlettBasics.__init__(self)
+
+    # """
+    # In the near future we will test this function here to see if it works better than the current one
+    # """
+    # def say(self,something, language='en', voice='f3'):
+    #     subprocess.call(['espeak', '-v%s+%s' % (language, voice), something])
 
     # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
     #@staticmethod

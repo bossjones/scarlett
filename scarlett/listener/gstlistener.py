@@ -19,6 +19,7 @@ import gst
 class GstListener(Listener):
 
     def __init__(self, lis_type, override_parse=False):
+        scarlett.log.debug('Starting up GstListener')
         self.failed = 0
         self.keyword_identified = 0
         self.lis_type = lis_type
@@ -52,7 +53,7 @@ class GstListener(Listener):
                       ' dict=' +
                       self.ps_dict +
                       ' hmm=' +
-                      self.hmm +
+                      self.ps_hmm +
                       ' name=listener',
                       'fakesink dump=1 t.']
         else:
