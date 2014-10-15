@@ -25,7 +25,7 @@ ScarlettConfigLocations.append(UserConfigPath)
 # If there's a SCARLETT_CONFIG variable set, we load ONLY
 # that variable
 if 'SCARLETT_CONFIG' in os.environ:
-    scarlett.log("ENV SCARLETT_CONFIG is set")
+    scarlett.log.info("ENV SCARLETT_CONFIG is set")
     ScarlettConfigLocations = [expanduser(os.environ['SCARLETT_CONFIG'])]
 
 # If there's a SCARLETT_PATH variable set, we use anything there
