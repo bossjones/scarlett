@@ -3,20 +3,59 @@ language: python
 matrix:
     include:
         - python: 2.7
-          env: {TOX_ENV: py27, COVERAGE: 1}
+          env: {TOX_ENV: py27, COVERAGE: 1, GSTREAMER: 0.10}
 #        - python: 2.7
 #          env: {TOX_ENV: docs}
         - python: 2.7
           env: {TOX_ENV: flake8}
 
+# env:
+#   - GSTREAMER=0.10
+#   - GSTREAMER=1.0
+
+# Instructions to install gstreamer1.0
+## env:
+##   - GSTREAMER=0.10
+##   - GSTREAMER=1.0
+##
+## before_install:
+##   - sudo add-apt-repository -y ppa:strukturag/libde265
+##   - sh -c "if [ '$GSTREAMER' = '1.0'   ]; then sudo add-apt-repository -y ppa:gstreamer-developers/ppa; fi"
+##   - sudo apt-get update -qq
+##   - sudo apt-get install -y libde265-dev libz-dev libbz2-dev gstreamer$GSTREAMER-tools libgstreamer$GSTREAMER-dev libgstreamer-plugins-base$GSTREAMER-dev libgstreamer-plugins-bad$GSTREAMER-dev
+##   - sh -c "if [ '$GSTREAMER' = '1.0'   ]; then sudo apt-get install -y libgstreamer-plugins-good$GSTREAMER-dev; fi"
+
+# Instructions to install gstreamer1.0
+## install:
+##  - sudo add-apt-repository -y ppa:gstreamer-developers/ppa
+##  - sudo apt-get update
+##  - sudo apt-get install
+##         expect
+##         gir1.2-gstreamer-1.0
+##         gir1.2-gudev-1.0
+##         gstreamer1.0-libav
+##         gstreamer1.0-plugins-bad
+##         gstreamer1.0-plugins-base
+##         gstreamer1.0-plugins-good
+##         gstreamer1.0-tools
+##         gstreamer1.0-x
+##         libgstreamer1.0-dev
+##         libgstreamer-plugins-base1.0-dev
+##
 install:
+    - sh -c "echo -e \"\e[31mGSTREAMER VERSION $GSTREAMER\e[39;\""
     - travis_retry sudo apt-get update
     - travis_retry sudo apt-get install -qq bash-completion swig
-    - travis_retry pip install tox sphinx
+    - travis_retry pip install tox sphinx nose
     - travis_retry sudo apt-get install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
   # Environment setup
+    - export MAIN_DIR=$(pwd)
     - export VIRT_ROOT=/home/travis/virtualenv/python$TRAVIS_PYTHON_VERSION
     - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+    - export SCARLETT_CONFIG=$MAIN_DIR/tests/fixtures/.scarlett
+    - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
+    - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
+    - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
   # PyCairo
     - wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
     - tar xf py2cairo-1.10.0.tar.bz2
@@ -64,25 +103,46 @@ install:
     - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
     - travis_retry sudo apt-get -qq install python2.7-dev
     - travis_retry sudo apt-get -qq install bison
-    # PyGST
+    - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
+    - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+    - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+
+  # PyGST
     # source: http://wiki.pitivi.org/wiki/Dependencies
     - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
-    - tar xvf gst-python-0.10.22.tar.bz2
+    - tar xf gst-python-0.10.22.tar.bz2
     - cd gst-python-0.10.22
-    #- PYGOBJECT_LIBS=$VIRT_ROOT/include/pygobject-3.0/ PYGOBJECT_CFLAGS=-I$VIRT_ROOT/include/pygobject-3.0/ ./configure --prefix=$VIRT_ROOT
-    #- PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./autogen.sh
-    #- LDFLAGS=-Wl,-m PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig ./configure
     - ./configure --prefix=$VIRT_ROOT
     - make > /dev/null
     - make install > /dev/null
     - cd ..
     - python -c 'import pygst'
     - python -c 'import gst'
-    - pip install -r requirements_dev.txt --use-mirrors
+  # Pocketsphinx
+    - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
+    - tar -zxf sphinxbase-0.8.tar.gz
+    - cd sphinxbase-0.8
+    - ./configure
+    - make
+    - sudo make install
+    - cd ..
+    - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
+    - cd bossjones-pocketsphinx
+    - ./configure
+    - make
+    - sudo make install
+    - cd ..
+    - sudo ldconfig
     - pip install -r requirements.txt --use-mirrors
+    - pip install -r requirements_plugins.txt --use-mirrors
+    - pip install -r requirements_dev.txt --use-mirrors
+    # - pip install -r requirements.txt --use-mirrors
+    # - pip install -r requirements_plugins.txt
+    - python setup.py install
+    # - python tests/test.py
     # run tests
     - "[ ! -z $COVERAGE ] && pip install coveralls || true"
-    - pip install --allow-all-external -r requirements.txt
+    # - pip install --allow-all-external -r requirements.txt
 
 #install: pip install --allow-all-external -r requirements.txt
 
@@ -91,5 +151,20 @@ script: tox -e $TOX_ENV
 # Only report coverage for one version.
 after_success:
     - "[ ! -z $COVERAGE ] && coveralls || true"
+
+# SEND PACKAGE TO PYPI
+# after_success:
+#   # Test building deployable packages
+#   - pwd && cd src
+#   - python setup.py bdist_egg
+#   - python setup.py sdist
+#   - cd ..
+#   # Test installing the built packages
+#   - pwd && cd src/dist
+#   - pip install scarlett-*.tar.gz
+#   - echo "y" | pip uninstall scarlett
+#   - easy_install scarlett-*.egg
+#   - echo "y" | pip uninstall scarlett
+#   - cd ../..
 
 #script: python tests/test_scarlett.py unit

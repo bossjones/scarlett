@@ -79,37 +79,44 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
 
 
 def connect_pocketsphinx():
-    scarlett.log("connect_pocketsphinx")
+    global log
+    scarlett.log.info("connect_pocketsphinx")
 
 
 def connect_gearman():
-    scarlett.log("connect_gearman")
+    global log
+    scarlett.log.info("connect_gearman")
 
 
 def connect_forecastio():
-    scarlett.log("connect_forecastio")
+    global log
+    scarlett.log.info("connect_forecastio")
 
 
 def connect_wordnik():
-    scarlett.log("connect_wordnik")
+    global log
+    scarlett.log.info("connect_wordnik")
 
 
 def connect_nltk():
-    scarlett.log("connect_nltk")
+    global log
+    scarlett.log.info("connect_nltk")
 
 
 def connect_hue():
-    scarlett.log("connect_hue")
+    global log
+    scarlett.log.info("connect_hue")
 
 
 def connect_wa():
-    scarlett.log("connect_wa")
+    global log
+    scarlett.log.info("connect_wa")
 
 
-@staticmethod
-def log(msg):
-    d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
-    print '[' + d + '] ' + msg
+# @staticmethod
+# def log(msg):
+#     d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
+#     print '[' + d + '] ' + msg
 
 
 # COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)

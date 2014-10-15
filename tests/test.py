@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-test_scarlett
+test
 ----------------------------------
 
 Tests for `scarlett` module.
@@ -15,7 +15,8 @@ import unittest
 from nose.core import run
 import argparse
 
-from scarlett import scarlett
+import scarlett
+#from scarlett import scarlett
 
 def main():
     description = ("Runs scarlett unit and/or integration tests. "
@@ -25,7 +26,7 @@ def main():
     parser.add_argument('-t', '--service-tests', action="append", default=[],
                         help="Run tests for a given service.  This will "
                         "run any test tagged with the specified value, "
-                        "e.g -t daemon -t client")
+                        "e.g -t listeners -t client")
     known_args, remaining_args = parser.parse_known_args()
     attribute_args = []
     for service_attribute in known_args.service_tests:
@@ -42,17 +43,6 @@ def main():
         return 0
     else:
         return 1
-
-class TestScarlett(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def test_something(self):
-        pass
-
-    def tearDown(self):
-        pass
 
 if __name__ == '__main__':
     unittest.main()

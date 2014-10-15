@@ -1,8 +1,8 @@
 # wheel==0.22.0
-requests==2.4.3
+# requests==2.4.3
 # duckduckgo2>=0.21
 # feedparser>=5.1.2
-python-forecastio>=0.1
+#python-forecastio>=0.1
 yolk>=0.4.3
 pyserial>=2.7
 #wordnik==2.1.1
@@ -10,3 +10,4 @@ pyserial>=2.7
 #nltk==2.0.4
 changes==0.6.0
 #pygtk
+ipython

@@ -3,7 +3,6 @@ from scarlett.basics.voice import Voice
 from scarlett.commands import Command
 from scarlett.listener import Listener
 
-
 import os
 import json
 import tempfile
@@ -17,10 +16,9 @@ pygst.require('0.10')
 gobject.threads_init()
 import gst
 
-
 class GstListener(Listener):
 
-    def __init__(self, lis_type):
+    def __init__(self, lis_type, override_parse=False):
         self.failed = 0
         self.keyword_identified = 0
         self.lis_type = lis_type
@@ -29,36 +27,40 @@ class GstListener(Listener):
         self.config = scarlett.config
         Listener.__init__(self, lis_type)
 
-        self.hmm = "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
+        # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
+        self.ps_hmm = self.get_hmm_full_path()
+        self.ps_dict = self.get_dict_full_path()
+        self.ps_lm = self.get_lm_full_path()
+        self.ps_device = self.config.get('audio','usb_input_device')
 
         self.speech_system = self.config.get('speech', 'system')
 
+        # default, use what we have set
+        if override_parse == False:
+            parse_launch_array = [
+                      'alsasrc device=' +
+                      self.ps_device,
+                      'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
+                      'audioconvert',
+                      'audioresample',
+                      'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
+                      'audioresample',
+                      'audio/x-raw-int, rate=8000',
+                      'vader name=vader auto-threshold=true',
+                      'pocketsphinx lm=' +
+                      self.ps_lm +
+                      ' dict=' +
+                      self.ps_dict +
+                      ' hmm=' +
+                      self.hmm +
+                      ' name=listener',
+                      'fakesink dump=1 t.']
+        else:
+            parse_launch_array = override_parse
+
+
         self.pipeline = gst.parse_launch(
-            ' ! '.join(
-                [
-                    'alsasrc device=' +
-                    self.config.get(
-                        'audio',
-                        'usb_input_device'),
-                    'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
-                    'audioconvert',
-                    'audioresample',
-                    'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
-                    'audioresample',
-                    'audio/x-raw-int, rate=8000',
-                    'vader name=vader auto-threshold=true',
-                    'pocketsphinx lm=' +
-                    self.config.get(
-                        'pocketsphinx',
-                        'lm') +
-                    ' dict=' +
-                    self.config.get(
-                        'pocketsphinx',
-                        'dict') +
-                    ' hmm=' +
-                    self.hmm +
-                    ' name=listener',
-                    'fakesink dump=1 t.']))
+           ' ! '.join(parse_launch_array))
 
         listener = self.pipeline.get_by_name('listener')
         listener.connect('result', self.__result__)
@@ -131,6 +133,30 @@ class GstListener(Listener):
 # DISABLED 10/8/2014 #        self.voice.play('pi-cancel')
 # DISABLED 10/8/2014 #
 # DISABLED 10/8/2014 #    self.pipeline.set_state(gst.STATE_PLAYING)
+
+    def get_hmm_full_path(self):
+        if os.environ.get('SCARLETT_HMM'):
+            _hmm_full_path = os.environ.get('SCARLETT_HMM')
+        else:
+            _hmm_full_path = self.config.get('pocketsphinx','hmm')
+
+        return _hmm_full_path
+
+    def get_lm_full_path(self):
+        if os.environ.get('SCARLETT_LM'):
+            _lm_full_path = os.environ.get('SCARLETT_LM')
+        else:
+            _lm_full_path = self.config.get('pocketsphinx','lm')
+
+        return _lm_full_path
+
+    def get_dict_full_path(self):
+        if os.environ.get('SCARLETT_DICT'):
+            _dict_full_path = os.environ.get('SCARLETT_DICT')
+        else:
+            _dict_full_path = self.config.get('pocketsphinx','dict')
+
+        return _dict_full_path
 
     def get_pipeline(self):
         return self.pipeline

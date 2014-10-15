@@ -4,6 +4,7 @@ import re
 import warnings
 import ConfigParser
 import scarlett
+#from scarlett import log
 
 # If running in Google App Engine there is no "user" and
 # os.path.expanduser() will fail. Attempt to detect this case and use a
@@ -25,13 +26,13 @@ ScarlettConfigLocations.append(UserConfigPath)
 # If there's a SCARLETT_CONFIG variable set, we load ONLY
 # that variable
 if 'SCARLETT_CONFIG' in os.environ:
-    scarlett.log("ENV SCARLETT_CONFIG is set")
+    #scarlett.log.info("ENV SCARLETT_CONFIG is set")
     ScarlettConfigLocations = [expanduser(os.environ['SCARLETT_CONFIG'])]
 
 # If there's a SCARLETT_PATH variable set, we use anything there
 # as the current configuration locations, split with colons
 elif 'SCARLETT_PATH' in os.environ:
-    scarlett.log("ENV SCARLETT_PATH is set")
+    #scarlett.log.info("ENV SCARLETT_PATH is set")
     ScarlettConfigLocations = []
     for path in os.environ['SCARLETT_PATH'].split(":"):
         ScarlettConfigLocations.append(expanduser(path))

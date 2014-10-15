@@ -273,3 +273,75 @@ sudo pip install -y ino;
 #### DO THIS IN VIRTUALENV # ./configure --prefix=/home/PATH/TO/VIRT/
 #### DO THIS IN VIRTUALENV # make
 #### DO THIS IN VIRTUALENV # make install
+
+
+# install in virtualenv
+export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv
+export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+# one liner
+# cd /home/pi/dev/bossjones-github/scarlett && sudo apt-get update && sudo apt-get install -y bash-completion swig && pip install tox sphinx && sudo apt-get install -y git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev && wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2 && tar xf py2cairo-1.10.0.tar.bz2 && cd py2cairo-1.10.0 && ./waf configure --prefix=$VIRT_ROOT > /dev/null && ./waf build > /dev/null && ./waf install > /dev/null && cd .. && wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2 && tar xf pygobject-2.28.6.tar.bz2 && cd pygobject-2.28.6 && ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null && make > /dev/null && make install > /dev/null && cd .. && wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2 && tar xf pygtk-2.24.0.tar.bz2 && cd pygtk-2.24.0 && ./configure --prefix=$VIRT_ROOT > /dev/null && make > /dev/null && make install > /dev/null && cd .. && sudo apt-get -y install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison && sudo apt-get -y install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good && sudo apt-get -y install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0 libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0 libgstrtspserver-0.10-dev libnice-dev && sudo apt-get -y install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly && sudo apt-get -y install gstreamer0.10-pulseaudio && sudo apt-get -y install gstreamer0.10-alsa && sudo apt-get -y install pavucontrol gstreamer0.10-pulseaudio pulseaudio && sudo apt-get -y install gstreamer0.10-pulseaudio libao4 libasound2-plugins libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg pulseaudio-utils && sudo apt-get -y install bison && sudo apt-get -y install autoconf automake bison build-essential libasound2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib python-simplejson && sudo apt-get -y install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg && sudo apt-get -y install python2.7-dev && sudo apt-get -y install bison && wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2 && tar xvf gst-python-0.10.22.tar.bz2 && cd gst-python-0.10.22 && ./configure --prefix=$VIRT_ROOT && make > /dev/null && make install > /dev/null && cd .. && python -c 'import pygst' && python -c 'import gst' && wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz && tar -zxf sphinxbase-0.8.tar.gz && cd sphinxbase-0.8 && ./configure && make && sudo make install && cd .. && git clone https://github.com/bossjones/bossjones-pocketsphinx.git && cd bossjones-pocketsphinx && ./configure && make && sudo make install && cd .. && sudo ldconfig && pip install -r requirements_dev.txt --use-mirrors && pip install -r requirements.txt --use-mirrors && pip install -r requirements_plugins.txt --use-mirrors
+cd /home/pi/dev/bossjones-github/scarlett
+sudo apt-get update
+sudo apt-get install -y bash-completion swig
+pip install tox sphinx
+sudo apt-get install -y git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
+tar xf py2cairo-1.10.0.tar.bz2
+cd py2cairo-1.10.0
+./waf configure --prefix=$VIRT_ROOT > /dev/null
+./waf build > /dev/null
+./waf install > /dev/null
+cd ..
+wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2
+tar xf pygobject-2.28.6.tar.bz2
+cd pygobject-2.28.6
+./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
+make > /dev/null
+make install > /dev/null
+cd ..
+wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
+tar xf pygtk-2.24.0.tar.bz2
+cd pygtk-2.24.0
+./configure --prefix=$VIRT_ROOT > /dev/null
+make > /dev/null
+make install > /dev/null
+cd ..
+sudo apt-get -y install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+sudo apt-get -y install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
+sudo apt-get -y install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0 libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0 libgstrtspserver-0.10-dev libnice-dev
+sudo apt-get -y install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+sudo apt-get -y install gstreamer0.10-pulseaudio
+sudo apt-get -y install gstreamer0.10-alsa
+sudo apt-get -y install pavucontrol gstreamer0.10-pulseaudio pulseaudio
+sudo apt-get -y install gstreamer0.10-pulseaudio libao4 libasound2-plugins libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg pulseaudio-utils
+sudo apt-get -y install bison
+sudo apt-get -y install autoconf automake bison build-essential libasound2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib python-simplejson
+sudo apt-get -y install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
+sudo apt-get -y install python2.7-dev
+sudo apt-get -y install bison
+wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
+tar xvf gst-python-0.10.22.tar.bz2
+cd gst-python-0.10.22
+./configure --prefix=$VIRT_ROOT
+make > /dev/null
+make install > /dev/null
+cd ..
+python -c 'import pygst'
+python -c 'import gst'
+wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
+tar -zxf sphinxbase-0.8.tar.gz
+cd sphinxbase-0.8
+./configure
+make
+sudo make install
+cd ..
+git clone https://github.com/bossjones/bossjones-pocketsphinx.git
+cd bossjones-pocketsphinx
+./configure
+make
+sudo make install
+cd ..
+sudo ldconfig
+pip install -r requirements_dev.txt --use-mirrors
+pip install -r requirements.txt --use-mirrors
+pip install --allow-all-external -r requirements.txt

@@ -12,6 +12,7 @@
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
 
+import scarlett
 
 """
 Implements Feature related API. Allows for certain features
@@ -48,3 +49,11 @@ class Feature(object):
     def general_play(self,cmd):
       self.keyword_identified = 0
       self.voice.play('pi-cancel')
+
+    def module_exists(self,module_name):
+        try:
+            __import__(module_name)
+        except ImportError:
+            return False
+        else:
+            return True
