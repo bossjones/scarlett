@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import scarlett
 from features import Feature
 #from phue import Bridge
 
@@ -12,6 +13,8 @@ class FeatureHueLights(Feature):
         Feature.__init__(self, "hue")
         if self.module_exists("phue"):
           from phue import Bridge
+          self.b = Bridge(scarlett.config.get('hue', 'bridge'))
+          self.b.connect()
 
     def add_auth(self, http_request):
         pass
