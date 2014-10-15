@@ -125,9 +125,10 @@ install:
     - cd ..
     - sudo ldconfig
     - pip install -r requirements_dev.txt --use-mirrors
-    - pip install -r requirements.txt --use-mirrors
-    - pip install -r requirements_plugins.txt
+    # - pip install -r requirements.txt --use-mirrors
+    # - pip install -r requirements_plugins.txt
     - python setup.py install
+    # - python tests/test.py
     # run tests
     - "[ ! -z $COVERAGE ] && pip install coveralls || true"
     # - pip install --allow-all-external -r requirements.txt
