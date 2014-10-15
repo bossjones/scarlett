@@ -4,7 +4,24 @@
 Scarlett Client Utils
 """
 import scarlett
+# import os
+# import pygtk
+# pygtk.require('2.0')
+# import gtk
+# import gobject
+# import pygst
+# pygst.require('0.10')
+# gobject.threads_init()
+# import gst
 import os
+import sys
+import time
+import getopt
+import tempfile
+import json
+import glob
+import tempfile
+import subprocess
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -34,7 +51,6 @@ class Voice(ScarlettBasics):
     #     subprocess.call(['espeak', '-v%s+%s' % (language, voice), something])
 
     # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
-    #@staticmethod
     def speak(self, text, speed=150):
         # lets add this back in later
         # NOTE: old command by josip ( mmj2f 8:55AM March 15, 2014 )
@@ -45,7 +61,6 @@ class Voice(ScarlettBasics):
         else:
             os.system('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))
 
-    #@staticmethod
     def greetings_play(self):
         self.speak(
             "Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands")
@@ -53,7 +68,6 @@ class Voice(ScarlettBasics):
     def read(self, text):
         self.speak(text, self.reading_Speed)
 
-    #@staticmethod
     def play(self, sound):
         global __PLAYER__
         __PLAYER__.set_state(gst.STATE_NULL)

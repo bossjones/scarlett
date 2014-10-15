@@ -1,7 +1,6 @@
 import scarlett
-from scarlett.basics.voice import Voice
+from scarlett.basics.voice import *
 from scarlett.constants import *
-
 
 class Listener(object):
 

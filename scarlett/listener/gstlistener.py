@@ -1,25 +1,6 @@
 import scarlett
-from scarlett.basics.voice import Voice
 from scarlett.commands import Command
 from scarlett.listener import *
-
-import os
-import sys
-import time
-import getopt
-import tempfile
-import json
-import glob
-import tempfile
-import subprocess
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
-import pygst
-pygst.require('0.10')
-gobject.threads_init()
-import gst
 
 class GstListener(Listener):
 
