@@ -8,7 +8,10 @@ class FeatureHueLights(Feature):
     capability = []
 
     def __init__(self, host, config, provider):
+
         Feature.__init__(self, "hue")
+        if self.module_exists("phue"):
+          from phue import Bridge
 
     def add_auth(self, http_request):
         pass

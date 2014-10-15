@@ -4,7 +4,7 @@ Defines an interface which all Auth handlers need to implement.
 
 from features import Feature
 from scarlett.basics import Voice
-import forecastio
+#import forecastio
 
 class FeatureForecast(Feature):
 
@@ -18,6 +18,7 @@ class FeatureForecast(Feature):
         self.voice              = Voice()
 
         Feature.__init__(self, "forecast")
+        self.module_exists("forecastio")
 
     def add_auth(self, http_request):
         pass

@@ -16,6 +16,7 @@ from nose.core import run
 import argparse
 
 import scarlett
+#from scarlett import scarlett
 
 def main():
     description = ("Runs scarlett unit and/or integration tests. "
