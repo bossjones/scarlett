@@ -49,12 +49,12 @@ def main():
     #pipeline
     #pipeline.set_property('configured', True)
     pipeline.set_state(gst.STATE_PLAYING)
-    gobject.timeout_add(5000,__timeout__,pipeline)
+    #gobject.timeout_add(5000,__timeout__,pipeline)
     #Tracer()()
     gtk.main()
 
-def __timeout__(pipeline):
-    pipeline.set_state(gst.STATE_NULL)
+#def __timeout__(pipeline):
+#    pipeline.set_state(gst.STATE_NULL)
 
 if __name__ == "__main__":
     main()

@@ -280,6 +280,7 @@ sudo pip install -y ino;
 
 # install gstreamer bash completion!!
 # https://raw.githubusercontent.com/drothlis/gstreamer/38df76af49f81857c8f0bed3f426093469f5ae01/tools/gstreamer-completion-0.10
+# GST_DEBUG=qtdemux:5,faad:5,ffdec_h264:5 gst-launch-0.10 filesrc location=turn_lights_red.mp4 ! qtdemux name=demuxer demuxer. ! queue ! faad ! audioconvert ! audioresample ! audio/x-raw-int, rate=16000,depth=16 ! wavenc ! filesink location=./turn_lights_red.wav
 
 # install in virtualenv
 export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv
