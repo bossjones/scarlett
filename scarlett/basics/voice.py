@@ -4,15 +4,6 @@
 Scarlett Client Utils
 """
 import scarlett
-# import os
-# import pygtk
-# pygtk.require('2.0')
-# import gtk
-# import gobject
-# import pygst
-# pygst.require('0.10')
-# gobject.threads_init()
-# import gst
 import os
 import sys
 import time

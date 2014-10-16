@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import time
+import getopt
+import tempfile
+import json
+import glob
+import tempfile
+import subprocess
+import pygtk
+pygtk.require('2.0')
+import gtk
+import gobject
+import pygst
+pygst.require('0.10')
+gobject.threads_init()
+import gst
+from IPython.core.debugger import Tracer
+
+global pipeline
+
+def main():
+
+    ### parse_launch_array = [
+    ###           'alsasrc device=hw:1',
+    ###           'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
+    ###           'audioconvert',
+    ###           'audioresample',
+    ###           'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
+    ###           'audioresample',
+    ###           'audio/x-raw-int, rate=8000',
+    ###           'filesink location=scarlett.raw']
+
+    parse_launch_array = [
+              'alsasrc device=hw:1',
+              'audioconvert',
+              'vorbisenc',
+              'oggmux',
+              'filesink location=scarlett.ogg']
+
+# ! audioconvert ! vorbisenc ! oggmux ! filesink location=input.ogg
+
+
+    pipeline = gst.parse_launch(
+       ' ! '.join(parse_launch_array))
+
+    #pipeline
+    #pipeline.set_property('configured', True)
+    pipeline.set_state(gst.STATE_PLAYING)
+    gobject.timeout_add(5000,__timeout__,pipeline)
+    #Tracer()()
+    gtk.main()
+
+def __timeout__(pipeline):
+    pipeline.set_state(gst.STATE_NULL)
+
+if __name__ == "__main__":
+    main()

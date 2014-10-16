@@ -278,6 +278,9 @@ sudo pip install -y ino;
 # http://dodgyville.tumblr.com/post/25814402767/simple-python-espeak-example
 # sudo apt-get install espeak python-espeak
 
+# install gstreamer bash completion!!
+# https://raw.githubusercontent.com/drothlis/gstreamer/38df76af49f81857c8f0bed3f426093469f5ae01/tools/gstreamer-completion-0.10
+
 # install in virtualenv
 export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv
 export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig

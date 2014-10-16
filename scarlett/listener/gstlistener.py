@@ -2,6 +2,13 @@ import scarlett
 from scarlett.commands import Command
 from scarlett.listener import *
 
+# gst.STATE_PLAYING — Used to start playing
+#  * player_name.set_state(gst.STATE_PLAYING)
+# gst.STATE_PAUSED — Used to pause file
+#  * player_name.set_state(gst.STATE_PAUSED)
+# gst.STATE_NULL — Used to stop file
+#  * player_name.set_state(gst.STATE_NULL)
+
 class GstListener(Listener):
 
     def __init__(self, lis_type, override_parse=False):
@@ -45,6 +52,7 @@ class GstListener(Listener):
         else:
             parse_launch_array = override_parse
 
+        #scarlett.log.debug(Fore.YELLOW + parse_launch_array)
 
         self.pipeline = gst.parse_launch(
            ' ! '.join(parse_launch_array))
@@ -74,24 +82,29 @@ class GstListener(Listener):
             self.keyword_identified = 1
             self.voice.play('pi-listening')
         else:
+            self.pipeline.set_state(gst.STATE_NULL)
             self.failed += 1
             if self.failed > 4:
                 self.voice.speak(
                     " %s , if you need me, just say my name." %
                     (self.config('scarlett_owner')))
                 self.failed = 0
+                self.pipeline.set_state(gst.STATE_PLAYING)
 
     def run_cmd(self, hyp, uttid):
         scarlett.log.debug(Fore.YELLOW + "KEYWORD IDENTIFIED BABY")
-        self.check_cmd.commander(hyp)
+        self.commander.check_cmd(hyp)
 
     def listen(self, valve, vader):
+        scarlett.log.debug(Fore.YELLOW + "Inside listen function" )
         self.pipeline.set_state(gst.STATE_PAUSED)
         self.voice.play('pi-listening')
         valve.set_property('drop', False)
         valve.set_property('drop', True)
 
     def cancel_listening(self, valve):
+        self.pipeline.set_state(gst.STATE_NULL)
+        scarlett.log.debug(Fore.YELLOW + "Inside cancel_listening function" )
         self.voice.play('pi-cancel')
         valve.set_property('drop', False)
         self.pipeline.set_state(gst.STATE_PLAYING)
@@ -156,3 +169,9 @@ class GstListener(Listener):
         elif msgtype == 'run_cmd':
             self.run_cmd(msg.structure['hyp'], msg.structure['uttid'])
             # self.pipeline.set_state(gst.STATE_PAUSED)
+        elif msgtype == gst.MESSAGE_EOS:
+            self.pipeline.set_state(gst.STATE_NULL)
+        elif msgtype == gst.MESSAGE_ERROR:
+            self.pipeline.set_state(gst.STATE_NULL)
+            (err, debug) = msgtype.parse_error()
+            scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
