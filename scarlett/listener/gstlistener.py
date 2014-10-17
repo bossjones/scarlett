@@ -2,11 +2,22 @@ import scarlett
 from scarlett.commands import Command
 from scarlett.listener import *
 
-# gst.STATE_PLAYING — Used to start playing
+
+# this is very important, without this, callbacks from gstreamer thread
+# will messed our program up
+import gobject
+gobject.threads_init()
+
+# source: http://stackoverflow.com/questions/8005765/how-to-get-duration-of-steaming-data-with-gstreamer
+# # LETS TRY USING THIS: # gobject.threads_init()
+
+# EXAMPLES source code: http://cgit.freedesktop.org/gstreamer/gst-python/tree/examples/filesrc.py?h=0.10
+
+# gst.STATE_PLAYING Used to start playing
 #  * player_name.set_state(gst.STATE_PLAYING)
-# gst.STATE_PAUSED — Used to pause file
+# gst.STATE_PAUSED Used to pause file
 #  * player_name.set_state(gst.STATE_PAUSED)
-# gst.STATE_NULL — Used to stop file
+# gst.STATE_NULL Used to stop file
 #  * player_name.set_state(gst.STATE_NULL)
 
 class GstListener(Listener):
@@ -19,6 +30,7 @@ class GstListener(Listener):
         self.voice = Voice()
         self.commander = Command()
         self.config = scarlett.config
+        self.override_parse = override_parse
         Listener.__init__(self, lis_type)
 
         # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
@@ -30,45 +42,49 @@ class GstListener(Listener):
         self.speech_system = self.config.get('speech', 'system')
 
         # default, use what we have set
-        if override_parse == False:
-            parse_launch_array = [
-                      'alsasrc device=' +
-                      self.ps_device,
-                      'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
-                      'audioconvert',
-                      'audioresample',
-                      'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
-                      'audioresample',
-                      'audio/x-raw-int, rate=8000',
-                      'vader name=vader auto-threshold=true',
-                      'pocketsphinx lm=' +
-                      self.ps_lm +
-                      ' dict=' +
-                      self.ps_dict +
-                      ' hmm=' +
-                      self.ps_hmm +
-                      ' name=listener',
-                      'fakesink dump=1 t.']
-        else:
-            parse_launch_array = override_parse
+        self.parse_launch_array = self._get_pocketsphinx_definition(override_parse)
 
-        #scarlett.log.debug(Fore.YELLOW + parse_launch_array)
-
+        scarlett.log.debug(Fore.YELLOW + 'Initializing gst-parse-launch -------->')
         self.pipeline = gst.parse_launch(
-           ' ! '.join(parse_launch_array))
+           ' ! '.join(self.parse_launch_array))
 
         listener = self.pipeline.get_by_name('listener')
         listener.connect('result', self.__result__)
         listener.set_property('configured', True)
-        scarlett.log.debug(Fore.YELLOW + "KEYWORDS WE'RE LOOKING FOR: " + self.config.get('scarlett', 'owner'))
 
+        scarlett.log.debug(Fore.YELLOW + "Initializing connection to vader element -------->")
+        # TODO: Play with vader object some more
+        #vader = self.pipeline.get_by_name("vader")
+        #vader.connect("vader-start", self._on_vader_start)
+        #vader.connect("vader-stop", self._on_vader_stop)
+
+        scarlett.log.debug(Fore.YELLOW + "Initializing Bus -------->")
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
+        scarlett.log.debug(Fore.YELLOW + "Sending Message to Bus ---------->")
         bus.connect('message::application', self.__application_message__)
-        self.pipeline.set_state(gst.STATE_PLAYING)
+
+        # TODO: TEST EOS AND RESETTING PIPLINE
+        #scarlett.log.debug(Fore.YELLOW + "After Message to Bus ----------->")
+        #bus.connect("message::eos", self._on_bus_message_eos)
 
         # Scarlett's greetings
         self.voice.greetings_play()
+        scarlett.log.debug(Fore.YELLOW + "KEYWORDS WE'RE LOOKING FOR: " + self.config.get('scarlett', 'owner'))
+        self.pipeline.set_state(gst.STATE_PLAYING)
+
+    def scarlett_start_listen(self):
+        self.pipeline.set_state(gst.STATE_PLAYING)
+
+    def scarlett_stop_listen(self):
+        self.pipeline.set_state(gst.STATE_NULL)
+
+    def scarlett_pause_listen(self):
+        self.pipeline.set_state(gst.STATE_PAUSED)
+
+    def scarlett_restart_listen(self):
+        self.scarlett_stop_listen()
+        self.scarlett_start_listen()
 
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
@@ -135,6 +151,77 @@ class GstListener(Listener):
 
     def get_pipeline(self):
         return self.pipeline
+
+    def _get_pocketsphinx_definition(self,override_parse):
+        """Return ``pocketsphinx`` definition for :func:`gst.parse_launch`."""
+        # default, use what we have set
+        if override_parse == False:
+            return [
+                      'alsasrc device=' +
+                      self.ps_device,
+                      'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
+                      'audioconvert',
+                      'audioresample',
+                      'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
+                      'audioresample',
+                      'audio/x-raw-int, rate=8000',
+                      'vader name=vader auto-threshold=true',
+                      'pocketsphinx lm=' +
+                      self.ps_lm +
+                      ' dict=' +
+                      self.ps_dict +
+                      ' hmm=' +
+                      self.ps_hmm +
+                      ' name=listener',
+                      'fakesink dump=1']
+                      # NOTE, I commented out the refrence to the tee
+                      # #'fakesink dump=1 t.'
+        else:
+            return override_parse
+
+    def _get_vader_definition(self):
+        """Return ``vader`` definition for :func:`gst.parse_launch`."""
+        # source: https://github.com/bossjones/eshayari/blob/master/eshayari/application.py
+        # Convert noise level from spin button range [0,32768] to gstreamer
+        # element's range [0,1]. Likewise, convert silence from spin button's
+        # milliseconds to gstreamer element's nanoseconds.
+
+        # MY DEFAULT VADER DEFINITON WAS: vader name=vader auto-threshold=true
+        # vader name=vader auto-threshold=true
+        noise = 256 / 32768
+        silence = 300 * 1000000
+        return ("vader "
+                        + "name=vader "
+                        + "auto-threshold=false "
+                        + "threshold=%.9f " % noise
+                        + "run-length=%d " % silence
+                        )
+
+
+    def _on_vader_start(self, vader, pos):
+        """Send start position as a message on the bus."""
+        import gst
+        struct = gst.Structure("start")
+        pos = pos / 1000000000 # ns to s
+        struct.set_value("start", pos)
+        vader.post_message(gst.message_new_application(vader, struct))
+
+    def _on_vader_stop(self, vader, pos):
+        """Send stop position as a message on the bus."""
+        import gst
+        struct = gst.Structure("stop")
+        pos = pos / 1000000000 # ns to s
+        struct.set_value("stop", pos)
+
+    ### def _on_bus_message_eos(self, bus, message):
+    ###     """Flush remaining subtitles to page."""
+    ###     if self._text is not None:
+    ###         # Store previous text.
+    ###         self._texts[-1] = self._text
+    ###         self._text = None
+    ###     if self._starts and self._stops[-1] is not None:
+    ###         self._append_subtitle(-1)
+    ###         self._stop_speech_recognition()
 
     def __result__(self, listener, text, uttid):
         """We're inside __result__"""

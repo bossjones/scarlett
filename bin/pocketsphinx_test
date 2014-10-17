@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+
+import pocketsphinx as ps
+speechRec = ps.Decoder()
+wavFile = file(wavfile,'rb')
+wavFile.seek(44)
+speechRec.decode_raw(wavFile)
+result = speechRec.get_hyp()
+print result[0]
