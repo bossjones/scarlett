@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import scarlett
-from features import *
+from scarlett.features import *
 
 class FeatureHueLights(Feature):
 

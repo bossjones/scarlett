@@ -1,5 +1,5 @@
 import scarlett
-from features import *
+from scarlett.features import *
 
 class FeatureSpotify(Feature):
 
@@ -7,10 +7,6 @@ class FeatureSpotify(Feature):
 
     def __init__(self, host, config, provider):
         Feature.__init__(self, "spotify")
-
-    def add_auth(self, http_request):
-        pass
-
 
     def spotify_play(self,cmd):
       self.keyword_identified = 0

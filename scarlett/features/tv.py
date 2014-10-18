@@ -1,6 +1,6 @@
 import scarlett
 import time
-from features import *
+from scarlett.features import *
 
 class FeatureTv(Feature):
 

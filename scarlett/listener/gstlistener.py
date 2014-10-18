@@ -22,13 +22,13 @@ gobject.threads_init()
 
 class GstListener(Listener):
 
-    def __init__(self, lis_type, override_parse=False):
+    def __init__(self, lis_type, voice, override_parse=False):
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
         self.failed = 0
         self.keyword_identified = 0
         self.lis_type = lis_type
-        self.voice = Voice()
-        self.commander = Command()
+        self.voice = voice
+        self.commander = Command(self.voice)
         self.config = scarlett.config
         self.override_parse = override_parse
         Listener.__init__(self, lis_type)
@@ -91,6 +91,7 @@ class GstListener(Listener):
 
     def result(self, hyp, uttid):
         """Forward result signals on the bus to the main thread."""
+        scarlett.log.debug(Fore.YELLOW + "Inside result function")
         if hyp in self.config.get('scarlett', 'keywords'):
             scarlett.log.debug(Fore.YELLOW + "HYP-IS-SOMETHING: " + hyp + "\n\n\n")
             scarlett.log.debug(Fore.YELLOW + "UTTID-IS-SOMETHING:" + uttid + "\n")
@@ -98,8 +99,9 @@ class GstListener(Listener):
             self.keyword_identified = 1
             self.voice.play('pi-listening')
         else:
-            self.pipeline.set_state(gst.STATE_NULL)
+            #self.pipeline.set_state(gst.STATE_NULL)
             self.failed += 1
+            scarlett.log.debug(Fore.YELLOW + "self.failed = %i" % (self.failed))
             if self.failed > 4:
                 self.voice.speak(
                     " %s , if you need me, just say my name." %
@@ -108,8 +110,11 @@ class GstListener(Listener):
                 self.pipeline.set_state(gst.STATE_PLAYING)
 
     def run_cmd(self, hyp, uttid):
+        scarlett.log.debug(Fore.YELLOW + "Inside run_cmd function")
         scarlett.log.debug(Fore.YELLOW + "KEYWORD IDENTIFIED BABY")
+        scarlett.log.debug(Fore.RED + "self.keyword_identified = %i" % (self.keyword_identified))
         self.commander.check_cmd(hyp)
+        scarlett.log.debug(Fore.RED + "AFTER run_cmd, self.keyword_identified = %i" % (self.keyword_identified))
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function" )
@@ -151,6 +156,9 @@ class GstListener(Listener):
 
     def get_pipeline(self):
         return self.pipeline
+
+    def get_voice(self):
+        return self.voice
 
     def _get_pocketsphinx_definition(self,override_parse):
         """Return ``pocketsphinx`` definition for :func:`gst.parse_launch`."""

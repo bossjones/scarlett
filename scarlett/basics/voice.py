@@ -60,6 +60,8 @@ class Voice(ScarlettBasics):
         self.speak(text, self.reading_Speed)
 
     def play(self, sound):
+        scarlett.log.debug(Fore.YELLOW + 'PWD: ' + PWD)
+        scarlett.log.debug(Fore.YELLOW + 'SOUND: ' + sound)
         global __PLAYER__
         __PLAYER__.set_state(gst.STATE_NULL)
         __PLAYER__ = gst.element_factory_make("playbin", "player")

@@ -6,7 +6,7 @@ init(autoreset=True)
 
 _DEBUG_MODE_ = False
 DEFAULT_SCARLETT_PORT = 7272
-PWD = os.path.dirname(os.path.abspath(__file__ + '/..'))
+PWD = os.path.dirname(os.path.abspath(__file__))
 
 PRIORITY_NONE = None
 PRIORITY_LOW = 'LOW'

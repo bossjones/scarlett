@@ -3,7 +3,7 @@ Defines an interface which all Auth handlers need to implement.
 """
 
 import scarlett
-from features import *
+from scarlett.features import *
 from scarlett.basics import Voice
 
 class FeatureForecast(Feature):

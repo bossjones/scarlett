@@ -15,27 +15,9 @@
 import scarlett
 from scarlett.constants import *
 
-"""
-Implements Feature related API. Allows for certain features
-to be called based on what is in config.
-
-To define a new feature just subclass Feature, like this.
-
-class AuthFeature(Feature):
-  pass
-
-Then start creating subclasses of your new plugin.
-
-class MyFancyAuth(AuthFeature):
-  capability = ['spotify', 'datadog']
-
-The actual interface is duck typed.
-
-"""
-
 class Feature(object):
 
-    def __init__(self,name):
+    def __init__(self, name):
 
         self.name   = name
 

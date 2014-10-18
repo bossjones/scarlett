@@ -102,6 +102,12 @@ def connect_hue():
     from scarlett.features import FeatureHueLights
     return FeatureHueLights()
 
+#def connect_time():
+#    global log
+#    scarlett.log.info("connect_time")
+#    from scarlett.features import FeatureHueLights
+#    return FeatureHueLights()
+
 def connect_wa():
     global log
     scarlett.log.info("connect_wa")

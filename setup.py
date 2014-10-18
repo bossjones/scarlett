@@ -60,6 +60,7 @@ setup(
         "scarlett.basics",
         "scarlett.core",
         "scarlett.features",
+        #"scarlett.features.time",
         "scarlett.listener"
     ],
     package_dir={"scarlett":
