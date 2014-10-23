@@ -24,6 +24,7 @@ class GstListener(Listener):
 
     def __init__(self, lis_type, voice, override_parse=False):
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
+        self.successes = 0
         self.failed = 0
         self.keyword_identified = 0
         self.lis_type = lis_type
@@ -99,22 +100,29 @@ class GstListener(Listener):
             self.keyword_identified = 1
             self.voice.play('pi-listening')
         else:
-            #self.pipeline.set_state(gst.STATE_NULL)
             self.failed += 1
             scarlett.log.debug(Fore.YELLOW + "self.failed = %i" % (self.failed))
             if self.failed > 4:
+                # reset pipline
+                self.pipeline.set_state(gst.STATE_NULL)
                 self.voice.speak(
                     " %s , if you need me, just say my name." %
-                    (self.config('scarlett_owner')))
+                    (self.config.get('scarlett','owner')))
                 self.failed = 0
+                # TODO: If this REALLY doesn't work, DISABLED IT
+                self.keyword_identified = 0
                 self.pipeline.set_state(gst.STATE_PLAYING)
+                self.voice.play('cancel')
 
     def run_cmd(self, hyp, uttid):
         scarlett.log.debug(Fore.YELLOW + "Inside run_cmd function")
         scarlett.log.debug(Fore.YELLOW + "KEYWORD IDENTIFIED BABY")
         scarlett.log.debug(Fore.RED + "self.keyword_identified = %i" % (self.keyword_identified))
-        self.commander.check_cmd(hyp)
-        scarlett.log.debug(Fore.RED + "AFTER run_cmd, self.keyword_identified = %i" % (self.keyword_identified))
+        if hyp == 'CANCEL':
+            self.cancel_listening()
+        else:
+            self.commander.check_cmd(hyp)
+            scarlett.log.debug(Fore.RED + "AFTER run_cmd, self.keyword_identified = %i" % (self.keyword_identified))
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function" )
@@ -123,12 +131,16 @@ class GstListener(Listener):
         valve.set_property('drop', False)
         valve.set_property('drop', True)
 
-    def cancel_listening(self, valve):
-        self.pipeline.set_state(gst.STATE_NULL)
+    #def cancel_listening(self, valve):
+    def cancel_listening(self):
         scarlett.log.debug(Fore.YELLOW + "Inside cancel_listening function" )
+        #valve.set_property('drop', False)
+        self.failed = 0
+        self.keyword_identified = 0
+        scarlett.log.debug(Fore.YELLOW + "self.failed = %i" % (self.failed))
+        scarlett.log.debug(Fore.RED + "self.keyword_identified = %i" % (self.keyword_identified))
+        self.scarlett_restart_listen()
         self.voice.play('pi-cancel')
-        valve.set_property('drop', False)
-        self.pipeline.set_state(gst.STATE_PLAYING)
 
     def get_hmm_full_path(self):
         if os.environ.get('SCARLETT_HMM'):
@@ -155,12 +167,21 @@ class GstListener(Listener):
         return _dict_full_path
 
     def get_pipeline(self):
+        scarlett.log.debug(Fore.YELLOW + "Inside get_pipeline" )
         return self.pipeline
 
     def get_voice(self):
+        scarlett.log.debug(Fore.YELLOW + "Inside get_voice" )
         return self.voice
 
+    def destroy_listener(self):
+        gtk.main_quit()
+
+    def get_pipeline_state(self):
+        return self.pipeline.get_state()
+
     def _get_pocketsphinx_definition(self,override_parse):
+        scarlett.log.debug(Fore.YELLOW + "Inside _get_pocketsphinx_definition" )
         """Return ``pocketsphinx`` definition for :func:`gst.parse_launch`."""
         # default, use what we have set
         if override_parse == False:
@@ -188,6 +209,7 @@ class GstListener(Listener):
             return override_parse
 
     def _get_vader_definition(self):
+        scarlett.log.debug(Fore.YELLOW + "Inside _get_vader_definition" )
         """Return ``vader`` definition for :func:`gst.parse_launch`."""
         # source: https://github.com/bossjones/eshayari/blob/master/eshayari/application.py
         # Convert noise level from spin button range [0,32768] to gstreamer
@@ -207,6 +229,7 @@ class GstListener(Listener):
 
 
     def _on_vader_start(self, vader, pos):
+        scarlett.log.debug(Fore.YELLOW + "Inside _on_vader_start" )
         """Send start position as a message on the bus."""
         import gst
         struct = gst.Structure("start")
@@ -215,6 +238,7 @@ class GstListener(Listener):
         vader.post_message(gst.message_new_application(vader, struct))
 
     def _on_vader_stop(self, vader, pos):
+        scarlett.log.debug(Fore.YELLOW + "Inside _on_vader_stop" )
         """Send stop position as a message on the bus."""
         import gst
         struct = gst.Structure("stop")
@@ -232,6 +256,7 @@ class GstListener(Listener):
     ###         self._stop_speech_recognition()
 
     def __result__(self, listener, text, uttid):
+        scarlett.log.debug(Fore.YELLOW + "Inside __result__" )
         """We're inside __result__"""
         struct = gst.Structure('result')
         struct.set_value('hyp', text)
@@ -239,6 +264,7 @@ class GstListener(Listener):
         listener.post_message(gst.message_new_application(listener, struct))
 
     def __partial_result__(self, listner, text, uttid):
+        scarlett.log.debug(Fore.YELLOW + "Inside __partial_result__" )
         """We're inside __partial_result__"""
         struct = gst.Structure('partial_result')
         struct.set_value('hyp', text)
@@ -246,6 +272,7 @@ class GstListener(Listener):
         listener.post_message(gst.message_new_application(listener, struct))
 
     def __run_cmd__(self, listener, text, uttid):
+        scarlett.log.debug(Fore.YELLOW + "Inside __run_cmd__" )
         """We're inside __run_cmd__"""
         struct = gst.Structure('result')
         struct.set_value('hyp', text)
@@ -254,6 +281,7 @@ class GstListener(Listener):
 
     def __application_message__(self, bus, msg):
         msgtype = msg.structure.get_name()
+        scarlett.log.debug(Fore.YELLOW + "msgtype: " + msgtype)
         if msgtype == 'partial_result':
             self.partial_result(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == 'result':
@@ -263,7 +291,6 @@ class GstListener(Listener):
                 self.result(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == 'run_cmd':
             self.run_cmd(msg.structure['hyp'], msg.structure['uttid'])
-            # self.pipeline.set_state(gst.STATE_PAUSED)
         elif msgtype == gst.MESSAGE_EOS:
             self.pipeline.set_state(gst.STATE_NULL)
         elif msgtype == gst.MESSAGE_ERROR:

@@ -42,8 +42,6 @@ class Command(object):
                 "** received %s, sending 'time %s'" %
                 (command, TIME_CMDS[command]))
             try:
-                # REFACTOR ### time_play(TIME_CMDS[command])
-                scarlett.log.debug(Fore.YELLOW + "I WOULD TELL THE TIME")
                 from scarlett.features.time import FeatureTime
                 self.get_time = FeatureTime(self.voice)
                 return self.get_time.time_play()
@@ -51,6 +49,7 @@ class Command(object):
                 scarlett.log.debug(Fore.YELLOW +
                     "time exception b. \nCMD: %s \nException: %s" %
                     (command, e))
+                #return 1
                 # REFACTOR ### general_play("cancel")
         elif command in GENERAL_CMDS.keys():
             scarlett.log.debug(Fore.YELLOW +

@@ -5,6 +5,8 @@ from scarlett.constants import *
 from scarlett.basics.voice import Voice
 from scarlett.listener.gstlistener import *
 #from IPython.core.debugger import Tracer
+import gobject
+gobject.threads_init()
 
 def main():
     # Begin logging to standard out
