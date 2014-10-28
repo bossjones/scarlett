@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# if first filename is not set
+if [[ "${1}" = ""]]; then
+   usage
+fi
+
+# if second filename is not set
+if [[ "${2}" = ""]]; then
+   usage
+fi
+
+# if 3rd filename is not set
+if [[ "${3}" = ""]]; then
+   usage
+fi
+
+sox $1 -r 8000 -c 1 -s -w /tmp/$$-1.raw
+sox $2 -r 8000 -c 1 -s -w /tmp/$$-2.raw
+cat /tmp/$$-1.raw /tmp/$$-2.raw > /tmp/$$.raw
+sox -r 8000 -c 1 -s -w /tmp/$$.raw $3
+\rm /tmp/$$*.raw
+
+usage () {
+  echo -e "\e[31mUsage: catwav file1.wav file2.wav outputfile.wav"
+}
