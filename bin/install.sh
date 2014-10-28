@@ -288,6 +288,8 @@ sudo pip install -y ino;
 # not fully working
 #gst-launch-0.10 filesrc location=turn_lights_red.wav ! audioconvert ! audioresample ! "audio/x-raw-int, rate=16000, width=16, depth=16, channels=1" ! audioresample ! "audio/x-raw-int, rate=8000" ! pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k name=listener ! fakesink dump=1
 
+# pocketsphinx_continuous -lm /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm -dict /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic -hmm /usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k -silprob  0.1 -wip 1e-4 -bestpath 0 -samprate 8000 -infile
+
 # install in virtualenv
 export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv
 export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig

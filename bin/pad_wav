@@ -1,12 +1,21 @@
-#!/bin/bash
+#!/bin/bash -x
 
-duration=2.0
+_FIRST_FILE=$1
+_OUTPUT_FILE=$2
 
-for i
-do
-sox -n -r 8000 -c 1 /tmp/silence.wav trim 0.0 $duration
-sox $i -r 8000 -c 1 /tmp/output1.wav
-sox /tmp/silence.wav /tmp/output1.wav /tmp/silence.wav /tmp/output.wav
-#lame /tmp/output.wav $i
+if [[ "${_FIRST_FILE}" = "" ]]; then
+   usage
+fi
 
-done
+# if 3rd filename is not set
+if [[ "${_OUTPUT_FILE}" = "" ]]; then
+   usage
+fi
+
+sox $_FIRST_FILE $_OUTPUT_FILE pad 2 2
+
+usage () {
+  echo -e "\e[31mUsage: pad_wav file1.wav outputfile.wav"
+}
+
+
