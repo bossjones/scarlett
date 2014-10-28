@@ -1,25 +1,26 @@
 #!/bin/bash
 
 # if first filename is not set
-if [[ "${1}" = ""]]; then
+
+_FIRST_FILE=$1
+_SECOND_FILE=$2
+_OUTPUT_FILE=$3
+
+if [[ "${_FIRST_FILE}" = "" ]]; then
    usage
 fi
 
 # if second filename is not set
-if [[ "${2}" = ""]]; then
+if [[ "${_SECOND_FILE}" = "" ]]; then
    usage
 fi
 
 # if 3rd filename is not set
-if [[ "${3}" = ""]]; then
+if [[ "${_OUTPUT_FILE}" = "" ]]; then
    usage
 fi
 
-sox $1 -r 8000 -c 1 -s -w /tmp/$$-1.raw
-sox $2 -r 8000 -c 1 -s -w /tmp/$$-2.raw
-cat /tmp/$$-1.raw /tmp/$$-2.raw > /tmp/$$.raw
-sox -r 8000 -c 1 -s -w /tmp/$$.raw $3
-\rm /tmp/$$*.raw
+sox $_FIRST_FILE -r 8000 -c 1 /tmp/temp-1.wav && sox $_SECOND_FILE -r 8000 -c 1 /tmp/temp-2.wav && sox -m /tmp/temp-1.wav /tmp/temp-2.wav $_OUTPUT_FILE && \rm -v /tmp/temp-{1,2}.wav
 
 usage () {
   echo -e "\e[31mUsage: catwav file1.wav file2.wav outputfile.wav"

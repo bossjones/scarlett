@@ -1,0 +1,12 @@
+#!/bin/bash
+
+duration=2.0
+
+for i
+do
+sox -n -r 8000 -c 1 /tmp/silence.wav trim 0.0 $duration
+sox $i -r 8000 -c 1 /tmp/output1.wav
+sox /tmp/silence.wav /tmp/output1.wav /tmp/silence.wav /tmp/output.wav
+#lame /tmp/output.wav $i
+
+done

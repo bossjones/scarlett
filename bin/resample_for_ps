@@ -1,3 +1,8 @@
 #!/bin/bash
 
-sox $1 -r 8000 -c 1 -s -w /tmp/$$-1.raw
+# get info on sox file: sox --i turn_lights_red.wav
+
+_INPUT=$1
+_OUTPUT=$2
+
+sox $_INPUT -r 8000 -c 1 $_OUTPUT
