@@ -22,3 +22,6 @@ class FeatureTime(Feature):
       self.voice.speak(self.current_time)
       self.voice.speak(self.current_date)
       return 0
+
+    def get_time(self):
+      return self.now

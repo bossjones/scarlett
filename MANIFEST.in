@@ -3,6 +3,8 @@ include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
+include tox.ini
+include requirements*.txt
 
 recursive-include tests *
 recursive-exclude * __pycache__
@@ -12,3 +14,14 @@ recursive-include docs *.rst conf.py Makefile make.bat
 
 include static/noise.prof
 global-include *.wav
+
+# Exclude junk.
+global-exclude .DS_Store
+
+# Include the Sphinx documentation.
+#recursive-include docs *.rst *.py Makefile *.png
+#prune docs/_build
+
+# And generated manpages.
+#include man/scarlett.1
+#include man/scarlettconfig.5

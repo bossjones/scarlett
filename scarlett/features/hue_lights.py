@@ -7,7 +7,7 @@ class FeatureHueLights(Feature):
 
     capability = []
 
-    def __init__(self, host, config, provider):
+    def __init__(self,voice):
 
         Feature.__init__(self, "hue")
         if self.module_exists("phue"):

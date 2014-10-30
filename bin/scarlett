@@ -12,7 +12,7 @@ def main():
     # Begin logging to standard out
     scarlett.set_stream_logger('scarlett')
     scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
-    _voice = Voice()
+    _voice = scarlett.connect_voice()
     _voice.play('pi-listening')
     listenser = GstListener("gst",_voice)
     #Tracer()()

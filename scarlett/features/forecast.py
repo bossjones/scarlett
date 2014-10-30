@@ -10,7 +10,7 @@ class FeatureForecast(Feature):
 
     capability = []
 
-    def __init__(self, name):
+    def __init__(self, voice):
         self.module_exists("forecastio")
         self.config             = scarlett.config
         self.lat                = self.config.get('forecastio','lat')

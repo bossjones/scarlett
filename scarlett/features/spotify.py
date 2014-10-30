@@ -5,7 +5,7 @@ class FeatureSpotify(Feature):
 
     capability = []
 
-    def __init__(self, host, config, provider):
+    def __init__(self,voice):
         Feature.__init__(self, "spotify")
 
     def spotify_play(self,cmd):

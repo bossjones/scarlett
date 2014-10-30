@@ -290,6 +290,10 @@ sudo pip install -y ino;
 
 # pocketsphinx_continuous -lm /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm -dict /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic -hmm /usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k -silprob  0.1 -wip 1e-4 -bestpath 0 -samprate 8000 -infile
 
+# RUN COVERAGE: source: http://nedbatchelder.com/code/coverage/
+coverage report -m
+
+
 # install in virtualenv
 export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv
 export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig

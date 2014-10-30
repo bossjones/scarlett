@@ -1,4 +1,10 @@
 import os
+
+try:
+  import httplib2 as http_client
+except ImportError:
+  import httplib2
+
 from colorama import init, Fore, Back, Style
 
 # set colorama

@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import sys
 
 from scarlett import __version__ as version
 
 try:
-    from setuptools import setup, find_packages
+    #from setuptools import setup, find_packages
+    from setuptools import setup
     # might need this later
-    #extra = dict(test_suite="tests.test_scarlett.suite", include_package_data=True)
+    extra = dict(test_suite="tests.test.suite", include_package_data=True)
 except ImportError:
     from distutils.core import setup
     extra = {}
@@ -38,14 +41,31 @@ try:
 except:
     pass
 
-# def read_requirements(filename):
-#     content = open(os.path.join(here, filename)).read()
-#     requirements = map(lambda r: r.strip(), content.splitlines())
-#     return requirements
-#
-#
-# requirements = read_requirements('requirements.txt')
-# test_requirements = read_requirements('requirements_dev.txt')
+def read_requirements(filename):
+    content = open(os.path.join(here, filename)).read()
+    requirements = map(lambda r: r.strip(), content.splitlines())
+    return requirements
+
+
+requirements = read_requirements('requirements.txt')
+test_requirements = read_requirements('requirements_dev.txt')
+
+### # Build manpages if we're making a source distribution tarball.
+### if 'sdist' in sys.argv:
+###     # Go into the docs directory and build the manpage.
+###     docdir = os.path.join(os.path.dirname(__file__), 'docs')
+###     curdir = os.getcwd()
+###     os.chdir(docdir)
+###     try:
+###         subprocess.check_call(['make', 'man'])
+###     finally:
+###         os.chdir(curdir)
+###
+###     # Copy resulting manpages.
+###     mandir = os.path.join(os.path.dirname(__file__), 'man')
+###     if os.path.exists(mandir):
+###         shutil.rmtree(mandir)
+###     shutil.copytree(os.path.join(docdir, '_build', 'man'), mandir)
 
 setup(
     name="scarlett",
@@ -65,7 +85,6 @@ setup(
     ],
     package_dir={"scarlett":
                  "scarlett"},
-    include_package_data=True,
     data_files=static.items(),
     install_requires=[
     ],
@@ -81,6 +100,5 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 2.7",
     ],
-    test_suite="tests",
-    #**extra
+    **extra
 )

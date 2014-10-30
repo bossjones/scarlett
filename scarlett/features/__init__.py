@@ -29,9 +29,9 @@ class Feature(object):
 
         return "Scarlett Feature is %s" % (self.name)
 
-    def general_play(self,cmd):
-      self.keyword_identified = 0
-      self.voice.play('pi-cancel')
+    ## def general_play(self,cmd):
+    ##   self.keyword_identified = 0
+    ##   self.voice.play('pi-cancel')
 
     def module_exists(self,module_name):
         try:

@@ -78,38 +78,38 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
 
 def connect_voice():
     global log
-    scarlett.log.info("connect_voice")
-    from scarlett.basics import Voice
+    scarlett.log.debug("connect_voice")
+    from scarlett.basics.voice import Voice
     return Voice()
 
 def connect_forecastio():
     global log
-    scarlett.log.info("connect_forecastio")
-    from scarlett.features import FeatureForecast
+    scarlett.log.debug("connect_forecastio")
+    from scarlett.features.forecast import FeatureForecast
     return FeatureForecast()
 
 def connect_wordnik():
     global log
-    scarlett.log.info("connect_wordnik")
+    scarlett.log.debug("connect_wordnik")
 
 def connect_nltk():
     global log
-    scarlett.log.info("connect_nltk")
+    scarlett.log.debug("connect_nltk")
 
 def connect_hue():
     global log
-    scarlett.log.info("connect_hue")
-    from scarlett.features import FeatureHueLights
+    scarlett.log.debug("connect_hue")
+    from scarlett.features.hue_lights import FeatureHueLights
     return FeatureHueLights()
 
-#def connect_time():
-#    global log
-#    scarlett.log.info("connect_time")
-#    from scarlett.features import FeatureHueLights
-#    return FeatureHueLights()
+def connect_time():
+    global log
+    scarlett.log.debug("connect_time")
+    from scarlett.features.time import FeatureTime
+    return FeatureTime()
 
 def connect_wa():
     global log
-    scarlett.log.info("connect_wa")
+    scarlett.log.debug("connect_wa")
 
 # COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)
