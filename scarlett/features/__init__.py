@@ -13,28 +13,11 @@
 # included in all copies or substantial portions of the Software.
 
 import scarlett
-
-"""
-Implements Feature related API. Allows for certain features
-to be called based on what is in config.
-
-To define a new feature just subclass Feature, like this.
-
-class AuthFeature(Feature):
-  pass
-
-Then start creating subclasses of your new plugin.
-
-class MyFancyAuth(AuthFeature):
-  capability = ['spotify', 'datadog']
-
-The actual interface is duck typed.
-
-"""
+from scarlett.constants import *
 
 class Feature(object):
 
-    def __init__(self,name):
+    def __init__(self, name):
 
         self.name   = name
 
@@ -46,9 +29,9 @@ class Feature(object):
 
         return "Scarlett Feature is %s" % (self.name)
 
-    def general_play(self,cmd):
-      self.keyword_identified = 0
-      self.voice.play('pi-cancel')
+    ## def general_play(self,cmd):
+    ##   self.keyword_identified = 0
+    ##   self.voice.play('pi-cancel')
 
     def module_exists(self,module_name):
         try:

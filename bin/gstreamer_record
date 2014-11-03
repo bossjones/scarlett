@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import time
+import getopt
+import tempfile
+import json
+import glob
+import tempfile
+import subprocess
+import pygtk
+pygtk.require('2.0')
+import gtk
+import gobject
+import pygst
+pygst.require('0.10')
+gobject.threads_init()
+import gst
+from IPython.core.debugger import Tracer
+
+global pipeline
+
+def main():
+
+    # gst-launch-0.10 filesrc location=/home/pi/dev/bossjones-github/scarlett/tests/fixtures/wav/turn_lights_red.wav ! decodebin2 name=mux ! queue ! audioconvert ! audioresample ! vader name=vad auto_threshold=true ! pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k name=listener ! fakesink dump=1
+
+    parse_launch_array = [
+              'filesrc location=/home/pi/dev/bossjones-github/scarlett/tests/fixtures/wav/turn_lights_red.wav',
+              'decodebin2 name=mux',
+              'queue'
+              'audioconvert',
+              'audioresample',
+              'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
+              'audioresample',
+              'audio/x-raw-int, rate=8000',
+              'vader name=vader auto-threshold=true',
+              'pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm' +
+              ' dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic' +
+              ' hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k' +
+              ' name=listener',
+              'fakesink dump=1']
+
+
+    pipeline = gst.parse_launch(
+       ' ! '.join(parse_launch_array))
+
+    #pipeline
+    #pipeline.set_property('configured', True)
+    pipeline.set_state(gst.STATE_PLAYING)
+    #gobject.timeout_add(5000,__timeout__,pipeline)
+    #Tracer()()
+    gtk.main()
+
+#def __timeout__(pipeline):
+#    pipeline.set_state(gst.STATE_NULL)
+
+if __name__ == "__main__":
+    main()

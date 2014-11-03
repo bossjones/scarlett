@@ -1,4 +1,5 @@
 import scarlett
+from scarlett.constants import *
 
 
 class ScarlettBasics(object):

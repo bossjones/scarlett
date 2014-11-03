@@ -63,7 +63,6 @@ def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
     logger.addHandler(fh)
     log = logger
 
-
 def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     global log
     if not format_string:
@@ -77,46 +76,40 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
-
-def connect_pocketsphinx():
+def connect_voice():
     global log
-    scarlett.log.info("connect_pocketsphinx")
-
-
-def connect_gearman():
-    global log
-    scarlett.log.info("connect_gearman")
-
+    scarlett.log.debug("connect_voice")
+    from scarlett.basics.voice import Voice
+    return Voice()
 
 def connect_forecastio():
     global log
-    scarlett.log.info("connect_forecastio")
-
+    scarlett.log.debug("connect_forecastio")
+    from scarlett.features.forecast import FeatureForecast
+    return FeatureForecast()
 
 def connect_wordnik():
     global log
-    scarlett.log.info("connect_wordnik")
-
+    scarlett.log.debug("connect_wordnik")
 
 def connect_nltk():
     global log
-    scarlett.log.info("connect_nltk")
-
+    scarlett.log.debug("connect_nltk")
 
 def connect_hue():
     global log
-    scarlett.log.info("connect_hue")
+    scarlett.log.debug("connect_hue")
+    from scarlett.features.hue_lights import FeatureHueLights
+    return FeatureHueLights()
 
+def connect_time():
+    global log
+    scarlett.log.debug("connect_time")
+    from scarlett.features.time import FeatureTime
+    return FeatureTime()
 
 def connect_wa():
     global log
-    scarlett.log.info("connect_wa")
-
-
-# @staticmethod
-# def log(msg):
-#     d = datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S')
-#     print '[' + d + '] ' + msg
-
+    scarlett.log.debug("connect_wa")
 
 # COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)

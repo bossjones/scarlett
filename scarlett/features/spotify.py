@@ -1,15 +1,12 @@
-from features import Feature
+import scarlett
+from scarlett.features import *
 
 class FeatureSpotify(Feature):
 
     capability = []
 
-    def __init__(self, host, config, provider):
+    def __init__(self,voice):
         Feature.__init__(self, "spotify")
-
-    def add_auth(self, http_request):
-        pass
-
 
     def spotify_play(self,cmd):
       self.keyword_identified = 0

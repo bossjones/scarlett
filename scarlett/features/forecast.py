@@ -2,15 +2,16 @@
 Defines an interface which all Auth handlers need to implement.
 """
 
-from features import Feature
+import scarlett
+from scarlett.features import *
 from scarlett.basics import Voice
-#import forecastio
 
 class FeatureForecast(Feature):
 
     capability = []
 
-    def __init__(self, name):
+    def __init__(self, voice):
+        self.module_exists("forecastio")
         self.config             = scarlett.config
         self.lat                = self.config.get('forecastio','lat')
         self.lng                = self.config.get('forecastio','lng')
@@ -18,7 +19,6 @@ class FeatureForecast(Feature):
         self.voice              = Voice()
 
         Feature.__init__(self, "forecast")
-        self.module_exists("forecastio")
 
     def add_auth(self, http_request):
         pass
@@ -29,21 +29,21 @@ class FeatureForecast(Feature):
         self.voice.play('pi-response')
         forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng)
 
-        print forecast.hourly().data[0].temperature
+        scarlett.log.debug(Fore.YELLOW + "" + forecast.hourly().data[0].temperature)
         fio_hourly =  "%s degrees fahrenheit" % (forecast.hourly().data[0].temperature)
         fio_hourly = fio_hourly.replace(";","\;")
         self.voice.speak(fio_hourly)
 
-        print "===========Hourly Data========="
+        scarlett.log.debug(Fore.YELLOW + "===========Hourly Data=========" )
         by_hour = forecast.hourly()
-        print "Hourly Summary: %s" % (by_hour.summary)
+        scarlett.log.debug(Fore.YELLOW + "Hourly Summary: %s" % (by_hour.summary) )
         fio_summary = "Hourly Summary: %s" % (by_hour.summary)
         fio_summary = fio_summary.replace(";","\;")
         self.voice.speak(fio_summary)
 
-        print "===========Daily Data========="
+        scarlett.log.debug(Fore.YELLOW + "===========Daily Data=========" )
         by_day = forecast.daily()
-        print "Daily Summary: %s" % (by_day.summary)
+        scarlett.log.debug(Fore.YELLOW + "Daily Summary: %s" % (by_day.summary))
         fio_day = "Daily Summary: %s" % (by_day.summary)
         self.voice.speak(fio_day)
 

@@ -1,31 +1,21 @@
 #!/usr/bin/env python
 
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
-import pygst
-pygst.require('0.10')
-gobject.threads_init()
-import gst
-import os
-import sys
-import time
-import getopt
-import tempfile
-import json
-import glob
 import scarlett
-#from pi.listener import Listener
+from scarlett.constants import *
 from scarlett.basics.voice import Voice
-from scarlett.listener.gstlistener import GstListener
-#from scarlett.brain import Graycell
-
+from scarlett.listener.gstlistener import *
+#from IPython.core.debugger import Tracer
+import gobject
+gobject.threads_init()
 
 def main():
-    _voice = Voice()
+    # Begin logging to standard out
+    scarlett.set_stream_logger('scarlett')
+    scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
+    _voice = scarlett.connect_voice()
     _voice.play('pi-listening')
-    listenser = GstListener("gst")
+    listenser = GstListener("gst",_voice)
+    #Tracer()()
     gtk.main()
 
 
@@ -50,3 +40,18 @@ if __name__ == "__main__":
 
     # REFACTOR: listener = Listener(gobject, gst)
     # NEW ONE WILL BE
+
+
+#### DAEMON MODE? # TODO #### #!/usr/bin/env python
+#### DAEMON MODE? # TODO ####
+#### DAEMON MODE? # TODO #### import os
+#### DAEMON MODE? # TODO #### import sys
+#### DAEMON MODE? # TODO #### import gobject
+#### DAEMON MODE? # TODO #### gobject.threads_init()
+#### DAEMON MODE? # TODO ####
+#### DAEMON MODE? # TODO #### import eshayari
+#### DAEMON MODE? # TODO #### eshayari.main.main(sys.argv[1:])
+#### DAEMON MODE? # TODO ####
+#### DAEMON MODE? # TODO #### g_loop = threading.Thread(target=gobject.MainLoop().run)
+#### DAEMON MODE? # TODO #### g_loop.daemon = True
+#### DAEMON MODE? # TODO #### g_loop.start()

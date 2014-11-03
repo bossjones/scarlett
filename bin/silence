@@ -1,0 +1,5 @@
+#!/bin/bash
+
+_SECONDS=$1
+
+sox -n -r 44100 -c 1 silence.wav trim 0.0 $_SECONDS.0

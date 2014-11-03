@@ -1,6 +1,6 @@
 import scarlett
-from scarlett.basics.voice import Voice
-
+from scarlett.basics.voice import *
+from scarlett.constants import *
 
 class Listener(object):
 
@@ -11,7 +11,6 @@ class Listener(object):
         self.lis_type = lis_type
         self.keyword_identified = 0
         self.config = scarlett.config
-        # self.voice                  = Voice()
 
     def __str__(self):
         return "You are using a %s type Listener" % (self.lis_type)

@@ -274,6 +274,25 @@ sudo pip install -y ino;
 #### DO THIS IN VIRTUALENV # make
 #### DO THIS IN VIRTUALENV # make install
 
+# test using the python-espeak bindings
+# http://dodgyville.tumblr.com/post/25814402767/simple-python-espeak-example
+# sudo apt-get install espeak python-espeak
+
+# install gstreamer bash completion!!
+# https://raw.githubusercontent.com/drothlis/gstreamer/38df76af49f81857c8f0bed3f426093469f5ae01/tools/gstreamer-completion-0.10
+# GST_DEBUG=qtdemux:5,faad:5,ffdec_h264:5 gst-launch-0.10 filesrc location=turn_lights_red.mp4 ! qtdemux name=demuxer demuxer. ! queue ! faad ! audioconvert ! audioresample ! audio/x-raw-int, rate=16000,depth=16 ! wavenc ! filesink location=./turn_lights_red.wav
+
+# try integration test gst-launch-0.10 command. play wav file pipe to pocketsphinx
+# gst-launch-0.10 playbin2 uri=turn_lights_red.wav ! pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k name=listener ! fakesink dump=1
+
+# not fully working
+#gst-launch-0.10 filesrc location=turn_lights_red.wav ! audioconvert ! audioresample ! "audio/x-raw-int, rate=16000, width=16, depth=16, channels=1" ! audioresample ! "audio/x-raw-int, rate=8000" ! pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k name=listener ! fakesink dump=1
+
+# pocketsphinx_continuous -lm /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm -dict /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic -hmm /usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k -silprob  0.1 -wip 1e-4 -bestpath 0 -samprate 8000 -infile
+
+# RUN COVERAGE: source: http://nedbatchelder.com/code/coverage/
+coverage report -m
+
 
 # install in virtualenv
 export VIRT_ROOT=~/.virtualenvs/scarlett-virtualenv

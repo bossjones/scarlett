@@ -4,7 +4,7 @@ scarlett
 
 .. image:: https://badge.fury.io/py/scarlett.png
     :target: http://badge.fury.io/py/scarlett
-    
+
 .. image:: https://travis-ci.org/bossjones/scarlett.png?branch=master
         :target: https://travis-ci.org/bossjones/scarlett
 
@@ -26,3 +26,8 @@ Features
 * TODO
 
 REFACTOR EVERYTHING FROM PRIVATE REPO. This might take some time guys.
+
+Testing
+-------
+
+Coverage: `nosetests --with-coverage --cover-html`

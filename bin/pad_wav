@@ -1,0 +1,21 @@
+#!/bin/bash -x
+
+_FIRST_FILE=$1
+_OUTPUT_FILE=$2
+
+if [[ "${_FIRST_FILE}" = "" ]]; then
+   usage
+fi
+
+# if 3rd filename is not set
+if [[ "${_OUTPUT_FILE}" = "" ]]; then
+   usage
+fi
+
+sox $_FIRST_FILE $_OUTPUT_FILE pad 2 2
+
+usage () {
+  echo -e "\e[31mUsage: pad_wav file1.wav outputfile.wav"
+}
+
+
