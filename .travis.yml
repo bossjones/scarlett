@@ -43,6 +43,8 @@ matrix:
 ##         libgstreamer-plugins-base1.0-dev
 ##
 install:
+    - "export DISPLAY=:99.0"
+    - "sh -e /etc/init.d/xvfb start"
     - sh -c "echo -e \"\e[31mGSTREAMER VERSION $GSTREAMER\e[39;\""
     - travis_retry sudo apt-get update
     - travis_retry sudo apt-get install -qq bash-completion swig

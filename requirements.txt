@@ -13,3 +13,5 @@ changes==0.6.0
 ipython
 colorama==0.3.2
 httplib2
+redis
+hiredis

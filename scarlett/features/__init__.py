@@ -19,11 +19,11 @@ class Feature(object):
 
     def __init__(self, name):
 
-        self.name   = name
+        self._name   = name
 
-    def getName(self):
-
-        return self.name
+    @property
+    def name(self):
+        return self._name
 
     def __str__(self):
 

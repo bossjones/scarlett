@@ -19,6 +19,10 @@ class FeatureHueLights(Feature):
     def find_active_lights(self):
         pass
 
+    @property
+    def name(self):
+        return self._name
+
     def find_light(self,light_name):
         return self.b.get_light(light_name)
 
