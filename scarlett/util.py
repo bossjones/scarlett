@@ -5,6 +5,7 @@ Scarlett Client Utils
 import errno
 import select as select_lib
 import time
+import socket
 
 from scarlett.constants import DEFAULT_SCARLETT_PORT
 
@@ -81,6 +82,22 @@ def unlist(given_list):
         return given_list[0]
     else:
         raise ValueError(list_size)
+
+# Taken from: http://stackoverflow.com/a/11735897
+def get_local_ip():
+    """ Tries to determine the local IP address of the machine. """
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        # Use Google Public DNS server to determine own IP
+        sock.connect(('8.8.8.8', 80))
+        ip_addr = sock.getsockname()[0]
+        sock.close()
+
+        return ip_addr
+
+    except socket.error:
+        return socket.gethostbyname(socket.gethostname())
 
 ### TODO: Try this at some point and make testable
 ### def gst_available():

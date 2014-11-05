@@ -10,7 +10,7 @@ gobject.threads_init()
 
 def main():
     if scarlett.config.has_section("redis"):
-       scarlett.connect_redis()
+        scarlett.
     # Begin logging to standard out
     scarlett.set_stream_logger('scarlett')
     scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")

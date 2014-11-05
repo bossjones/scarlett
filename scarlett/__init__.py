@@ -112,10 +112,12 @@ def connect_wa():
     global log
     scarlett.log.debug("connect_wa")
 
-# def connect_redis():
-#     global log
-#     scarlett.log.debug("connect_redis")
-#     from scarlett.basics.voice import Voice
-#     return Voice()
-#
+def connect_redis():
+    global log
+    scarlett.log.debug("connect_redis")
+    from scarlett.brain.brain_redis import ScarlettBrainRedis
+    _redis_brain = ScarlettBrainRedis("scarlett_brain")
+    redis_brain = _redis_brain.create()
+    return redis_brain
+
 # COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)
