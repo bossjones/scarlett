@@ -121,3 +121,85 @@ def connect_redis():
     return redis_brain
 
 # COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)
+
+# class RequestHandler(object):
+#     """Subclass this class and define `get()` or `post()` to make a handler.
+#     If you want to support more methods than the standard GET/HEAD/POST, you
+#     should override the class variable ``SUPPORTED_METHODS`` in your
+#     `RequestHandler` subclass.
+#     """
+#     SUPPORTED_METHODS = ("GET", "HEAD", "POST", "DELETE", "PATCH", "PUT",
+#                          "OPTIONS")
+
+#     _template_loaders = {}  # {path: template.BaseLoader}
+#     _template_loader_lock = threading.Lock()
+#     _remove_control_chars_regex = re.compile(r"[\x00-\x08\x0e-\x1f]")
+
+#     def __init__(self, application, request, **kwargs):
+#         super(RequestHandler, self).__init__()
+
+#         self.application = application
+#         self.request = request
+#         self._headers_written = False
+#         self._finished = False
+#         self._auto_finish = True
+#         self._transforms = None  # will be set in _execute
+#         self._prepared_future = None
+#         self.path_args = None
+#         self.path_kwargs = None
+#         self.ui = ObjectDict((n, self._ui_method(m)) for n, m in
+#                              application.ui_methods.items())
+#         # UIModules are available as both `modules` and `_tt_modules` in the
+#         # template namespace.  Historically only `modules` was available
+#         # but could be clobbered by user additions to the namespace.
+#         # The template {% module %} directive looks in `_tt_modules` to avoid
+#         # possible conflicts.
+#         self.ui["_tt_modules"] = _UIModuleNamespace(self,
+#                                                     application.ui_modules)
+#         self.ui["modules"] = self.ui["_tt_modules"]
+#         self.clear()
+#         self.request.connection.set_close_callback(self.on_connection_close)
+#         self.initialize(**kwargs)
+
+#     def initialize(self):
+#         """Hook for subclass initialization.
+#         A dictionary passed as the third argument of a url spec will be
+#         supplied as keyword arguments to initialize().
+#         Example::
+#             class ProfileHandler(RequestHandler):
+#                 def initialize(self, database):
+#                     self.database = database
+#                 def get(self, username):
+#                     ...
+#             app = Application([
+#                 (r'/user/(.*)', ProfileHandler, dict(database=database)),
+#                 ])
+#         """
+#         pass
+
+#     @property
+#     def settings(self):
+#         """An alias for `self.application.settings <Application.settings>`."""
+#         return self.application.settings
+
+#     def head(self, *args, **kwargs):
+#         raise HTTPError(405)
+
+#     def get(self, *args, **kwargs):
+#         raise HTTPError(405)
+
+#     def post(self, *args, **kwargs):
+#         raise HTTPError(405)
+
+#     def delete(self, *args, **kwargs):
+#         raise HTTPError(405)
+
+#     def patch(self, *args, **kwargs):
+#         raise HTTPError(405)
+
+#     def put(self, *args, **kwargs):
+#         raise HTTPError(405)
+
+#     def options(self, *args, **kwargs):
+#         raise HTTPError(405)
+
