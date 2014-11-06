@@ -15,3 +15,6 @@ colorama==0.3.2
 httplib2
 redis
 hiredis
+# source: https://pythonhosted.org/python-stdnet/backends/redis.html
+stdnet==
+pulsar==0.9.1
