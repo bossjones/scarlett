@@ -19,3 +19,4 @@ hiredis
 python-stdnet
 pulsar==0.9.1
 gevent
+greenlet
