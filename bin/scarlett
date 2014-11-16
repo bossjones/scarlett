@@ -8,6 +8,7 @@ from scarlett.listener.gstlistener import *
 import gobject
 gobject.threads_init()
 
+
 def main():
     #if scarlett.config.has_section("redis"):
     #   scarlett.connect_redis()
