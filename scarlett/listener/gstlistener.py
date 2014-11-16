@@ -21,8 +21,11 @@ gobject.threads_init()
 #  * player_name.set_state(gst.STATE_NULL)
 
 class GstListener(Listener):
+    """
+    Controls all actions involving pocketsphinx, stt, and tts.
+    """
 
-    def __init__(self, lis_type, voice, override_parse=False):
+    def __init__(self, lis_type, voice, override_parse=False, *args, **kwargs):
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
         self.successes = 0
         self.failed = 0
