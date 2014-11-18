@@ -90,7 +90,7 @@ setup(
     data_files=static.items(),
     install_requires=[
     ],
-    scripts=['bin/scarlett','bin/scarlett_echo_client_test.py','bin/scarlett_worker_cb_test.py','bin/catwav','bin/silence','bin/resample_for_ps','bin/pad_wav'],
+    scripts=['bin/scarlett','bin/scarlett_daemon','bin/scarlett_echo_client_test.py','bin/scarlett_worker_cb_test.py','bin/catwav','bin/silence','bin/resample_for_ps','bin/pad_wav'],
     license="BSD",
     platforms="Posix; MacOS X",
     zip_safe=False,
