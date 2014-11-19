@@ -80,7 +80,7 @@ setup(
         "scarlett.basics",
         "scarlett.core",
         "scarlett.features",
-        #"scarlett.data",
+        "scarlett.brain",
         #"scarlett.features.time",
         "scarlett.listener"
 

@@ -17,6 +17,7 @@ class ScarlettBot(object):
     def __init__(self):
         scarlett.set_stream_logger('scarlett')
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
+        #Tracer()()
         self._brain = scarlett.connect_brain()
         self._voice = scarlett.connect_voice()
         self._voice.play('pi-listening')
