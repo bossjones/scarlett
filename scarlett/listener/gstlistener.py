@@ -25,7 +25,8 @@ class GstListener(Listener):
     Controls all actions involving pocketsphinx, stt, and tts.
     """
 
-    def __init__(self, lis_type, voice, override_parse=False, *args, **kwargs):
+    def __init__(self, lis_type, voice, override_parse=False, **kwargs):
+        super(GstListener, self).__init__(kwargs)
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
         self.successes = 0
         self.failed = 0
@@ -35,7 +36,7 @@ class GstListener(Listener):
         self.commander = Command(self.voice)
         self.config = scarlett.config
         self.override_parse = override_parse
-        Listener.__init__(self, lis_type)
+        #Listener.__init__(self, lis_type)
 
         # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
         self.ps_hmm = self.get_hmm_full_path()

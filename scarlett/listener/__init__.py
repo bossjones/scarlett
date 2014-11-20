@@ -4,7 +4,7 @@ from scarlett.constants import *
 
 class Listener(object):
 
-    def __init__(self, lis_type):
+    def __init__(self, lis_type, **kwargs):
 
         _listener_types = ['gearman', 'gst']
 
