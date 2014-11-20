@@ -38,7 +38,7 @@ except ImportError:
     import mock
 
 # Use standard unittest.mock if possible. (mock doesn't support Python 3.4)
-### try:
+# try:
 ###     from scarlett.constants import httplib2 as http_client
-### except ImportError:
-###     print "UGH"
+# except ImportError:
+# print "UGH"

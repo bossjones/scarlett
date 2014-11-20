@@ -63,6 +63,7 @@ def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
     logger.addHandler(fh)
     log = logger
 
+
 def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     global log
     if not format_string:
@@ -76,11 +77,13 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
+
 def connect_voice():
     global log
     scarlett.log.debug("connect_voice")
     from scarlett.basics.voice import Voice
     return Voice()
+
 
 def connect_forecastio():
     global log
@@ -88,13 +91,16 @@ def connect_forecastio():
     from scarlett.features.forecast import FeatureForecast
     return FeatureForecast()
 
+
 def connect_wordnik():
     global log
     scarlett.log.debug("connect_wordnik")
 
+
 def connect_nltk():
     global log
     scarlett.log.debug("connect_nltk")
+
 
 def connect_hue():
     global log
@@ -102,23 +108,26 @@ def connect_hue():
     from scarlett.features.hue_lights import FeatureHueLights
     return FeatureHueLights()
 
+
 def connect_time():
     global log
     scarlett.log.debug("connect_time")
     from scarlett.features.time import FeatureTime
     return FeatureTime()
 
+
 def connect_wa():
     global log
     scarlett.log.debug("connect_wa")
 
-### def connect_redis():
+# def connect_redis():
 ###     global log
-###     scarlett.log.debug("connect_redis")
+# scarlett.log.debug("connect_redis")
 ###     from scarlett.brain.brain_redis import ScarlettBrainRedis
 ###     _redis_brain = ScarlettBrainRedis("scarlett_brain")
 ###     redis_brain = _redis_brain.create()
-###     return redis_brain
+# return redis_brain
+
 
 def connect_brain():
     global log
@@ -137,7 +146,7 @@ def connect_brain():
 #     SUPPORTED_METHODS = ("GET", "HEAD", "POST", "DELETE", "PATCH", "PUT",
 #                          "OPTIONS")
 
-#     _template_loaders = {}  # {path: template.BaseLoader}
+# _template_loaders = {}  # {path: template.BaseLoader}
 #     _template_loader_lock = threading.Lock()
 #     _remove_control_chars_regex = re.compile(r"[\x00-\x08\x0e-\x1f]")
 
@@ -149,17 +158,17 @@ def connect_brain():
 #         self._headers_written = False
 #         self._finished = False
 #         self._auto_finish = True
-#         self._transforms = None  # will be set in _execute
+# self._transforms = None  # will be set in _execute
 #         self._prepared_future = None
 #         self.path_args = None
 #         self.path_kwargs = None
 #         self.ui = ObjectDict((n, self._ui_method(m)) for n, m in
 #                              application.ui_methods.items())
-#         # UIModules are available as both `modules` and `_tt_modules` in the
-#         # template namespace.  Historically only `modules` was available
-#         # but could be clobbered by user additions to the namespace.
-#         # The template {% module %} directive looks in `_tt_modules` to avoid
-#         # possible conflicts.
+# UIModules are available as both `modules` and `_tt_modules` in the
+# template namespace.  Historically only `modules` was available
+# but could be clobbered by user additions to the namespace.
+# The template {% module %} directive looks in `_tt_modules` to avoid
+# possible conflicts.
 #         self.ui["_tt_modules"] = _UIModuleNamespace(self,
 #                                                     application.ui_modules)
 #         self.ui["modules"] = self.ui["_tt_modules"]
@@ -208,4 +217,3 @@ def connect_brain():
 
 #     def options(self, *args, **kwargs):
 #         raise HTTPError(405)
-

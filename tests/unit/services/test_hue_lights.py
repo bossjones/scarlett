@@ -3,9 +3,10 @@
 
 import scarlett
 import sys
-from tests.unit import unittest,ScarlettTestCase
+from tests.unit import unittest, ScarlettTestCase
 from nose.plugins.attrib import attr
 from scarlett.features.hue_lights import FeatureHueLights
+
 
 class HueTestCase(ScarlettTestCase):
 
@@ -16,7 +17,8 @@ class HueTestCase(ScarlettTestCase):
     def test_hue_lights(self):
         pass
         #self.hue_test = self.scarlett.connect_hue()
-        #self.assertEqual(self.voice_test,Voice())
+        # self.assertEqual(self.voice_test,Voice())
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromName(__name__)

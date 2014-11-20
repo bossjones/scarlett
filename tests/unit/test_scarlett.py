@@ -3,21 +3,23 @@
 
 import scarlett
 import sys
-from tests.unit import unittest,ScarlettTestCase
+from tests.unit import unittest, ScarlettTestCase
 from nose.plugins.attrib import attr
+
 
 class ListenerTestCase(ScarlettTestCase):
 
     def setUp(self):
         super(ListenerTestCase, self).setUp()
 
-    @attr(listener=True,pocketsphinx=True,gstreamer=True)
+    @attr(listener=True, pocketsphinx=True, gstreamer=True)
     def test_scarlett_attributes(self):
         pass
 
     @attr(features=True)
     def test_scarlett_features(self):
         pass
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromName(__name__)

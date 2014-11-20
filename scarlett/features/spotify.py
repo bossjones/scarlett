@@ -1,6 +1,7 @@
 import scarlett
 from scarlett.features import *
 
+
 class FeatureSpotify(Feature):
 
     capability = []
@@ -9,6 +10,6 @@ class FeatureSpotify(Feature):
         super(FeatureSpotify, self).__init__(kwargs)
         #Feature.__init__(self, "spotify")
 
-    def spotify_play(self,cmd):
-      self.keyword_identified = 0
-      self.voice.play('pi-response')
+    def spotify_play(self, cmd):
+        self.keyword_identified = 0
+        self.voice.play('pi-response')
