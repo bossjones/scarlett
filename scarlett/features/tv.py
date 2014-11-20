@@ -6,9 +6,10 @@ class FeatureTv(Feature):
 
     capability = []
 
-    def __init__(self, host, config, provider):
+    def __init__(self, voice, **kwargs):
+        super(FeatureTv, self).__init__(kwargs)
         self.time = time
-        Feature.__init__(self, "tv")
+        #Feature.__init__(self, "tv")
 
     def add_auth(self, http_request):
         pass

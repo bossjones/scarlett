@@ -7,9 +7,10 @@ class FeatureHueLights(Feature):
 
     capability = []
 
-    def __init__(self,voice):
+    def __init__(self, voice, **kwargs):
 
-        Feature.__init__(self, "hue")
+        #Feature.__init__(self, "hue")
+        super(FeatureHueLights, self).__init__(kwargs)
         if self.module_exists("phue"):
           from phue import Bridge
           self.b = Bridge(scarlett.config.get('hue', 'bridge'))

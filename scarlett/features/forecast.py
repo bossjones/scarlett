@@ -10,15 +10,16 @@ class FeatureForecast(Feature):
 
     capability = []
 
-    def __init__(self, voice):
+    def __init__(self, voice, **kwargs):
         self.module_exists("forecastio")
+        super(FeatureForecast, self).__init__(kwargs)
         self.config             = scarlett.config
         self.lat                = self.config.get('forecastio','lat')
         self.lng                = self.config.get('forecastio','lng')
         self.api_key            = self.config.get('forecastio','api_key')
         self.voice              = Voice()
 
-        Feature.__init__(self, "forecast")
+        #Feature.__init__(self, "forecast")
 
     def add_auth(self, http_request):
         pass

@@ -7,11 +7,12 @@ class FeatureTime(Feature):
 
     capability = []
 
-    def __init__(self,voice):
+    def __init__(self, voice, **kwargs):
+        super(FeatureTime, self).__init__(kwargs)
         self.voice = voice
         self.now = datetime.datetime.now()
         # Today is Saturday, October 18
-        Feature.__init__(self, "time")
+        #Feature.__init__(self, "time")
 
     def time_play(self,cmd='time'):
       #self.keyword_identified = 0
