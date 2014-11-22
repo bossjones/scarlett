@@ -7,9 +7,11 @@ class FeatureStock(Feature):
 
     capability = []
 
-    def __init__(self, voice, **kwargs):
+    def __init__(self, **kwargs):
         super(FeatureStock, self).__init__(kwargs)
+        self._name = "stock"
         self.voice = voice
+        self.brain = brain
         self.ystockquote = ystockquote
         self.stock_price = self.ystockquote.get_price(stock)
         self.stock_price_string = "%s price is, %f" (stock, self.stock_price)

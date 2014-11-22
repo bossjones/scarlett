@@ -21,6 +21,8 @@ class Feature(object):
     def __init__(self, name, **kwargs):
 
         self._name = name
+        self.voice = voice
+        self.brain = brain
 
     @property
     def name(self):

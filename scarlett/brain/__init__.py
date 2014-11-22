@@ -17,7 +17,9 @@ from json import loads, dumps
 
 class ScarlettBrain(object):
 
-    def __init__(self, brain_name, **kwargs):
+    _global_states = []
+
+    def __init__(self, brain_name, flush=True, **kwargs):
         self.brain_name = brain_name
         self.config = scarlett.config
         self.redis_host = scarlett.config.get('redis', 'host')
@@ -33,6 +35,12 @@ class ScarlettBrain(object):
             db=self.redis_db)
         scarlett.log.debug(Fore.YELLOW + "initializing ScarlettBrain")
         self.redis_server.set("name", "ScarlettBrain")
+
+        if flush:
+            self.wipe_brain()
+            self.set_brain_item('scarlett_main_keyword_identified',0)
+            self.set_brain_item('scarlett_successes',0)
+            self.set_brain_item('scarlett_failed',0)
 
     def get_brain(self):
         return self.redis_server
@@ -53,6 +61,10 @@ class ScarlettBrain(object):
 
     def set_brain_item(self, key, value):
         return self.redis_server.set(key, value)
+
+    def set_brain_item_r(self, key, value):
+        self.redis_server.set(key, value)
+        return self.redis_server.get(key)
 
     def get_brain_item(self, key):
         return self.redis_server.get(key)

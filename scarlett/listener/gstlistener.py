@@ -28,15 +28,18 @@ class GstListener(Listener):
     Controls all actions involving pocketsphinx, stt, and tts.
     """
 
-    def __init__(self, lis_type, voice, override_parse=False, **kwargs):
+    def __init__(self, lis_type, brain, voice, override_parse=False, **kwargs):
         super(GstListener, self).__init__(kwargs)
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
-        self.successes = 0
-        self.failed = 0
-        self.keyword_identified = 0
+        #### redis implementation # self.successes = 0
+        #### redis implementation # self.failed = 0
+        #### redis implementation # self.keyword_identified = 0
+        self.brain = brain
+        self.failed = int(self.brain.set_brain_item_r('scarlett_failed',0))
+        self.keyword_identified = int(self.brain.set_brain_item_r('scarlett_main_keyword_identified',0))
         self.lis_type = lis_type
         self.voice = voice
-        self.commander = Command(self.voice)
+        self.commander = Command(self.voice,self.brain)
         self.config = scarlett.config
         self.override_parse = override_parse
         #Listener.__init__(self, lis_type)
@@ -121,11 +124,15 @@ class GstListener(Listener):
                 "UTTID-IS-SOMETHING:" +
                 uttid +
                 "\n")
-            self.failed = 0
-            self.keyword_identified = 1
+            #### redis implementation # self.failed = 0
+            self.failed = int(self.brain.set_brain_item_r('scarlett_failed',0))
+            #### redis implementation # self.keyword_identified = 1
+            self.keyword_identified = int(self.brain.set_brain_item_r('scarlett_main_keyword_identified',1))
             self.voice.play('pi-listening')
         else:
-            self.failed += 1
+            #### redis implementation # self.failed += 1
+            self.failed_temp = int(self.brain.get_brain_item('scarlett_failed')) + 1
+            self.failed = int(self.brain.set_brain_item_r('scarlett_failed',self.failed_temp))
             scarlett.log.debug(
                 Fore.YELLOW +
                 "self.failed = %i" %
@@ -136,9 +143,11 @@ class GstListener(Listener):
                 self.voice.speak(
                     " %s , if you need me, just say my name." %
                     (self.config.get('scarlett', 'owner')))
-                self.failed = 0
+                self.set_brain_item('scarlett_failed',0)
+                self.failed = int(self.brain.set_brain_item_r('scarlett_failed',0))
+                #### redis implementation # self.failed = 0
                 # TODO: If this REALLY doesn't work, DISABLED IT
-                self.keyword_identified = 0
+                self.keyword_identified = int(self.brain.set_brain_item_r('scarlett_main_keyword_identified',0))
                 self.pipeline.set_state(gst.STATE_PLAYING)
                 self.voice.play('cancel')
 
@@ -169,8 +178,10 @@ class GstListener(Listener):
     def cancel_listening(self):
         scarlett.log.debug(Fore.YELLOW + "Inside cancel_listening function")
         #valve.set_property('drop', False)
-        self.failed = 0
-        self.keyword_identified = 0
+        ### redis implementation # self.failed = 0
+        ### redis implementation # self.keyword_identified = 0
+        self.failed = int(self.brain.set_brain_item_r('scarlett_failed',0))
+        self.keyword_identified = int(self.brain.set_brain_item_r('scarlett_main_keyword_identified',0))
         scarlett.log.debug(Fore.YELLOW + "self.failed = %i" % (self.failed))
         scarlett.log.debug(
             Fore.RED +

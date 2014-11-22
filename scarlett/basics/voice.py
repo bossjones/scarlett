@@ -26,12 +26,11 @@ from scarlett.constants import *
 
 __PLAYER__ = gst.element_factory_make("playbin", "player")
 
-
 class Voice(ScarlettBasics):
 
-    def __init__(self):
-        super(Voice, self).__init__()
-        self.keyword_identified = 0
+    def __init__(self,brain):
+        super(Voice, self).__init__(brain)
+        self.brain = brain
         self.config = scarlett.config
         self.sudo_enabled = self.config.getboolean('speech', 'sudo_enabled')
         self.reading_Speed = 165

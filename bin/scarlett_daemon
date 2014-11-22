@@ -19,9 +19,9 @@ class ScarlettBot(object):
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
         #Tracer()()
         self._brain = scarlett.connect_brain()
-        self._voice = scarlett.connect_voice()
+        self._voice = scarlett.connect_voice(self._brain)
         self._voice.play('pi-listening')
-        self.listener = GstListener("gst",self._voice)
+        self.listener = GstListener("gst",self._brain,self._voice,False)
 
     def main(self):
         # All PyGTK applications must have a gtk.main(). Control ends here

@@ -11,14 +11,17 @@ class FeatureForecast(Feature):
 
     capability = []
 
-    def __init__(self, voice, **kwargs):
+    def __init__(self, **kwargs):
         self.module_exists("forecastio")
         super(FeatureForecast, self).__init__(kwargs)
+        self._name = "forecastio"
+        self.voice = voice
+        self.brain = brain
         self.config = scarlett.config
         self.lat = self.config.get('forecastio', 'lat')
         self.lng = self.config.get('forecastio', 'lng')
         self.api_key = self.config.get('forecastio', 'api_key')
-        self.voice = Voice()
+        #self.voice = Voice()
 
         #Feature.__init__(self, "forecast")
 
@@ -27,7 +30,7 @@ class FeatureForecast(Feature):
 
     def forecast_play(self, cmd):
 
-        self.keyword_identified = 0
+        #self.keyword_identified = 0
         self.voice.play('pi-response')
         forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng)
 
@@ -59,4 +62,4 @@ class FeatureForecast(Feature):
         fio_day = "Daily Summary: %s" % (by_day.summary)
         self.voice.speak(fio_day)
 
-        return self.keyword_identified
+        #return self.keyword_identified

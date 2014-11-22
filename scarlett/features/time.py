@@ -8,9 +8,11 @@ class FeatureTime(Feature):
 
     capability = []
 
-    def __init__(self, voice, **kwargs):
+    def __init__(self, **kwargs):
         super(FeatureTime, self).__init__(kwargs)
+        self._name = "time"
         self.voice = voice
+        self.brain = brain
         self.now = datetime.datetime.now()
         # Today is Saturday, October 18
         #Feature.__init__(self, "time")

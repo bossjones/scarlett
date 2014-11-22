@@ -8,10 +8,13 @@ class FeatureHueLights(Feature):
 
     capability = []
 
-    def __init__(self, voice, **kwargs):
+    def __init__(self, **kwargs):
 
         #Feature.__init__(self, "hue")
         super(FeatureHueLights, self).__init__(kwargs)
+        self._name = "hue"
+        self.voice = voice
+        self.brain = brain
         if self.module_exists("phue"):
             from phue import Bridge
             self.b = Bridge(scarlett.config.get('hue', 'bridge'))
@@ -52,6 +55,6 @@ class FeatureHueLights(Feature):
             scarlett.log.debug(Fore.YELLOW + "" + (l.name))
 
     def light_play(self, cmd):
-        self.keyword_identified = 0
+        #self.keyword_identified = 0
         self.voice.play('pi-response')
-        return self.keyword_identified
+        #return self.keyword_identified
