@@ -7,7 +7,7 @@ class FeatureTv(Feature):
 
     capability = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, voice, brain, **kwargs):
         super(FeatureTv, self).__init__(kwargs)
         self._name = "tv"
         self.time = time

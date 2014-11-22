@@ -8,7 +8,7 @@ class FeatureHueLights(Feature):
 
     capability = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, voice, brain, **kwargs):
 
         #Feature.__init__(self, "hue")
         super(FeatureHueLights, self).__init__(kwargs)

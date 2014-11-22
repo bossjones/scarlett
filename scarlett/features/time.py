@@ -1,5 +1,5 @@
 import scarlett
-from . import time
+import time
 import datetime
 from scarlett.features import *
 
@@ -8,7 +8,7 @@ class FeatureTime(Feature):
 
     capability = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, voice, brain, **kwargs):
         super(FeatureTime, self).__init__(kwargs)
         self._name = "time"
         self.voice = voice

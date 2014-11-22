@@ -11,7 +11,7 @@ class FeatureForecast(Feature):
 
     capability = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, voice, brain, **kwargs):
         self.module_exists("forecastio")
         super(FeatureForecast, self).__init__(kwargs)
         self._name = "forecastio"

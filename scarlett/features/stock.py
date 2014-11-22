@@ -7,7 +7,7 @@ class FeatureStock(Feature):
 
     capability = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, voice, brain, **kwargs):
         super(FeatureStock, self).__init__(kwargs)
         self._name = "stock"
         self.voice = voice

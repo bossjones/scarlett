@@ -6,7 +6,7 @@ class FeatureSpotify(Feature):
 
     capability = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, voice, brain, **kwargs):
         super(FeatureSpotify, self).__init__(kwargs)
         self._name = "spotify"
         self.voice = voice

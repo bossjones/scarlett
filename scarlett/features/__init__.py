@@ -18,11 +18,11 @@ from scarlett.constants import *
 
 class Feature(object):
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, **kwargs):
 
         self._name = name
-        self.voice = voice
-        self.brain = brain
+        #self.voice = voice
+        #self.brain = brain
 
     @property
     def name(self):
