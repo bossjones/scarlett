@@ -6,6 +6,7 @@ import sys
 from tests.unit import unittest, ScarlettTestCase
 from nose.plugins.attrib import attr
 from scarlett.basics.voice import Voice
+from scarlett.brain import ScarlettBrain
 
 
 class VoiceTestCase(ScarlettTestCase):
@@ -15,7 +16,8 @@ class VoiceTestCase(ScarlettTestCase):
 
     @attr(voice=True)
     def test_voice(self):
-        self.voice_test = self.scarlett.connect_voice()
+        self.brain_test = self.scarlett.connect_brain()
+        self.voice_test = self.scarlett.connect_voice(self.brain_test)
         # self.assertEqual(self.voice_test,Voice())
 
 

@@ -57,4 +57,4 @@ class FeatureHueLights(Feature):
     def light_play(self, cmd):
         #self.keyword_identified = 0
         self.voice.play('pi-response')
-        #return self.keyword_identified
+        # return self.keyword_identified

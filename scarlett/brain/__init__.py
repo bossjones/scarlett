@@ -38,9 +38,9 @@ class ScarlettBrain(object):
 
         if flush:
             self.wipe_brain()
-            self.set_brain_item('scarlett_main_keyword_identified',0)
-            self.set_brain_item('scarlett_successes',0)
-            self.set_brain_item('scarlett_failed',0)
+            self.set_brain_item('scarlett_main_keyword_identified', 0)
+            self.set_brain_item('scarlett_successes', 0)
+            self.set_brain_item('scarlett_failed', 0)
 
     def get_brain(self):
         return self.redis_server

@@ -62,4 +62,4 @@ class FeatureForecast(Feature):
         fio_day = "Daily Summary: %s" % (by_day.summary)
         self.voice.speak(fio_day)
 
-        #return self.keyword_identified
+        # return self.keyword_identified

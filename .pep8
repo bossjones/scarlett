@@ -1,2 +1,2 @@
 [pep8]
-ignore=E401
+ignore=E401,E501,E265,E713

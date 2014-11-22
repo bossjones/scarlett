@@ -9,7 +9,7 @@ enable=hue_lights,time
 [redis]
 host = 127.0.0.1
 port = 6379
-redis_db = 10
+redis_db = 9
 
 [pocketsphinx]
 silprob = 0.1

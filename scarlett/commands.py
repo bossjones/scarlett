@@ -15,9 +15,9 @@ MAGIC_REQ_STRING = '%sREQ' % NULL_CHAR
 class Command(object):
 
     def __init__(self, voice, brain, **kwargs):
-        self.brain  = brain
+        self.brain = brain
         self.config = scarlett.config
-        self.voice  = voice
+        self.voice = voice
 
     def check_cmd(self, command=''):
 
@@ -44,7 +44,7 @@ class Command(object):
                                (command, TIME_CMDS[command]))
             try:
                 from scarlett.features.time import FeatureTime
-                self.get_time = FeatureTime(self.voice,self.brain)
+                self.get_time = FeatureTime(self.voice, self.brain)
                 return self.get_time.time_play()
             except Exception as e:
                 scarlett.log.debug(

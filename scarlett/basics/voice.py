@@ -26,9 +26,10 @@ from scarlett.constants import *
 
 __PLAYER__ = gst.element_factory_make("playbin", "player")
 
+
 class Voice(ScarlettBasics):
 
-    def __init__(self,brain):
+    def __init__(self, brain):
         super(Voice, self).__init__(brain)
         self.brain = brain
         self.config = scarlett.config

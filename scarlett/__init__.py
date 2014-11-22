@@ -27,12 +27,14 @@ UserAgent = 'Scarlett/%s Python/%s %s/%s' % (
 
 config = Config()
 
+
 def init_logging():
     for file in ScarlettConfigLocations:
         try:
             logging.config.fileConfig(os.path.expanduser(file))
         except:
             pass
+
 
 class NullHandler(logging.Handler):
 
@@ -47,6 +49,7 @@ init_logging()
 
 # convenience function to set logging to a particular file
 
+
 def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
     global log
     if not format_string:
@@ -59,6 +62,7 @@ def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
     fh.setFormatter(formatter)
     logger.addHandler(fh)
     log = logger
+
 
 def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     global log
@@ -73,11 +77,13 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
-def connect_voice(brain,**kwargs):
+
+def connect_voice(brain, **kwargs):
     global log
     scarlett.log.debug("connect_voice")
     from scarlett.basics.voice import Voice
     return Voice(brain)
+
 
 def connect_forecastio(brain):
     global log
@@ -85,13 +91,16 @@ def connect_forecastio(brain):
     from scarlett.features.forecast import FeatureForecast
     return FeatureForecast()
 
+
 def connect_wordnik(brain):
     global log
     scarlett.log.debug("connect_wordnik")
 
+
 def connect_nltk(brain):
     global log
     scarlett.log.debug("connect_nltk")
+
 
 def connect_hue(brain):
     global log
@@ -99,18 +108,21 @@ def connect_hue(brain):
     from scarlett.features.hue_lights import FeatureHueLights
     return FeatureHueLights()
 
+
 def connect_time(brain):
     global log
     scarlett.log.debug("connect_time")
     from scarlett.features.time import FeatureTime
     return FeatureTime()
 
+
 def connect_wa(brain):
     global log
     scarlett.log.debug("connect_wa")
+
 
 def connect_brain():
     global log
     scarlett.log.debug("connect_brain")
     from scarlett.brain import ScarlettBrain
-    return ScarlettBrain(brain_name="DeepThought",flush=True)
+    return ScarlettBrain(brain_name="DeepThought", flush=True)
