@@ -2,7 +2,6 @@ import scarlett
 from scarlett.commands import Command
 from scarlett.listener import *
 
-
 # this is very important, without this, callbacks from gstreamer thread
 # will messed our program up
 import gobject
@@ -31,9 +30,6 @@ class GstListener(Listener):
     def __init__(self, lis_type, brain, voice, override_parse=False, **kwargs):
         super(GstListener, self).__init__(kwargs)
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
-        # redis implementation # self.successes = 0
-        # redis implementation # self.failed = 0
-        # redis implementation # self.keyword_identified = 0
         self.brain = brain
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
@@ -45,7 +41,6 @@ class GstListener(Listener):
         self.commander = Command(self.voice, self.brain)
         self.config = scarlett.config
         self.override_parse = override_parse
-        #Listener.__init__(self, lis_type)
 
         # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
         self.ps_hmm = self.get_hmm_full_path()
@@ -197,8 +192,6 @@ class GstListener(Listener):
     def cancel_listening(self):
         scarlett.log.debug(Fore.YELLOW + "Inside cancel_listening function")
         #valve.set_property('drop', False)
-        # redis implementation # self.failed = 0
-        # redis implementation # self.keyword_identified = 0
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
