@@ -15,13 +15,9 @@
 import scarlett
 from scarlett.constants import *
 
-
 class Feature(object):
 
     def __init__(self, voice, brain):
-        pass
-
-        #self._name = name
         self.voice = voice
         self.brain = brain
 
@@ -30,12 +26,7 @@ class Feature(object):
         return self._name
 
     def __str__(self):
-
         return "Scarlett Feature is %s" % (self.name)
-
-    # def general_play(self,cmd):
-    ##   self.keyword_identified = 0
-    # self.voice.play('pi-cancel')
 
     def module_exists(self, module_name):
         try:

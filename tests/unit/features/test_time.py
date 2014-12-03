@@ -26,14 +26,8 @@ class TimeTestCase(ScarlettTestCase):
 
     @attr(voice=True)
     def test_time(self):
-        #self.set_now   =datetime.datetime(2014, 12, 2, 20, 47, 19, 715394)
-        # self.assertEqual(self.voice_test,Voice())
         self.assertTrue(self.time_test.get_current_time(),"It is now, 08:47 PM")
         self.assertTrue(self.time_test.get_current_date(),"Today's date is, Tuesday, December 02, 2014")
-
-# from scarlett.features.time import FeatureTime
-#                 self.get_time = FeatureTime(self.voice, self.brain)
-#                 return self.get_time.time_play()
 
 def suite():
     return unittest.TestLoader().loadTestsFromName(__name__)

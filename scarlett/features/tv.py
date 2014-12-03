@@ -7,13 +7,12 @@ class FeatureTv(Feature):
 
     capability = []
 
-    def __init__(self, voice, brain, **kwargs):
-        super(FeatureTv, self).__init__(kwargs)
+    def __init__(self, voice, brain, *args, **kwargs):
+        super(FeatureTv, self).__init__(args, kwargs)
         self._name = "tv"
         self.time = time
         self.voice = voice
         self.brain = brain
-        #Feature.__init__(self, "tv")
 
     def add_auth(self, http_request):
         pass
