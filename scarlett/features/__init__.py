@@ -15,25 +15,29 @@
 import scarlett
 from scarlett.constants import *
 
+
 class Feature(object):
 
-    def __init__(self, name):
+    def __init__(self, voice, brain):
+        pass
 
-        self.name   = name
+        #self._name = name
+        self.voice = voice
+        self.brain = brain
 
-    def getName(self):
-
-        return self.name
+    @property
+    def name(self):
+        return self._name
 
     def __str__(self):
 
         return "Scarlett Feature is %s" % (self.name)
 
-    ## def general_play(self,cmd):
+    # def general_play(self,cmd):
     ##   self.keyword_identified = 0
-    ##   self.voice.play('pi-cancel')
+    # self.voice.play('pi-cancel')
 
-    def module_exists(self,module_name):
+    def module_exists(self, module_name):
         try:
             __import__(module_name)
         except ImportError:

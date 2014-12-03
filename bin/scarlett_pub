@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+import scarlett
+from scarlett.constants import *
+from scarlett.basics.voice import Voice

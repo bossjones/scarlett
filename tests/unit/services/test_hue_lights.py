@@ -5,19 +5,18 @@ import scarlett
 import sys
 from tests.unit import unittest, ScarlettTestCase
 from nose.plugins.attrib import attr
-from scarlett.basics.voice import Voice
-from scarlett.brain import ScarlettBrain
+from scarlett.features.hue_lights import FeatureHueLights
 
 
-class VoiceTestCase(ScarlettTestCase):
+class HueTestCase(ScarlettTestCase):
 
     def setUp(self):
-        super(VoiceTestCase, self).setUp()
+        super(HueTestCase, self).setUp()
 
-    @attr(voice=True)
-    def test_voice(self):
-        self.brain_test = self.scarlett.connect_brain()
-        self.voice_test = self.scarlett.connect_voice(self.brain_test)
+    @attr(hue=True)
+    def test_hue_lights(self):
+        pass
+        #self.hue_test = self.scarlett.connect_hue()
         # self.assertEqual(self.voice_test,Voice())
 
 

@@ -3,12 +3,14 @@ language: python
 matrix:
     include:
         - python: 2.7
-          env: {TOX_ENV: py27, COVERAGE: 1, GSTREAMER: 0.10}
+          env: {TOX_ENV: py27, COVERAGE: 1, GSTREAMER: 0.10,TEST_PEP8: 1}
 #        - python: 2.7
 #          env: {TOX_ENV: docs}
         - python: 2.7
           env: {TOX_ENV: flake8}
 
+services:
+  - redis-server
 # env:
 #   - GSTREAMER=0.10
 #   - GSTREAMER=1.0
@@ -43,6 +45,8 @@ matrix:
 ##         libgstreamer-plugins-base1.0-dev
 ##
 install:
+    - "export DISPLAY=:99.0"
+    - "sh -e /etc/init.d/xvfb start"
     - sh -c "echo -e \"\e[31mGSTREAMER VERSION $GSTREAMER\e[39;\""
     - travis_retry sudo apt-get update
     - travis_retry sudo apt-get install -qq bash-completion swig
@@ -146,7 +150,7 @@ install:
 
 #install: pip install --allow-all-external -r requirements.txt
 
-script: tox -e $TOX_ENV
+script: "if [[ $TEST_PEP8 == '1' ]]; then pep8 --repeat --show-source --exclude=.venv,.tox,dist,docs,build,*.egg scarlett;fi; tox -e ${TOX_ENV}"
 
 # Only report coverage for one version.
 after_success:

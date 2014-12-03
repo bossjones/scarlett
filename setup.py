@@ -27,19 +27,20 @@ history = open("HISTORY.rst").read().replace(".. :changelog:", "")
 static = {}
 
 for root, dirs, files in os.walk('static'):
-  for filename in files:
-    filepath = os.path.join(root, filename)
+    for filename in files:
+        filepath = os.path.join(root, filename)
 
-    if root not in static:
-      static[root] = []
+        if root not in static:
+            static[root] = []
 
-    static[root].append(filepath)
+        static[root].append(filepath)
 
 # Might use this later
 try:
     here = os.path.abspath(os.path.dirname(__file__))
 except:
     pass
+
 
 def read_requirements(filename):
     content = open(os.path.join(here, filename)).read()
@@ -50,21 +51,21 @@ def read_requirements(filename):
 requirements = read_requirements('requirements.txt')
 test_requirements = read_requirements('requirements_dev.txt')
 
-### # Build manpages if we're making a source distribution tarball.
-### if 'sdist' in sys.argv:
-###     # Go into the docs directory and build the manpage.
+# Build manpages if we're making a source distribution tarball.
+# if 'sdist' in sys.argv:
+# Go into the docs directory and build the manpage.
 ###     docdir = os.path.join(os.path.dirname(__file__), 'docs')
 ###     curdir = os.getcwd()
-###     os.chdir(docdir)
-###     try:
+# os.chdir(docdir)
+# try:
 ###         subprocess.check_call(['make', 'man'])
-###     finally:
-###         os.chdir(curdir)
+# finally:
+# os.chdir(curdir)
 ###
-###     # Copy resulting manpages.
+# Copy resulting manpages.
 ###     mandir = os.path.join(os.path.dirname(__file__), 'man')
-###     if os.path.exists(mandir):
-###         shutil.rmtree(mandir)
+# if os.path.exists(mandir):
+# shutil.rmtree(mandir)
 ###     shutil.copytree(os.path.join(docdir, '_build', 'man'), mandir)
 
 setup(
@@ -80,15 +81,25 @@ setup(
         "scarlett.basics",
         "scarlett.core",
         "scarlett.features",
+        "scarlett.brain",
         #"scarlett.features.time",
         "scarlett.listener"
+
     ],
     package_dir={"scarlett":
                  "scarlett"},
     data_files=static.items(),
     install_requires=[
     ],
-    scripts=['bin/scarlett','bin/scarlett_echo_client_test.py','bin/scarlett_worker_cb_test.py','bin/catwav','bin/silence','bin/resample_for_ps','bin/pad_wav'],
+    scripts=[
+        'bin/scarlett',
+        'bin/scarlett_daemon',
+        'bin/scarlett_echo_client_test.py',
+        'bin/scarlett_worker_cb_test.py',
+        'bin/catwav',
+        'bin/silence',
+        'bin/resample_for_ps',
+        'bin/pad_wav'],
     license="BSD",
     platforms="Posix; MacOS X",
     zip_safe=False,

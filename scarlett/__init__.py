@@ -63,6 +63,7 @@ def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
     logger.addHandler(fh)
     log = logger
 
+
 def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     global log
     if not format_string:
@@ -76,40 +77,52 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
-def connect_voice():
+
+def connect_voice(brain, **kwargs):
     global log
     scarlett.log.debug("connect_voice")
     from scarlett.basics.voice import Voice
-    return Voice()
+    return Voice(brain)
 
-def connect_forecastio():
+
+def connect_forecastio(brain):
     global log
     scarlett.log.debug("connect_forecastio")
     from scarlett.features.forecast import FeatureForecast
     return FeatureForecast()
 
-def connect_wordnik():
+
+def connect_wordnik(brain):
     global log
     scarlett.log.debug("connect_wordnik")
 
-def connect_nltk():
+
+def connect_nltk(brain):
     global log
     scarlett.log.debug("connect_nltk")
 
-def connect_hue():
+
+def connect_hue(brain):
     global log
     scarlett.log.debug("connect_hue")
     from scarlett.features.hue_lights import FeatureHueLights
     return FeatureHueLights()
 
-def connect_time():
+
+def connect_time(brain):
     global log
     scarlett.log.debug("connect_time")
     from scarlett.features.time import FeatureTime
     return FeatureTime()
 
-def connect_wa():
+
+def connect_wa(brain):
     global log
     scarlett.log.debug("connect_wa")
 
-# COMMENTED OUT 10/8/2014 # scarlett.plugin.load_plugins(config)
+
+def connect_brain():
+    global log
+    scarlett.log.debug("connect_brain")
+    from scarlett.brain import ScarlettBrain
+    return ScarlettBrain(brain_name="DeepThought", flush=True)

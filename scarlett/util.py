@@ -5,6 +5,7 @@ Scarlett Client Utils
 import errno
 import select as select_lib
 import time
+import socket
 
 from scarlett.constants import DEFAULT_SCARLETT_PORT
 
@@ -82,25 +83,43 @@ def unlist(given_list):
     else:
         raise ValueError(list_size)
 
-### TODO: Try this at some point and make testable
-### def gst_available():
+# Taken from: http://stackoverflow.com/a/11735897
+
+
+def get_local_ip():
+    """ Tries to determine the local IP address of the machine. """
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        # Use Google Public DNS server to determine own IP
+        sock.connect(('8.8.8.8', 80))
+        ip_addr = sock.getsockname()[0]
+        sock.close()
+
+        return ip_addr
+
+    except socket.error:
+        return socket.gethostbyname(socket.gethostname())
+
+# TODO: Try this at some point and make testable
+# def gst_available():
 ###     """Return ``True`` if :mod:`gst` module is available."""
-###     try:
-###         print "Checking for Python Gstreamer Bindings.......\n "
+# try:
+# print "Checking for Python Gstreamer Bindings.......\n "
 ###         import gst
-###         print "Found...."
-###         return True
-###     except Exception:
-###         print "Python Gstreamer bindings are not found !\n\n"
-###         return False
+# print "Found...."
+# return True
+# except Exception:
+# print "Python Gstreamer bindings are not found !\n\n"
+# return False
 ###
-### def pocketsphinx_available():
+# def pocketsphinx_available():
 ###     """Return ``True`` if `pocketsphinx` gstreamer plugin is available."""
-###     try:
-###         print "Checking for Gstreamer Pocketsphinx plugins......\n"
+# try:
+# print "Checking for Gstreamer Pocketsphinx plugins......\n"
 ###         import gst
-###         print "Found !!!"
-###         return gst.plugin_load_by_name("pocketsphinx") is not None
-###     except Exception:
-###         print "Gstreamer Pocketsphinx plugins not found !!! \n\n\n"
-###         return False
+# print "Found !!!"
+# return gst.plugin_load_by_name("pocketsphinx") is not None
+# except Exception:
+# print "Gstreamer Pocketsphinx plugins not found !!! \n\n\n"
+# return False
