@@ -8,53 +8,32 @@ from scarlett.listener.gstlistener import *
 import gobject
 gobject.threads_init()
 
+class ScarlettBot(object):
+    """ Actual scarlett bot object that has a brain, voice, etc """
 
-def main():
-    #if scarlett.config.has_section("redis"):
-    #   scarlett.connect_redis()
-    # Begin logging to standard out
-    scarlett.set_stream_logger('scarlett')
-    scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
-    _voice = scarlett.connect_voice()
-    _voice.play('pi-listening')
-    listenser = GstListener("gst",_voice)
-    #Tracer()()
-    gtk.main()
+    _scarlett_services = []
+    _last_send_time    = time.time()
 
+    def __init__(self):
+        scarlett.set_stream_logger('scarlett')
+        scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
+        #Tracer()()
+        self._brain = scarlett.connect_brain()
+        self._voice = scarlett.connect_voice(self._brain)
+        self._voice.play('pi-listening')
+        self.listener = GstListener("gst",self._brain,self._voice,False)
 
+    def main(self):
+        # All PyGTK applications must have a gtk.main(). Control ends here
+        # and waits for an event to occur (like a key press or mouse event).
+        gtk.main()
+
+    def destroy(self):
+        scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
+        gtk.main_quit()
+
+# If the program is run directly or passed as an argument to the python
+# interpreter then create a HelloWorld instance and show it
 if __name__ == "__main__":
-    main()
-
-# if __name__ == '__main__':
-    # TODO: Add logic here to get config,
-    # then determin which plugins and brain,
-    # features to import
-    #from pi.cells import *
-    #from lib.monitors import *
-
-    # DISABLED 10/8/2014, will figure out better way to do this # # TODO: REFACTOR THIS TO LATER ON ALLOW FOR IN PLACE PLUGINS
-    # DISABLED 10/8/2014, will figure out better way to do this # extra_cells = os.environ['HOME'] + '/.scarlett/cells'
-    # DISABLED 10/8/2014, will figure out better way to do this # if os.path.exists(extra_cells) == False:
-    # DISABLED 10/8/2014, will figure out better way to do this #   os.makedirs(extra_cells)
-    # DISABLED 10/8/2014, will figure out better way to do this # sys.path.append(extra_cells)
-    # DISABLED 10/8/2014, will figure out better way to do this # cell_files = [os.path.basename(x)[:-3] for x in glob.glob(extra_cells + "/*.py")]
-    # DISABLED 10/8/2014, will figure out better way to do this #
-    # map(__import__, cell_files)
-
-    # REFACTOR: listener = Listener(gobject, gst)
-    # NEW ONE WILL BE
-
-
-#### DAEMON MODE? # TODO #### #!/usr/bin/env python
-#### DAEMON MODE? # TODO ####
-#### DAEMON MODE? # TODO #### import os
-#### DAEMON MODE? # TODO #### import sys
-#### DAEMON MODE? # TODO #### import gobject
-#### DAEMON MODE? # TODO #### gobject.threads_init()
-#### DAEMON MODE? # TODO ####
-#### DAEMON MODE? # TODO #### import eshayari
-#### DAEMON MODE? # TODO #### eshayari.main.main(sys.argv[1:])
-#### DAEMON MODE? # TODO ####
-#### DAEMON MODE? # TODO #### g_loop = threading.Thread(target=gobject.MainLoop().run)
-#### DAEMON MODE? # TODO #### g_loop.daemon = True
-#### DAEMON MODE? # TODO #### g_loop.start()
+    scarlett_daemon = ScarlettBot()
+    scarlett_daemon.main()

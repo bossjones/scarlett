@@ -18,7 +18,7 @@ from scarlett.constants import *
 
 class Feature(object):
 
-    def __init__(self,voice,brain):
+    def __init__(self, voice, brain):
         pass
 
         #self._name = name

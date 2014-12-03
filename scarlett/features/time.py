@@ -9,11 +9,11 @@ class FeatureTime(Feature):
     capability = []
 
     def __init__(self, voice, brain, *args, **kwargs):
-        super(FeatureTime, self).__init__(args,kwargs)
+        super(FeatureTime, self).__init__(args, kwargs)
         self._name = "time"
         self.voice = voice
         self.brain = brain
-        self.now   = self.set_now()
+        self.now = self.set_now()
         # Today is Saturday, October 18
         #Feature.__init__(self, "time")
 
@@ -39,7 +39,7 @@ class FeatureTime(Feature):
     def get_current_date(self):
         return self.now.strftime("Today's date is, %A, %B %d, %Y")
 
-    def set_now(self,override=False):
+    def set_now(self, override=False):
         if override:
             self.now = override
             return override

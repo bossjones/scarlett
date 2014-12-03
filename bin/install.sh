@@ -290,6 +290,18 @@ sudo pip install -y ino;
 
 # pocketsphinx_continuous -lm /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm -dict /home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic -hmm /usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k -silprob  0.1 -wip 1e-4 -bestpath 0 -samprate 8000 -infile
 
+# install monitoring
+
+##### snmp
+sudo apt-get install snmpd snmp snmp-mibs-downloader -y
+sudo sed -i "s,^#rocommunity public  localhost, rocommunity public  localhost," /etc/snmp/snmpd.conf
+sudo sed -i "s,.*rocommunity.*public.*default.*-V.*systemonly$,#  rocommunity public  default    -V systemonly," /etc/snmp/snmpd.conf
+
+_BEST_PATH_LINE_NUMBER=$(grep -n " rocommunity public  localhost" /etc/snmp/snmpd.conf | head -1 | cut -d: -f1)
+_LINE_TO_EDIT=$(($_BEST_PATH_LINE_NUMBER+2))
+echo $_LINE_TO_EDIT
+sudo sed -i "${_LINE_TO_EDIT}i  rocommunity scarlett 192.168.0.0\/24" /etc/snmp/snmpd.conf
+
 # RUN COVERAGE: source: http://nedbatchelder.com/code/coverage/
 coverage report -m
 
