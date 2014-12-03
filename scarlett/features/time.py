@@ -31,7 +31,11 @@ class FeatureTime(Feature):
             self.current_date)
         self.voice.speak(self.current_time)
         self.voice.speak(self.current_date)
-        return 0
+        self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
+        self.keyword_identified = int(
+            self.brain.set_brain_item_r(
+                'scarlett_main_keyword_identified',
+                0))
 
     def get_current_time(self):
         return self.now.strftime("It is now, %I:%M %p")
