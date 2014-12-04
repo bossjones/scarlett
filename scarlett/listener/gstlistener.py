@@ -2,11 +2,6 @@ import scarlett
 from scarlett.commands import Command
 from scarlett.listener import *
 
-# this is very important, without this, callbacks from gstreamer thread
-# will messed our program up
-import gobject
-#gobject.threads_init()
-
 # source: http://stackoverflow.com/questions/8005765/how-to-get-duration-of-steaming-data-with-gstreamer
 # LETS TRY USING THIS: # gobject.threads_init()
 

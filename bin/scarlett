@@ -5,8 +5,11 @@ from scarlett.constants import *
 from scarlett.basics.voice import Voice
 from scarlett.listener.gstlistener import *
 #from IPython.core.debugger import Tracer
+# this is very important, without this, callbacks from gstreamer thread
+# will messed our program up
 import gobject
 gobject.threads_init()
+import argparse
 
 class ScarlettBot(object):
     """ Actual scarlett bot object that has a brain, voice, etc """

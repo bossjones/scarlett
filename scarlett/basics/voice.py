@@ -14,14 +14,12 @@ import json
 import glob
 import tempfile
 import subprocess
+import pygst
+pygst.require("0.10")
+import gst
 import pygtk
 pygtk.require('2.0')
 import gtk
-import gobject
-import pygst
-pygst.require('0.10')
-#gobject.threads_init()
-import gst
 from scarlett.basics import *
 from scarlett.constants import *
 
