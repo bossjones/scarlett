@@ -3,7 +3,6 @@
 import scarlett
 from scarlett.features import *
 
-
 class FeatureHueLights(Feature):
 
     capability = []
@@ -53,6 +52,9 @@ class FeatureHueLights(Feature):
             scarlett.log.debug(Fore.YELLOW + "" + (l.name))
 
     def light_play(self, cmd):
-        #self.keyword_identified = 0
         self.voice.play('pi-response')
-        # return self.keyword_identified
+        self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
+        self.keyword_identified = int(
+            self.brain.set_brain_item_r(
+                'scarlett_main_keyword_identified',
+                0))
