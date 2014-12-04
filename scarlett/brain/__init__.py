@@ -5,7 +5,6 @@ Scarlett Brain
 
 """
 
-#from __future__ import unicode_literals
 import os
 import time
 import redis
@@ -13,7 +12,6 @@ import redis.connection
 import scarlett
 from scarlett.constants import *
 from json import loads, dumps
-
 
 class ScarlettBrain(object):
 

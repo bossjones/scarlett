@@ -11,9 +11,9 @@ class FeatureForecast(Feature):
 
     capability = []
 
-    def __init__(self, voice, brain, **kwargs):
+    def __init__(self, voice, brain, *args, **kwargs):
         self.module_exists("forecastio")
-        super(FeatureForecast, self).__init__(kwargs)
+        super(FeatureForecast, self).__init__(args, kwargs)
         self._name = "forecastio"
         self.voice = voice
         self.brain = brain
@@ -21,16 +21,12 @@ class FeatureForecast(Feature):
         self.lat = self.config.get('forecastio', 'lat')
         self.lng = self.config.get('forecastio', 'lng')
         self.api_key = self.config.get('forecastio', 'api_key')
-        #self.voice = Voice()
-
-        #Feature.__init__(self, "forecast")
 
     def add_auth(self, http_request):
         pass
 
     def forecast_play(self, cmd):
 
-        #self.keyword_identified = 0
         self.voice.play('pi-response')
         forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng)
 
@@ -61,5 +57,9 @@ class FeatureForecast(Feature):
             (by_day.summary))
         fio_day = "Daily Summary: %s" % (by_day.summary)
         self.voice.speak(fio_day)
+        self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
+        self.keyword_identified = int(
+            self.brain.set_brain_item_r(
+                'scarlett_main_keyword_identified',
+                0))
 
-        # return self.keyword_identified

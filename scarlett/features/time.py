@@ -3,7 +3,6 @@ import time
 import datetime
 from scarlett.features import *
 
-
 class FeatureTime(Feature):
 
     capability = []
@@ -14,11 +13,8 @@ class FeatureTime(Feature):
         self.voice = voice
         self.brain = brain
         self.now = self.set_now()
-        # Today is Saturday, October 18
-        #Feature.__init__(self, "time")
 
     def time_play(self, cmd='time'):
-        #self.keyword_identified = 0
         self.current_time = self.get_current_time()
         self.current_date = self.get_current_date()
         scarlett.log.debug(

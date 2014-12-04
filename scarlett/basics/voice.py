@@ -3,6 +3,7 @@
 """
 Scarlett Client Utils
 """
+
 import scarlett
 import os
 import sys
@@ -19,7 +20,7 @@ import gtk
 import gobject
 import pygst
 pygst.require('0.10')
-gobject.threads_init()
+#gobject.threads_init()
 import gst
 from scarlett.basics import *
 from scarlett.constants import *
@@ -35,19 +36,9 @@ class Voice(ScarlettBasics):
         self.config = scarlett.config
         self.sudo_enabled = self.config.getboolean('speech', 'sudo_enabled')
         self.reading_Speed = 165
-        # ScarlettBasics.__init__(self)
-
-    # """
-    # In the near future we will test this function here to see if it works better than the current one
-    # """
-    # def say(self,something, language='en', voice='f3'):
-    #     subprocess.call(['espeak', '-v%s+%s' % (language, voice), something])
 
     # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
     def speak(self, text, speed=150):
-        # lets add this back in later
-        # NOTE: old command by josip ( mmj2f 8:55AM March 15, 2014 )
-        # remove special characters first
         text = ''.join(e for e in text if e.isalpha() or e.isspace())
         if self.sudo_enabled:
             os.system('sudo espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))

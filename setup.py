@@ -93,7 +93,6 @@ setup(
     ],
     scripts=[
         'bin/scarlett',
-        'bin/scarlett_daemon',
         'bin/scarlett_echo_client_test.py',
         'bin/scarlett_worker_cb_test.py',
         'bin/catwav',
