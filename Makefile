@@ -28,13 +28,13 @@ lint:
 	flake8 scarlett tests
 
 test:
-	python setup.py test
+	python tests/test.py
 
 test-all:
 	tox
 
 coverage:
-	coverage run --source scarlett setup.py test
+	coverage run --source scarlett tests/test.py
 	coverage report -m
 	coverage html
 	open htmlcov/index.html

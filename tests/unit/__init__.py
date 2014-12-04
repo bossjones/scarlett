@@ -40,12 +40,7 @@ class ScarlettTestCase(unittest.TestCase):
 
     def setUp(self):
         super(ScarlettTestCase, self).setUp()
-        self._scarlett_log_handler.reset()  # So each test is independent
-        # WAIT TILL WE START USING HTTP REQUESTS # self.https_connection = mock.Mock(spec=http_client.HTTPSConnection)
-        # WAIT TILL WE START USING HTTP REQUESTS # self.https_connection.debuglevel = 0
-        # WAIT TILL WE START USING HTTP REQUESTS # self.https_connection_factory = (
-        # WAIT TILL WE START USING HTTP REQUESTS #
-        # mock.Mock(return_value=self.https_connection), ())
+        self._scarlett_log_handler.reset()
         import scarlett
         self.scarlett = scarlett
 
@@ -68,11 +63,6 @@ class ScarlettTestCase(unittest.TestCase):
                 self.assertIn(param, request_params)
                 del request_params[param]
         self.assertDictEqual(request_params, params)
-
-    # WAIT TILL WE START USING HTTP REQUESTS # def set_http_response(self, status_code, reason='', header=[], body=None):
-    # WAIT TILL WE START USING HTTP REQUESTS #     http_response = self.create_response(status_code, reason, header, body)
-    # WAIT TILL WE START USING HTTP REQUESTS #
-    # self.https_connection.getresponse.return_value = http_response
 
     def default_body(self):
         return ''
@@ -105,35 +95,11 @@ class MockScarlettWithConfigTestCase(ScarlettTestCase):
 
     def setUp(self):
         super(ScarlettTestCase, self).setUp()
-        #self.environ = {}
-        #self.config = {}
-        # self.config_patch = mock.patch('boto.provider.config.get',
-        #                               self.get_config)
-        # self.has_config_patch = mock.patch('boto.provider.config.has_option',
-        #                                   self.has_config)
-        #self.environ_patch = mock.patch('os.environ', self.environ)
-        # self.config_patch.start()
-        # self.has_config_patch.start()
-        # self.environ_patch.start()
 
     def tearDown(self):
         self.config_patch.stop()
         self.has_config_patch.stop()
         self.environ_patch.stop()
-
-    # def has_config(self, section_name, key):
-    #     try:
-    #         self.config[section_name][key]
-    #         return True
-    #     except KeyError:
-    #         return False
-
-    # def get_config(self, section_name, key, default=None):
-    #     try:
-    #         return self.config[section_name][key]
-    #     except KeyError:
-    #         return None
-
 
 class MockLoggingHandler(logging.Handler):
 
