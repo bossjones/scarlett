@@ -106,7 +106,7 @@ def connect_hue(brain, **kwargs):
     global log
     scarlett.log.debug("connect_hue")
     from scarlett.features.hue_lights import FeatureHueLights
-    return FeatureHueLights()
+    return FeatureHueLights(brain)
 
 
 def connect_time(brain, **kwargs):

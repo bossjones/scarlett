@@ -14,7 +14,8 @@ class FeatureHueLights(Feature):
         self.brain = brain
         if self.module_exists("phue"):
             from phue import Bridge
-            self.b = Bridge(scarlett.config.get('hue', 'bridge'))
+            self.bridge_ip = scarlett.config.get('hue', 'bridge')
+            self.b = Bridge(self.bridge_ip)
             self.b.connect()
             self.lights = self.b.lights
 
