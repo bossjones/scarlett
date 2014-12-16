@@ -75,32 +75,32 @@ class ScarlettIntegrationTestCase(unittest.TestCase):
                          'file exists: %s' % path)
 
 
-class MockScarlettWithConfigTestCase(ScarlettTestCase):
+# class MockScarlettWithConfigTestCase(ScarlettTestCase):
 
-    def setUp(self):
-        super(ScarlettTestCase, self).setUp()
+#     def setUp(self):
+#         super(ScarlettTestCase, self).setUp()
 
-    def tearDown(self):
-        self.config_patch.stop()
-        self.has_config_patch.stop()
-        self.environ_patch.stop()
+#     def tearDown(self):
+#         self.config_patch.stop()
+#         self.has_config_patch.stop()
+#         self.environ_patch.stop()
 
-class MockLoggingHandler(logging.Handler):
+# class MockLoggingHandler(logging.Handler):
 
-    """Mock logging handler to check for expected logs."""
+#     """Mock logging handler to check for expected logs."""
 
-    def __init__(self, *args, **kwargs):
-        self.reset()
-        logging.Handler.__init__(self, *args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         self.reset()
+#         logging.Handler.__init__(self, *args, **kwargs)
 
-    def emit(self, record):
-        self.messages[record.levelname.lower()].append(record.getMessage())
+#     def emit(self, record):
+#         self.messages[record.levelname.lower()].append(record.getMessage())
 
-    def reset(self):
-        self.messages = {
-            'debug': [],
-            'info': [],
-            'warning': [],
-            'error': [],
-            'critical': [],
-        }
+#     def reset(self):
+#         self.messages = {
+#             'debug': [],
+#             'info': [],
+#             'warning': [],
+#             'error': [],
+#             'critical': [],
+#         }
