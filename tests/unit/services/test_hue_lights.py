@@ -2,12 +2,16 @@
 # Copyright 2014, Behanceops.
 
 import scarlett
+import os
 import sys
 from tests.unit import unittest, ScarlettTestCase
 from nose.plugins.attrib import attr
 from scarlett.features.hue_lights import FeatureHueLights
 import responses
 import requests
+import json
+from pprint import pprint
+import ast
 
 # POST
 # body: {"devicetype":"test user","username":"newdeveloper"}
@@ -232,59 +236,29 @@ class HueTestCase(ScarlettTestCase):
     def setUp(self):
         super(HueTestCase, self).setUp()
 
-
-
     @attr(hue=True)
     @responses.activate
     def test_hue_lights_names(self):
-        _hue_api_lights_resp = '{
-          "state": {
-            "on": true,
-            "bri": 174,
-            "hue": 59183,
-            "sat": 66,
-            "xy": [
-              0.3662,
-              0.5015
-            ],
-            "ct": 0,
-            "alert": "none",
-            "effect": "none",
-            "colormode": "hs",
-            "reachable": true
-          },
-          "type": "Extended color light",
-          "name": "Family Room",
-          "modelid": "LCT001",
-          "swversion": "65003148",
-          "pointsymbol": {
-            "1": "none",
-            "2": "none",
-            "3": "none",
-            "4": "none",
-            "5": "none",
-            "6": "none",
-            "7": "none",
-            "8": "none"
-          }
-        }'
+        light_resp_path     = "%s/fixtures/http/hue_api_lights_resp.json" % (os.environ['MAIN_DIR'])
+        with open(light_resp_path) as json_file:
+             _hue_api_lights_resp = json.load(json_file)
+        json_file.close
 
         _hue_ip = scarlett.config.get("hue","bridge")
-        #self.hue_test = self.scarlett.connect_hue()
-        # self.assertEqual(self.voice_test,Voice())
         _base_url = "http://{0}/".format(_hue_ip)
-        responses.add(responses.GET, _base_url + "/python_hue/lights",
-                  body=_hue_api_lights_resp, status=200,
+        _full_endpoint = "{0}/python_hue/lights".format(_base_url)
+
+        responses.add(responses.GET, _full_endpoint,
+                  body=json.dumps(_hue_api_lights_resp), status=200,
                   content_type='application/json')
 
-        resp = requests.get(_base_url + "/python_hue/lights")
+        resp = requests.get(_full_endpoint)
 
         assert resp.json() == _hue_api_lights_resp
 
         assert len(responses.calls) == 1
-        assert responses.calls[0].request.url == _base_url + "/python_hue/lights"
-        assert responses.calls[0].response.text == _hue_api_lights_resp
-
+        assert responses.calls[0].request.url == _full_endpoint
+        assert responses.calls[0].response.text == json.dumps(_hue_api_lights_resp).encode('utf-8')
 
 def suite():
     return unittest.TestLoader().loadTestsFromName(__name__)

@@ -39,7 +39,8 @@ def main():
                                '--with-coverage'
                                '-v',
                                '--cover-erase',
-                               '--cover-package=scarlett'])
+                               '--cover-package=scarlett'
+                               '-d'])
     if not attribute_args:
         # If the user did not specify any filtering criteria, we at least
         # will filter out any test tagged 'notdefault'.
@@ -49,7 +50,8 @@ def main():
             '--with-coverage',
             '-v',
             '--cover-erase',
-            '--cover-package=scarlett']
+            '--cover-package=scarlett',
+            '-d']
         #--cover-erase --cover-package=flask_encryptedsession --cover-html
 
     # Set default tests used by e.g. tox. For Py2 this means all unit
