@@ -5,6 +5,7 @@ from scarlett.features import *
 from phue import Bridge
 import socket
 
+
 class FeatureHueLights(Feature):
 
     capability = []
@@ -18,13 +19,16 @@ class FeatureHueLights(Feature):
         self.hue_bridge = "{0}".format(scarlett.config.get('hue', 'bridge'))
 
         try:
-          self.b = Bridge(ip=self.hue_bridge, username='python_hue', config_file_path=self.hue_config)
+            self.b = Bridge(
+                ip=self.hue_bridge,
+                username='python_hue',
+                config_file_path=self.hue_config)
         except socket.error:  # Error connecting using Phue
-          scarlett.log.debug(
-              Fore.YELLOW +
-              "Sorry, had an issue connecting to phue Bridge")
+            scarlett.log.debug(
+                Fore.YELLOW +
+                "Sorry, had an issue connecting to phue Bridge")
 
-        self.api    = self.b.get_api()
+        self.api = self.b.get_api()
         self.lights = self.api.get('lights')
 
     def find_active_lights(self):

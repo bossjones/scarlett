@@ -62,4 +62,3 @@ class FeatureForecast(Feature):
             self.brain.set_brain_item_r(
                 'scarlett_main_keyword_identified',
                 0))
-

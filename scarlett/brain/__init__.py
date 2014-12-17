@@ -13,6 +13,7 @@ import scarlett
 from scarlett.constants import *
 from json import loads, dumps
 
+
 class ScarlettBrain(object):
 
     _global_states = []
