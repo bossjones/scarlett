@@ -5,6 +5,7 @@ from scarlett.features import *
 from phue import Bridge
 import socket
 import time
+import os
 
 
 class FeatureHueLights(Feature):
