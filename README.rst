@@ -5,11 +5,11 @@ scarlett
 .. image:: https://badge.fury.io/py/scarlett.png
     :target: http://badge.fury.io/py/scarlett
 
-.. image:: https://travis-ci.org/bossjones/scarlett.png?branch=master
-        :target: https://travis-ci.org/bossjones/scarlett
-
 .. image:: https://pypip.in/d/scarlett/badge.png
         :target: https://pypi.python.org/pypi/scarlett
+
+.. image:: https://travis-ci.org/bossjones/scarlett.png?branch=master
+        :target: https://travis-ci.org/bossjones/scarlett
 
 .. image:: https://coveralls.io/repos/bossjones/scarlett/badge.png?branch=master
     :target: https://coveralls.io/r/bossjones/scarlett?branch=master

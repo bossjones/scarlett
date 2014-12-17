@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Malcolm Jones <@bossjones>
+* Malcolm Jones <bossjones@theblacktonystark.com>
 
 Contributors
 ------------
