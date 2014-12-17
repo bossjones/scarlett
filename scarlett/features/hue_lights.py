@@ -4,6 +4,7 @@ import scarlett
 from scarlett.features import *
 from phue import Bridge
 import socket
+import time
 
 
 class FeatureHueLights(Feature):
@@ -50,6 +51,13 @@ class FeatureHueLights(Feature):
     def find_light(self, light_name):
         return self._light_objects[light_name]
 
+    def get_light_names(self):
+        self.light_play()
+        lights_list = self.b.get_light_objects('list')
+        for light in lights_list:
+            self.voice.speak(light.name)
+            time.sleep(2)
+
     def brighten_light(self, light_name):
         self._light_objects[light_name].on = True
         self._light_objects[light_name].brightness = 240
@@ -77,7 +85,7 @@ class FeatureHueLights(Feature):
         for l in self.lights:
             scarlett.log.debug(Fore.YELLOW + "" + (l.name))
 
-    def light_play(self, cmd):
+    def light_play(self, cmd="hue_lights"):
         self.voice.play('pi-response')
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(

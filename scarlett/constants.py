@@ -103,6 +103,7 @@ LIGHT_CMDS = {
     "TURN LIGHTS DARKER": "echo '{\"bri\": 100}' | hue lights 3 state",
     "LIGHTS DARKER": "echo '{\"bri\": 100}' | hue lights 3 state",
     "SEXY TIME": "hue lights colorloop",
+    "GET LIGHT NAMES": "get light names",
 }
 
 TIME_CMDS = {

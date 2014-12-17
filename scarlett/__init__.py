@@ -102,11 +102,11 @@ def connect_nltk(brain, **kwargs):
     scarlett.log.debug("connect_nltk")
 
 
-def connect_hue(brain, **kwargs):
+def connect_hue(voice, brain, **kwargs):
     global log
     scarlett.log.debug("connect_hue")
     from scarlett.features.hue_lights import FeatureHueLights
-    return FeatureHueLights(brain)
+    return FeatureHueLights(voice, brain)
 
 
 def connect_time(brain, **kwargs):
