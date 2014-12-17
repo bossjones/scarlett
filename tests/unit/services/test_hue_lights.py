@@ -239,7 +239,7 @@ class HueTestCase(ScarlettTestCase):
     @attr(hue=True)
     @responses.activate
     def test_hue_lights_names(self):
-        light_resp_path     = "%s/fixtures/http/hue_api_lights_resp.json" % (os.environ['MAIN_DIR'])
+        light_resp_path     = "%s/tests/fixtures/http/hue_api_lights_resp.json" % (os.environ['MAIN_DIR'])
         with open(light_resp_path) as json_file:
              _hue_api_lights_resp = json.load(json_file)
         json_file.close
