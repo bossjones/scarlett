@@ -12,24 +12,33 @@ class FeatureHueLights(Feature):
 
     def __init__(self, voice, brain, *args, **kwargs):
         super(FeatureHueLights, self).__init__(args, kwargs)
+        self._light_objects = []
         self._name = "hue"
         self.voice = voice
         self.brain = brain
         self.hue_config = os.path.join(expanduser('~'), '.python_hue')
         self.hue_bridge = "{0}".format(scarlett.config.get('hue', 'bridge'))
 
+        # add test for unauthorized user
+        # [{u'error': {u'address': u'/',
+        # u'description': u'unauthorized user',
+        # u'type': 1}}]
+
         try:
             self.b = Bridge(
                 ip=self.hue_bridge,
-                username='python_hue',
                 config_file_path=self.hue_config)
         except socket.error:  # Error connecting using Phue
             scarlett.log.debug(
                 Fore.YELLOW +
-                "Sorry, had an issue connecting to phue Bridge")
+                "Sorry, had an issue connecting to phue Bridge, make sure you register the app first")
 
         self.api = self.b.get_api()
         self.lights = self.api.get('lights')
+
+        # capture all lights currently configured
+        for light_obj in self.b.get_light_objects():
+            self._light_objects.append(light_obj)
 
     def find_active_lights(self):
         pass
@@ -39,11 +48,12 @@ class FeatureHueLights(Feature):
         return self._name
 
     def find_light(self, light_name):
-        return self.b.get_light(light_name)
+        return self._light_objects[light_name]
 
     def brighten_light(self, light_name):
-        command = {'bri': 240}
-        return self.b.set_light(light_name, command)
+        self._light_objects[light_name].on = True
+        self._light_objects[light_name].brightness = 240
+        return self._light_objects[light_name].brightness
 
     def turn_on_all_lights(self):
         lights_list = self.b.get_light_objects('list')
@@ -53,12 +63,15 @@ class FeatureHueLights(Feature):
             light.bri = 127
 
     def brighten_lights_all(self, light_name):
-        command = {'bri': 240}
-        return self.b.set_light(light_name, command)
+        lights_list = self._light_objects
+        for light in lights_list:
+            light.on = True
+            light.brightness = 240
 
     def darken_light(self, light_name):
-        command = {'bri': 100}
-        return self.b.set_light(light_name, command)
+        self._light_objects[light_name].on = True
+        self._light_objects[light_name].brightness = 100
+        return self._light_objects[light_name].brightness
 
     def print_light_names(self):
         for l in self.lights:
