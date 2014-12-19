@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import scarlett
 from scarlett.commands import Command
 from scarlett.listener import *
