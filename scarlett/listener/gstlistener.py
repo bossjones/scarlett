@@ -177,6 +177,7 @@ class GstListener(Listener):
                 Fore.RED +
                 "AFTER run_cmd, self.keyword_identified = %i" %
                 (self.keyword_identified))
+            self.pipeline.set_state(gst.STATE_PLAYING)
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function")
