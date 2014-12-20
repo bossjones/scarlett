@@ -8,7 +8,7 @@ from scarlett.listener.gstlistener import *
 # this is very important, without this, callbacks from gstreamer thread
 # will messed our program up
 import gobject
-#gobject.threads_init()
+gobject.threads_init()
 import argparse
 
 class ScarlettBot(object):
