@@ -12,7 +12,7 @@ import gobject
 import argparse
 import time
 
-class ScarlettBot(object):
+class ScarlettBotPlayAll(object):
     """ Actual scarlett bot object that has a brain, voice, etc """
 
     _scarlett_services = []
@@ -32,7 +32,7 @@ class ScarlettBot(object):
         self._wa   = scarlett.connect_wa(self._brain,self._voice)
         self._wordnik = scarlett.connect_wordnik(self._brain,self._voice)
 
-        #### test all services now
+        # #### test all services now
         self.run_all()
 
     def main(self):
@@ -75,5 +75,5 @@ class ScarlettBot(object):
 # If the program is run directly or passed as an argument to the python
 # interpreter then create a HelloWorld instance and show it
 if __name__ == "__main__":
-    scarlett_daemon = ScarlettBot()
-    scarlett_daemon.main()
+    scarlett_daemon = ScarlettBotPlayAll()
+    #scarlett_daemon.main()
