@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+
+import scarlett
+from scarlett.constants import *
+from scarlett.basics.voice import Voice
+from scarlett.listener.gstlistener import *
+#from IPython.core.debugger import Tracer
+# this is very important, without this, callbacks from gstreamer thread
+# will messed our program up
+import gobject
+#gobject.threads_init()
+import argparse
+import time
+
+class ScarlettBot(object):
+    """ Actual scarlett bot object that has a brain, voice, etc """
+
+    _scarlett_services = []
+    _last_send_time    = time.time()
+
+    def __init__(self):
+        scarlett.set_stream_logger('scarlett')
+        scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
+        #Tracer()()
+        self._brain = scarlett.connect_brain()
+        self._voice = scarlett.connect_voice(self._brain)
+        self._voice.play('pi-listening')
+        #self.listener = GstListener("gst",self._brain,self._voice,False)
+        self._hue   = scarlett.connect_hue(self._brain,self._voice)
+        self._forecast = scarlett.connect_forecastio(self._brain,self._voice)
+        self._time = scarlett.connect_time(self._brain,self._voice)
+        self._wa   = scarlett.connect_wa(self._brain,self._voice)
+        self._wordnik = scarlett.connect_wordnik(self._brain,self._voice)
+
+        #### test all services now
+        self.run_all()
+
+    def main(self):
+        # All PyGTK applications must have a gtk.main(). Control ends here
+        # and waits for an event to occur (like a key press or mouse event).
+        gtk.main()
+
+    def destroy(self):
+        scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
+        gtk.main_quit()
+
+    def run_hue(self):
+        self._hue.get_light_names()
+
+    def run_forecastio(self):
+        self._forecast.forecast_play()
+
+    def run_wordnik(self):
+        pass
+
+    def run_nltk(self):
+        pass
+
+    def run_time(self):
+        self._time.time_play()
+
+    def run_wa(self):
+        pass
+
+    def run_all(self):
+        time.sleep(2)
+        self.run_time()
+        time.sleep(2)
+        self.run_hue()
+        time.sleep(2)
+        self.run_forecastio()
+        time.sleep(2)
+
+
+# If the program is run directly or passed as an argument to the python
+# interpreter then create a HelloWorld instance and show it
+if __name__ == "__main__":
+    scarlett_daemon = ScarlettBot()
+    scarlett_daemon.main()

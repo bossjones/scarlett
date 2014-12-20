@@ -85,19 +85,19 @@ def connect_voice(brain, **kwargs):
     return Voice(brain)
 
 
-def connect_forecastio(brain, **kwargs):
+def connect_forecastio(voice, brain, **kwargs):
     global log
     scarlett.log.debug("connect_forecastio")
     from scarlett.features.forecast import FeatureForecast
-    return FeatureForecast()
+    return FeatureForecast(voice, brain)
 
 
-def connect_wordnik(brain, **kwargs):
+def connect_wordnik(voice, brain, **kwargs):
     global log
     scarlett.log.debug("connect_wordnik")
 
 
-def connect_nltk(brain, **kwargs):
+def connect_nltk(voice, brain, **kwargs):
     global log
     scarlett.log.debug("connect_nltk")
 
@@ -109,14 +109,14 @@ def connect_hue(voice, brain, **kwargs):
     return FeatureHueLights(voice, brain)
 
 
-def connect_time(brain, **kwargs):
+def connect_time(voice, brain, **kwargs):
     global log
     scarlett.log.debug("connect_time")
     from scarlett.features.time import FeatureTime
-    return FeatureTime()
+    return FeatureTime(voice, brain)
 
 
-def connect_wa(brain, **kwargs):
+def connect_wa(voice, brain, **kwargs):
     global log
     scarlett.log.debug("connect_wa")
 

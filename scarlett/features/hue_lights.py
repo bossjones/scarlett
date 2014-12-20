@@ -12,13 +12,14 @@ class FeatureHueLights(Feature):
 
     capability = []
 
-    def __init__(self, voice, brain, *args, **kwargs):
+    def __init__(self, voice, brain, hue_dotfile='.python_hue',*args, **kwargs):
         super(FeatureHueLights, self).__init__(args, kwargs)
         self._light_objects = []
         self._name = "hue"
         self.voice = voice
         self.brain = brain
-        self.hue_config = os.path.join(expanduser('~'), '.python_hue')
+        self.hue_dotfile = hue_dotfile
+        self.hue_config = os.path.join(expanduser('~'), self.hue_dotfile)
         self.hue_bridge = "{0}".format(scarlett.config.get('hue', 'bridge'))
 
         # add test for unauthorized user

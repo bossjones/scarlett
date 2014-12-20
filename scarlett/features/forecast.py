@@ -26,7 +26,7 @@ class FeatureForecast(Feature):
     def add_auth(self, http_request):
         pass
 
-    def forecast_play(self, cmd):
+    def forecast_play(self):
 
         self.voice.play('pi-response')
         forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng)
