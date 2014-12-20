@@ -4,7 +4,6 @@ Defines an interface which all Auth handlers need to implement.
 
 import scarlett
 from scarlett.features import *
-from scarlett.basics import Voice
 import forecastio
 
 

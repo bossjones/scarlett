@@ -7,6 +7,12 @@ import socket
 import time
 import os
 
+try:
+    os.path.expanduser('~')
+    expanduser = os.path.expanduser
+except (AttributeError, ImportError):
+    # This is probably running on App Engine.
+    expanduser = (lambda x: x)
 
 class FeatureHueLights(Feature):
 
