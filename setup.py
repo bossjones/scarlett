@@ -104,10 +104,15 @@ setup(
     keywords="scarlett",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
+        "Environment :: Console",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Software Development :: Libraries :: Python Modules",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 2.7",
     ],
     **extra
 )
