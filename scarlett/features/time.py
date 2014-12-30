@@ -2,6 +2,7 @@ import scarlett
 import time
 import datetime
 from scarlett.features import *
+import scarlett.basics.voice
 
 
 class FeatureTime(Feature):

@@ -3,6 +3,7 @@
 import scarlett
 from scarlett.commands import Command
 from scarlett.listener import *
+import scarlett.basics.voice
 
 # source: http://stackoverflow.com/questions/8005765/how-to-get-duration-of-steaming-data-with-gstreamer
 # LETS TRY USING THIS: # gobject.threads_init()
@@ -102,6 +103,18 @@ class GstListener(Listener):
         self.scarlett_stop_listen()
         self.scarlett_start_listen()
 
+    def scarlett_reset_listen(self):
+        self.pipeline.set_state(gst.STATE_NULL)
+        self.failed = int(
+            self.brain.set_brain_item_r(
+                'scarlett_failed',
+                0))
+        self.keyword_identified = int(
+            self.brain.set_brain_item_r(
+                'scarlett_main_keyword_identified',
+                0))
+        self.pipeline.set_state(gst.STATE_PLAYING)
+
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
 
@@ -129,7 +142,7 @@ class GstListener(Listener):
                 self.brain.set_brain_item_r(
                     'scarlett_main_keyword_identified',
                     1))
-            self.voice.play('pi-listening')
+            scarlett.basics.voice.play_block('pi-listening')
         else:
             # redis implementation # self.failed += 1
             self.failed_temp = int(
@@ -144,23 +157,11 @@ class GstListener(Listener):
                 (self.failed))
             if self.failed > 4:
                 # reset pipline
-                self.pipeline.set_state(gst.STATE_NULL)
+                self.scarlett_reset_listen()
                 self.voice.speak(
                     " %s , if you need me, just say my name." %
                     (self.config.get('scarlett', 'owner')))
-                self.set_brain_item('scarlett_failed', 0)
-                self.failed = int(
-                    self.brain.set_brain_item_r(
-                        'scarlett_failed',
-                        0))
-                # redis implementation # self.failed = 0
-                # TODO: If this REALLY doesn't work, DISABLED IT
-                self.keyword_identified = int(
-                    self.brain.set_brain_item_r(
-                        'scarlett_main_keyword_identified',
-                        0))
-                self.pipeline.set_state(gst.STATE_PLAYING)
-                self.voice.play('cancel')
+                scarlett.basics.voice.play_block('cancel')
 
     def run_cmd(self, hyp, uttid):
         scarlett.log.debug(Fore.YELLOW + "Inside run_cmd function")
@@ -173,16 +174,17 @@ class GstListener(Listener):
             self.cancel_listening()
         else:
             self.commander.check_cmd(hyp)
+            self.keyword_identified = int(
+                self.brain.get_brain_item('scarlett_main_keyword_identified'))
             scarlett.log.debug(
                 Fore.RED +
                 "AFTER run_cmd, self.keyword_identified = %i" %
                 (self.keyword_identified))
-            self.pipeline.set_state(gst.STATE_PLAYING)
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function")
         self.pipeline.set_state(gst.STATE_PAUSED)
-        self.voice.play('pi-listening')
+        scarlett.basics.voice.play_block('pi-listening')
         valve.set_property('drop', False)
         valve.set_property('drop', True)
 
@@ -190,18 +192,13 @@ class GstListener(Listener):
     def cancel_listening(self):
         scarlett.log.debug(Fore.YELLOW + "Inside cancel_listening function")
         #valve.set_property('drop', False)
-        self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
-        self.keyword_identified = int(
-            self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
-                0))
+        self.scarlett_reset_listen()
         scarlett.log.debug(Fore.YELLOW + "self.failed = %i" % (self.failed))
         scarlett.log.debug(
             Fore.RED +
             "self.keyword_identified = %i" %
             (self.keyword_identified))
-        self.scarlett_restart_listen()
-        self.voice.play('pi-cancel')
+        scarlett.basics.voice.play_block('pi-cancel')
 
     def get_hmm_full_path(self):
         if os.environ.get('SCARLETT_HMM'):
