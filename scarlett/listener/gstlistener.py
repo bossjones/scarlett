@@ -99,12 +99,8 @@ class GstListener(Listener):
     def scarlett_pause_listen(self):
         self.pipeline.set_state(gst.STATE_PAUSED)
 
-    def scarlett_restart_listen(self):
-        self.scarlett_stop_listen()
-        self.scarlett_start_listen()
-
     def scarlett_reset_listen(self):
-        self.pipeline.set_state(gst.STATE_NULL)
+        self.scarlett_stop_listen()
         self.failed = int(
             self.brain.set_brain_item_r(
                 'scarlett_failed',
@@ -113,7 +109,7 @@ class GstListener(Listener):
             self.brain.set_brain_item_r(
                 'scarlett_main_keyword_identified',
                 0))
-        self.pipeline.set_state(gst.STATE_PLAYING)
+        self.scarlett_start_listen()
 
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
@@ -161,7 +157,6 @@ class GstListener(Listener):
                 self.voice.speak(
                     " %s , if you need me, just say my name." %
                     (self.config.get('scarlett', 'owner')))
-                scarlett.basics.voice.play_block('cancel')
 
     def run_cmd(self, hyp, uttid):
         scarlett.log.debug(Fore.YELLOW + "Inside run_cmd function")
@@ -198,7 +193,6 @@ class GstListener(Listener):
             Fore.RED +
             "self.keyword_identified = %i" %
             (self.keyword_identified))
-        scarlett.basics.voice.play_block('pi-cancel')
 
     def get_hmm_full_path(self):
         if os.environ.get('SCARLETT_HMM'):

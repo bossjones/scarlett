@@ -32,7 +32,6 @@ __PLAYER__ = None
 # Connect End Of Stream handler on bus
 main_loop = gobject.MainLoop()
 def eos_handler(bus, message):
-    scarlett.log.debug(Fore.YELLOW + '%s ' + __name__)
     __PLAYER__.set_state(gst.STATE_READY)
     main_loop.quit()
 
@@ -89,18 +88,6 @@ def play_free():
     if __PLAYER__ is not None:
         __PLAYER__.set_state(gst.STATE_NULL)
         __PLAYER__ = None
-
-# def play(self, sound):
-#     scarlett.log.debug(Fore.YELLOW + 'PWD: ' + PWD)
-#     scarlett.log.debug(Fore.YELLOW + 'SOUND: ' + sound)
-#     global __PLAYER__
-#     __PLAYER__.set_state(gst.STATE_NULL)
-#     __PLAYER__ = gst.element_factory_make("playbin", "player")
-#     __PLAYER__.set_property(
-#         'uri', 'file://%s/static/sounds/%s.wav' %
-#         (PWD, sound))
-#     __PLAYER__.set_state(gst.STATE_PLAYING)
-
 
 class Voice(ScarlettBasics):
 
