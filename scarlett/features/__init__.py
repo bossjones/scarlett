@@ -15,6 +15,7 @@
 import scarlett
 from scarlett.constants import *
 
+
 class Feature(object):
 
     def __init__(self, voice, brain):

@@ -10,9 +10,7 @@ class Listener(object):
         _listener_types = ['gearman', 'gst']
 
         self.lis_type = lis_type
-        #self.brain = brain
         self.config = scarlett.config
-        #self.voice  = voice
 
     def __str__(self):
         return "You are using a %s type Listener" % (self.lis_type)

@@ -1,6 +1,6 @@
 import scarlett
-import ystockquote
 from scarlett.features import *
+import ystockquote
 
 
 class FeatureStock(Feature):

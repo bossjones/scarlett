@@ -12,8 +12,8 @@ port = 6379
 redis_db = 9
 
 [hue]
-# home bridge
-bridge = 192.168.2.11
+# office bridge
+bridge = 10.32.80.55
 
 [pocketsphinx]
 silprob = 0.1

@@ -1,5 +1,5 @@
 import scarlett
-from . import time
+import time
 from scarlett.features import *
 
 

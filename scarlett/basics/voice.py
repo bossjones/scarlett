@@ -14,14 +14,12 @@ import json
 import glob
 import tempfile
 import subprocess
+import pygst
+pygst.require("0.10")
+import gst
 import pygtk
 pygtk.require('2.0')
 import gtk
-import gobject
-import pygst
-pygst.require('0.10')
-#gobject.threads_init()
-import gst
 from scarlett.basics import *
 from scarlett.constants import *
 
@@ -35,22 +33,22 @@ class Voice(ScarlettBasics):
         self.brain = brain
         self.config = scarlett.config
         self.sudo_enabled = self.config.getboolean('speech', 'sudo_enabled')
-        self.reading_Speed = 165
+        self.reading_speed = 165
 
     # best sounding female voice: espeak -ven+f3 -k5 -s150 "hello malcolm"
     def speak(self, text, speed=150):
         text = ''.join(e for e in text if e.isalpha() or e.isspace())
         if self.sudo_enabled:
-            os.system('sudo espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))
+            subprocess.Popen('sudo espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
         else:
-            os.system('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text))
+            subprocess.Popen('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
 
     def greetings_play(self):
         self.speak(
             "Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands")
 
     def read(self, text):
-        self.speak(text, self.reading_Speed)
+        self.speak(text, self.reading_speed)
 
     def play(self, sound):
         scarlett.log.debug(Fore.YELLOW + 'PWD: ' + PWD)

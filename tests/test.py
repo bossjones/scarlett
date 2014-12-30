@@ -39,7 +39,8 @@ def main():
                                '--with-coverage'
                                '-v',
                                '--cover-erase',
-                               '--cover-package=scarlett'])
+                               '--cover-package=scarlett'
+                               '-d'])
     if not attribute_args:
         # If the user did not specify any filtering criteria, we at least
         # will filter out any test tagged 'notdefault'.
@@ -49,7 +50,8 @@ def main():
             '--with-coverage',
             '-v',
             '--cover-erase',
-            '--cover-package=scarlett']
+            '--cover-package=scarlett',
+            '-d']
         #--cover-erase --cover-package=flask_encryptedsession --cover-html
 
     # Set default tests used by e.g. tox. For Py2 this means all unit
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     os.environ[
         'SCARLETT_HMM'] = "$%s/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k" % (os.environ['MAIN_DIR'])
     os.environ[
-        'SCARLETT_LM'] = "$%s/tests/fixtures/lm/1602.lm" % (os.environ['MAIN_DIR'])
+        'SCARLETT_LM'] = "$%s/tests/fixtures/lm/6253.lm" % (os.environ['MAIN_DIR'])
     os.environ[
-        'SCARLETT_DICT'] = "$%s/tests/fixtures/dict/1602.dic" % (os.environ['MAIN_DIR'])
+        'SCARLETT_DICT'] = "$%s/tests/fixtures/dict/6253.dic" % (os.environ['MAIN_DIR'])
     sys.exit(main())

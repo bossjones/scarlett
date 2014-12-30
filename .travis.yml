@@ -44,6 +44,16 @@ services:
 ##         libgstreamer1.0-dev
 ##         libgstreamer-plugins-base1.0-dev
 ##
+
+## instructions to install xvfb to run GUI on headless server
+
+## sudo apt-get update && sudo apt-get install -y xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic xvfb x11-apps imagemagick gtk2-engines-pixbuf
+## install/copy xvfb init.d script
+## sudo chmod +x /etc/init.d/xvfb
+# sudo update-rc.d xvfb defaults.
+# export DISPLAY=:99
+# sudo /etc/init.d/xvfb start
+
 install:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"

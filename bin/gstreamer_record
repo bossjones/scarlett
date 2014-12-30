@@ -15,45 +15,237 @@ import gtk
 import gobject
 import pygst
 pygst.require('0.10')
-gobject.threads_init()
+#gobject.threads_init()
 import gst
 from IPython.core.debugger import Tracer
+from colorama import init, Fore, Back, Style
+
+# set colorama
+init(autoreset=True)
+
+# install graph
+# sudo apt-get install gdebi-core -y
+# sudo apt-get install gdebi-core graphviz-* -y
+# install gst-debug-viewer
+# git clone git://people.freedesktop.org/~cymacs/gst-debug-viewer
+# python setup.py install
+# dbus-launch gsettings set com.canonical.Unity.Launcher favorites ...
 
 global pipeline
 
-def main():
+import logging
+import logging.handlers
 
-    # gst-launch-0.10 filesrc location=/home/pi/dev/bossjones-github/scarlett/tests/fixtures/wav/turn_lights_red.wav ! decodebin2 name=mux ! queue ! audioconvert ! audioresample ! vader name=vad auto_threshold=true ! pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k name=listener ! fakesink dump=1
+LOG_FORMAT = '%(asctime)s | %(levelname)1.1s | %(filename)s:%(lineno)d (%(funcName)s) | %(message)s'
 
-    parse_launch_array = [
-              'filesrc location=/home/pi/dev/bossjones-github/scarlett/tests/fixtures/wav/turn_lights_red.wav',
-              'decodebin2 name=mux',
-              'queue'
-              'audioconvert',
-              'audioresample',
-              'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
-              'audioresample',
-              'audio/x-raw-int, rate=8000',
-              'vader name=vader auto-threshold=true',
-              'pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm' +
-              ' dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic' +
-              ' hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k' +
-              ' name=listener',
-              'fakesink dump=1']
+# max size of log file before rotating
+log_maxsize = 20 * 1024*1024
+log_backups = 4
+
+class NullLogger(object):
+    """
+    The NullLogger can be used in the place of a "real" logging module logger
+    if the code just uses the standard levels/methods for logging.
+    It is useful when you need to suppress logging or bypass the overhead of
+    the logging module logger.
+    """
+    def __init__(self, f_out=None):
+        self.f_out = f_out
+
+    def debug(self, msg):
+        if self.f_out:
+            self.f_out.write("%s\n" % msg)
+            self.f_out.flush()
+
+    def info(self, msg):
+        if self.f_out:
+            self.f_out.write("%s\n" % msg)
+            self.f_out.flush()
+
+    def warn(self, msg):
+        if self.f_out:
+            self.f_out.write("%s\n" % msg)
+            self.f_out.flush()
+
+    def error(self, msg):
+        if self.f_out:
+            self.f_out.write("%s\n" % msg)
+            self.f_out.flush()
+
+    def addHandler(self, hndlr):
+        pass
 
 
-    pipeline = gst.parse_launch(
-       ' ! '.join(parse_launch_array))
+def get_logger(name='gstreamer_record', level=None, null=False,
+               options=None, log_file=None, log_stderr=False):
 
-    #pipeline
-    #pipeline.set_property('configured', True)
-    pipeline.set_state(gst.STATE_PLAYING)
-    #gobject.timeout_add(5000,__timeout__,pipeline)
-    #Tracer()()
-    gtk.main()
+    if null:
+        # User wants a Null Logger
+        return NullLogger()
 
-#def __timeout__(pipeline):
-#    pipeline.set_state(gst.STATE_NULL)
+    # Create a logger
+    logger = logging.Logger('gstreamer_record')
 
+    if level is None:
+        if (options is not None) and (options.loglevel is not None):
+            level = options.loglevel
+        else:
+            level = logging.WARN
+
+    fmt = logging.Formatter(LOG_FORMAT)
+    if (not log_file) and (options is not None) and (options.logfile is not None):
+        log_file = options.logfile
+
+    if log_file:
+        fileHdlr  = logging.handlers.RotatingFileHandler(options.logfile,
+                                                         maxBytes=log_maxsize,
+                                                         backupCount=log_backups)
+        fileHdlr.setLevel(level)
+        fileHdlr.setFormatter(fmt)
+        logger.addHandler(fileHdlr)
+
+    if (not log_stderr) and (options is not None) and (options.logstderr):
+        log_stderr = options.logstderr
+
+    if log_stderr:
+        stderrHdlr = logging.StreamHandler()
+        stderrHdlr.setLevel(level)
+        stderrHdlr.setFormatter(fmt)
+        logger.addHandler(stderrHdlr)
+
+    return logger
+
+#END
+
+class ScarlettGstreamerRecord(object):
+    """ Actual scarlett bot object that has a brain, voice, etc """
+
+    #os.environ['GST_DEBUG'] = "3,filesrc:4"
+    os.environ['GST_DEBUG'] = "4"
+
+    os.environ['GST_DEBUG_DUMP_DOT_DIR'] = "/home/pi/dev/bossjones-github/scarlett"
+
+    _scarlett_services = []
+    _last_send_time    = time.time()
+
+    def __init__(self):
+        # gst-launch-0.10 filesrc location=/home/pi/dev/bossjones-github/scarlett/tests/fixtures/wav/turn_lights_red.wav ! decodebin2 name=mux ! queue ! audioconvert ! audioresample ! vader name=vad auto_threshold=true ! pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/1602.lm dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/1602.dic hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k name=listener ! fakesink dump=1
+
+        self.logger = logging.getLogger('gstreamer_record')
+
+        self.parse_launch_array = [
+                  'filesrc location=/home/pi/dev/bossjones-github/scarlett/tests/fixtures/wav/turn_lights_red.wav',
+                  'decodebin2 name=mux',
+                  'queue',
+                  'audioconvert',
+                  'audioresample',
+                  'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
+                  'audioresample',
+                  'audio/x-raw-int, rate=8000',
+                  'vader name=vader auto-threshold=true',
+                  'pocketsphinx lm=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/lm/6253.lm' +
+                  ' dict=/home/pi/dev/bossjones-github/scarlett/scarlett/static/speech/dict/6253.dic' +
+                  ' hmm=/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k' +
+                  ' name=listener',
+                  'fakesink dump=1']
+
+        #Tracer()()
+
+        self.logger.info(
+            Fore.YELLOW +
+            'Initializing gst-parse-launch -------->')
+        self.pipeline = gst.parse_launch(
+            ' ! '.join(self.parse_launch_array))
+
+        listener = self.pipeline.get_by_name('listener')
+        listener.connect('result', self.__result__)
+        listener.set_property('configured', True)
+
+        self.logger.info(
+            Fore.YELLOW +
+            "Initializing connection to vader element -------->")
+        # TODO: Play with vader object some more
+        #vader = self.pipeline.get_by_name("vader")
+        #vader.connect("vader-start", self._on_vader_start)
+        #vader.connect("vader-stop", self._on_vader_stop)
+
+        self.logger.info(Fore.YELLOW + "Initializing Bus -------->")
+        bus = self.pipeline.get_bus()
+        bus.add_signal_watch()
+        self.logger.info(Fore.YELLOW + "Sending Message to Bus ---------->")
+        bus.connect('message::application', self.__application_message__)
+
+        self.pipeline.set_state(gst.STATE_PLAYING)
+
+    def main(self):
+        # All PyGTK applications must have a gtk.main(). Control ends here
+        # and waits for an event to occur (like a key press or mouse event).
+        gtk.main()
+
+    def destroy(self, widget, data=None):
+        print "destroy signal occurred"
+        gtk.main_quit()
+
+    # def destroy(self):
+    #     gtk.main_quit()
+
+    def delete_event(self, widget, event, data=None):
+        # If you return FALSE in the "delete_event" signal handler,
+        # GTK will emit the "destroy" signal. Returning TRUE means
+        # you don't want the window to be destroyed.
+        # This is useful for popping up 'are you sure you want to quit?'
+        # type dialogs.
+        print "delete event occurred"
+
+        # Change FALSE to TRUE and the main window will not be destroyed
+        # with a "delete_event".
+        return False
+
+    def __result__(self, listener, text, uttid):
+        self.logger.info(Fore.YELLOW + "Inside __result__")
+        """We're inside __result__"""
+        struct = gst.Structure('result')
+        struct.set_value('hyp', text)
+        struct.set_value('uttid', uttid)
+        listener.post_message(gst.message_new_application(listener, struct))
+
+    def __partial_result__(self, listener, text, uttid):
+        self.logger.info(Fore.YELLOW + "Inside __partial_result__")
+        """We're inside __partial_result__"""
+        struct = gst.Structure('partial_result')
+        struct.set_value('hyp', text)
+        struct.set_value('uttid', uttid)
+        listener.post_message(gst.message_new_application(listener, struct))
+
+    def __finished__(self, listener, text, uttid):
+        self.logger.info(Fore.YELLOW + "Inside __partial_result__")
+        """We're inside __partial_result__"""
+        struct = gst.Structure('partial_result')
+        struct.set_value('hyp', text)
+        struct.set_value('uttid', uttid)
+        listener.post_message(gst.message_new_application(listener, struct))
+
+    def run_cmd(self, hyp, uttid):
+        self.logger.info(Fore.YELLOW + "Inside run_cmd function")
+        self.logger.info(Fore.YELLOW + "KEYWORD IDENTIFIED BABY")
+        #self.destroy()
+
+    def __application_message__(self, bus, msg):
+        msgtype = msg.structure.get_name()
+        self.logger.info(Fore.YELLOW + "msgtype: " + msgtype)
+        if msgtype == 'partial_result':
+            self.partial_result(msg.structure['hyp'], msg.structure['uttid'])
+        elif msgtype == 'result':
+                self.finished(msg.structure['hyp'], msg.structure['uttid'])
+        elif msgtype == gst.MESSAGE_EOS:
+            self.pipeline.set_state(gst.STATE_NULL)
+        elif msgtype == gst.MESSAGE_ERROR:
+            self.pipeline.set_state(gst.STATE_NULL)
+            (err, debug) = msgtype.parse_error()
+            self.logger.info(Fore.RED + "Error: %s" % err, debug)
+
+# If the program is run directly or passed as an argument to the python
+# interpreter then create a HelloWorld instance and show it
 if __name__ == "__main__":
-    main()
+    scarlett_daemon = ScarlettGstreamerRecord()
+    scarlett_daemon.main()

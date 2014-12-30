@@ -4,7 +4,7 @@ Defines an interface which all Auth handlers need to implement.
 
 import scarlett
 from scarlett.features import *
-from scarlett.basics import Voice
+import forecastio
 
 
 class FeatureForecast(Feature):
@@ -25,7 +25,7 @@ class FeatureForecast(Feature):
     def add_auth(self, http_request):
         pass
 
-    def forecast_play(self, cmd):
+    def forecast_play(self):
 
         self.voice.play('pi-response')
         forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng)
@@ -62,4 +62,3 @@ class FeatureForecast(Feature):
             self.brain.set_brain_item_r(
                 'scarlett_main_keyword_identified',
                 0))
-

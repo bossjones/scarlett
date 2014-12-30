@@ -32,6 +32,8 @@ class Command(object):
                                (command, LIGHT_CMDS[command]))
             try:
                 scarlett.log.debug(Fore.YELLOW + "trying light chit")
+                self.get_hue = scarlett.connect_hue(self.voice, self.brain)
+                return self.get_hue.get_light_names()
                 # REFACTOR ### light_play(LIGHT_CMDS[command])
             except Exception as e:
                 scarlett.log.debug(
