@@ -8,9 +8,25 @@ from scarlett.listener.gstlistener import *
 #from IPython.core.debugger import Tracer
 # this is very important, without this, callbacks from gstreamer thread
 # will messed our program up
-import gobject
-gobject.threads_init()
+### import gobject
+### gobject.threads_init()
+### import argparse
+
+import signal
+gobjectnotimported = False
+try:
+    from dbus.mainloop.glib import DBusGMainLoop
+    DBusGMainLoop(set_as_default=True)
+    import gobject
+    import pygst
+    pygst.require('0.10')
+    gobject.threads_init()
+except:
+    gobjectnotimported = True
 import argparse
+
+# Unregister handler, next Ctrl-C will kill app
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class ScarlettBot(object):
     """ Actual scarlett bot object that has a brain, voice, etc """
@@ -36,8 +52,13 @@ class ScarlettBot(object):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         gtk.main_quit()
 
+    def Exit(self):
+        mainloop.quit()
+
 # If the program is run directly or passed as an argument to the python
 # interpreter then create a HelloWorld instance and show it
 if __name__ == "__main__":
     scarlett_daemon = ScarlettBot()
-    scarlett_daemon.main()
+    sys.exit(gobject.MainLoop().run())
+
+    #scarlett_daemon.main()
