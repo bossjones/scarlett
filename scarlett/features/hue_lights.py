@@ -6,6 +6,7 @@ from phue import Bridge
 import socket
 import time
 import os
+import scarlett.basics.voice
 
 try:
     os.path.expanduser('~')

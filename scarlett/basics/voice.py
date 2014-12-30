@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 
 """
 Scarlett Client Utils
@@ -23,8 +23,71 @@ import gtk
 from scarlett.basics import *
 from scarlett.constants import *
 
-__PLAYER__ = gst.element_factory_make("playbin", "player")
+import gobject
+gobject.threads_init()
 
+# Create a gtreamer playerbin
+__PLAYER__ = None
+
+# Connect End Of Stream handler on bus
+main_loop = gobject.MainLoop()
+def eos_handler(bus, message):
+    __PLAYER__.set_state(gst.STATE_READY)
+    main_loop.quit()
+
+
+def play(sound):
+    """
+    Play a sound.
+    """
+    scarlett.log.debug(Fore.YELLOW + 'PWD: ' + PWD)
+    scarlett.log.debug(Fore.YELLOW + 'SOUND: ' + sound)
+    global __PLAYER__
+
+    # Create player once
+    if __PLAYER__ is None:
+        __PLAYER__ = gst.element_factory_make("playbin2", "player")
+
+        # Connect End Of Stream handler on bus
+        bus = __PLAYER__.get_bus()
+        bus.add_signal_watch()
+        bus.connect('message::eos', eos_handler)
+
+    # Stop previous play if any
+    else:
+        __PLAYER__.set_state(gst.STATE_READY)
+
+    filename = '%s/static/sounds/%s.wav' % (PWD, sound)
+
+    # Play file
+    __PLAYER__.set_property('uri', 'file://%s' % filename)
+    __PLAYER__.set_state(gst.STATE_PLAYING)
+
+
+def play_block(sound):
+    """
+    Play sound but block until end
+    """
+    #scarlett.log.debug(Fore.YELLOW + '%s ' + __name__)
+    global main_loop
+
+    # Play sound
+    play(sound)
+
+    # Wait for EOS signal in mail loop
+    main_loop.run()
+
+
+def play_free():
+    """
+    Free player resource
+    """
+    global __PLAYER__
+
+    # Delete player
+    if __PLAYER__ is not None:
+        __PLAYER__.set_state(gst.STATE_NULL)
+        __PLAYER__ = None
 
 class Voice(ScarlettBasics):
 
@@ -50,13 +113,3 @@ class Voice(ScarlettBasics):
     def read(self, text):
         self.speak(text, self.reading_speed)
 
-    def play(self, sound):
-        scarlett.log.debug(Fore.YELLOW + 'PWD: ' + PWD)
-        scarlett.log.debug(Fore.YELLOW + 'SOUND: ' + sound)
-        global __PLAYER__
-        __PLAYER__.set_state(gst.STATE_NULL)
-        __PLAYER__ = gst.element_factory_make("playbin", "player")
-        __PLAYER__.set_property(
-            'uri', 'file://%s/static/sounds/%s.wav' %
-            (PWD, sound))
-        __PLAYER__.set_state(gst.STATE_PLAYING)

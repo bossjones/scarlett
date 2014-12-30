@@ -74,7 +74,7 @@ setup(
     description="S.C.A.R.L.E.T.T is Tony Darks artificially programmed intelligent computer. It is programmed to speak with a female voice in a British accent.",
     long_description=readme + "\n\n" + history,
     author="Malcolm Jones",
-    author_email="@bossjones",
+    author_email="bossjones@theblacktonystark.com",
     url="https://github.com/bossjones/scarlett/",
     packages=[
         "scarlett",
@@ -82,7 +82,6 @@ setup(
         "scarlett.core",
         "scarlett.features",
         "scarlett.brain",
-        #"scarlett.features.time",
         "scarlett.listener"
 
     ],
@@ -99,16 +98,21 @@ setup(
         'bin/silence',
         'bin/resample_for_ps',
         'bin/pad_wav'],
-    license="BSD",
+    license="MIT",
     platforms="Posix; MacOS X",
     zip_safe=False,
     keywords="scarlett",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
+        "Environment :: Console",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Software Development :: Libraries :: Python Modules",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 2.7",
     ],
     **extra
 )

@@ -2,6 +2,7 @@
 
 import scarlett
 from scarlett.constants import *
+import scarlett.basics.voice
 from scarlett.basics.voice import Voice
 from scarlett.listener.gstlistener import *
 #from IPython.core.debugger import Tracer
@@ -23,7 +24,7 @@ class ScarlettBot(object):
         #Tracer()()
         self._brain = scarlett.connect_brain()
         self._voice = scarlett.connect_voice(self._brain)
-        self._voice.play('pi-listening')
+        scarlett.basics.voice.play_block('pi-listening')
         self.listener = GstListener("gst",self._brain,self._voice,False)
 
     def main(self):

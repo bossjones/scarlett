@@ -1,5 +1,6 @@
 import scarlett
 from scarlett.features import *
+import scarlett.basics.voice
 
 
 class FeatureSpotify(Feature):
