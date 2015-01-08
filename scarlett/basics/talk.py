@@ -30,12 +30,12 @@ _utterances = {
     'error_conf':      {(1, _("My configuration file is not readable")),
                         (1, _("There's an error with my configuration file"))
                        },
-    'not_understood':  {(1, _("I didn't understood your question")),
+    'not_understood':  {(1, _("I didn't understand your question")),
                         (1, _("I can't hear you clearly")),
-                        (1, _("I didn't understood"))
+                        (1, _("I didn't understand"))
                        },
     'please_repeat':   {(1, _("Can you repeat please ?")),
-                        (1, _("I didn't understood, can you repeat please ?"))
+                        (1, _("I didn't understand, can you repeat please ?"))
                        },
     'ready':           {(3, _("I'm ready ok")),
                         (1, _("Initialization completed")),
