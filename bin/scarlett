@@ -80,7 +80,7 @@ def main():
     """Launch application."""
     logging.basicConfig(
         level=logging.DEBUG,
-        format='%(levelname)s: %(message)s')
+        format="%(asctime)s %(name)s [%(levelname)s]:%(message)s")
 
     @trace
     def sigint_handler(*args):
