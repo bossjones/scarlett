@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import scarlett
+from scarlett import __version__
 from scarlett.constants import *
 import scarlett.basics.voice
 from scarlett.basics.voice import Voice
@@ -8,9 +9,32 @@ from scarlett.listener.gstlistener import *
 #from IPython.core.debugger import Tracer
 # this is very important, without this, callbacks from gstreamer thread
 # will messed our program up
+
+import logging
+import signal
+
 import gobject
 gobject.threads_init()
 import argparse
+
+import sys
+# will use this to trace when functions begin and end
+# see details from: http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
+import textwrap
+from functools import wraps
+
+def trace(func):
+    """Tracing wrapper to log when function enter/exit happens.
+    :param func: Function to wrap
+    :type func: callable
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        logging.debug(Fore.GREEN + 'Start {!r}'. format(func.__name__))
+        result = func(*args, **kwargs)
+        logging.debug(Fore.GREEN + 'End {!r}'. format(func.__name__))
+        return result
+    return wrapper
 
 class ScarlettBot(object):
     """ Actual scarlett bot object that has a brain, voice, etc """
@@ -20,6 +44,19 @@ class ScarlettBot(object):
 
     def __init__(self):
         scarlett.set_stream_logger('scarlett')
+        scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
+        self.scarlett_version_info = textwrap.dedent('''\
+                                           Scarlett {version} ({platform})
+                                           Python {pymajor}.{pyminor}.{pymicro}
+                                           PyGst {pygst_version}
+                                           '''.format(version=__version__,
+                                                      platform=sys.platform,
+                                                      pymajor=sys.version_info.major,
+                                                      pyminor=sys.version_info.minor,
+                                                      pymicro=sys.version_info.micro,
+                                                      pygst_version=pygst._pygst_version))
+
+        scarlett.log.debug(Fore.GREEN + "VERSION INFO: \n\n" + self.scarlett_version_info)
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
         #Tracer()()
         self._brain = scarlett.connect_brain()
@@ -27,17 +64,35 @@ class ScarlettBot(object):
         scarlett.basics.voice.play_block('pi-listening')
         self.listener = GstListener("gst",self._brain,self._voice,False)
 
+    @trace
     def main(self):
+        """Main method used to start scarlett application."""
         # All PyGTK applications must have a gtk.main(). Control ends here
         # and waits for an event to occur (like a key press or mouse event).
         gtk.main()
 
+    @trace
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         gtk.main_quit()
 
+def main():
+    """Launch application."""
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s %(name)s [%(levelname)s]:%(message)s")
+
+    @trace
+    def sigint_handler(*args):
+        """Exit on Ctrl+C"""
+        gtk.main_quit()
+
+    signal.signal(signal.SIGINT, sigint_handler)
+
+    scarlett_daemon = ScarlettBot()
+    scarlett_daemon.main()
+
 # If the program is run directly or passed as an argument to the python
 # interpreter then create a HelloWorld instance and show it
 if __name__ == "__main__":
-    scarlett_daemon = ScarlettBot()
-    scarlett_daemon.main()
+    main()

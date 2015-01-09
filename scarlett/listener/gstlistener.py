@@ -94,13 +94,13 @@ class GstListener(Listener):
         self.pipeline.set_state(gst.STATE_PLAYING)
 
     def scarlett_stop_listen(self):
-        self.pipeline.set_state(gst.STATE_NULL)
+        self.pipeline.set_state(gst.STATE_READY)
 
     def scarlett_pause_listen(self):
         self.pipeline.set_state(gst.STATE_PAUSED)
 
     def scarlett_reset_listen(self):
-        self.scarlett_stop_listen()
+        #self.scarlett_stop_listen()
         self.failed = int(
             self.brain.set_brain_item_r(
                 'scarlett_failed',
@@ -109,7 +109,7 @@ class GstListener(Listener):
             self.brain.set_brain_item_r(
                 'scarlett_main_keyword_identified',
                 0))
-        self.scarlett_start_listen()
+        #self.scarlett_start_listen()
 
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
