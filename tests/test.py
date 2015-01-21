@@ -67,6 +67,17 @@ def main():
             if arg == 'default':
                 remaining_args[i] = 'tests/unit'
 
+    if 'gst_improved' in remaining_args:
+        # Run from the base project directory
+        # print "HERE:"
+        #print (os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        # Tracer()()
+        os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        for i, arg in enumerate(remaining_args):
+            if arg == 'gst_improved':
+                remaining_args[i] = 'tests/unit/future'
+
     all_args = [__file__] + attribute_args + remaining_args
     print("nose command:", ' '.join(all_args))
     if run(argv=all_args):
