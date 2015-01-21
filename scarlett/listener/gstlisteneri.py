@@ -30,7 +30,7 @@ from scarlett.basics.talk import ScarlettTalk
 #  * player_name.set_state(gst.STATE_NULL)
 
 
-class GstListener(threading.Thread):
+class GstListenerImproved(threading.Thread):
 
     """
     Controls all actions involving pocketsphinx, stt, and tts.
@@ -38,13 +38,13 @@ class GstListener(threading.Thread):
 
     def __init__(self, lis_type, brain, voice, override_parse=False, **kwargs):
         # Init thread class
-        super(GstListener, self).__init__(kwargs)
+        super(GstListenerImproved, self).__init__(kwargs)
         self._stopevent = threading.Event()
 
         self.wit_thread = None
         self.loop = None
 
-        scarlett.log.debug(Fore.YELLOW + 'Starting up GstListener')
+        scarlett.log.debug(Fore.YELLOW + 'Starting up GstListenerImproved')
         self.brain = brain
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
@@ -124,6 +124,17 @@ class GstListener(threading.Thread):
         self.loop = gobject.MainLoop()
         self.loop.run()
 
+    def stop(self):
+        """
+        Stop listener.
+        """
+        ScarlettTalk.speak('Goodbye....')
+
+        # Stop everything
+        self.pipeline.set_state(gst.STATE_NULL)
+        if self.loop is not None:
+            self.loop.quit()
+
     def scarlett_start_listen(self):
         self.pipeline.set_state(gst.STATE_PLAYING)
 
@@ -143,12 +154,6 @@ class GstListener(threading.Thread):
                 'scarlett_main_keyword_identified',
                 0))
         #self.scarlett_start_listen()
-
-    def get_pipeline(self):
-        """
-        Return Gstreamer pipeline
-        """
-        return self.pipeline
 
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
@@ -217,7 +222,7 @@ class GstListener(threading.Thread):
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function")
-        self.pipeline.set_state(gst.STATE_PAUSED)
+        ### DISABLED # TODO: SEE IF WE NEED THIS # self.pipeline.set_state(gst.STATE_PAUSED)
         scarlett.basics.voice.play_block('pi-listening')
         valve.set_property('drop', False)
         valve.set_property('drop', True)
@@ -382,8 +387,12 @@ class GstListener(threading.Thread):
         elif msgtype == 'run_cmd':
             self.run_cmd(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == gst.MESSAGE_EOS:
-            self.pipeline.set_state(gst.STATE_NULL)
+            pass
+            ### DISABLE # TODO: SEE IF WE NEED THIS # self.pipeline.set_state(gst.STATE_NULL)
         elif msgtype == gst.MESSAGE_ERROR:
-            self.pipeline.set_state(gst.STATE_NULL)
             (err, debug) = msgtype.parse_error()
             scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
+            pass
+            ### DISABLE # TODO: SEE IF WE NEED THIS # self.pipeline.set_state(gst.STATE_NULL)
+            ### DISABLE # TODO: SEE IF WE NEED THIS # (err, debug) = msgtype.parse_error()
+            ### DISABLE # TODO: SEE IF WE NEED THIS # scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
