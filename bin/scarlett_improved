@@ -5,14 +5,15 @@ gobjectnotimported = False
 
 try:
     from dbus.mainloop.glib import DBusGMainLoop
+    # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
     DBusGMainLoop(set_as_default=True)
     import gobject
     import pygst
     pygst.require('0.10')
     gobject.threads_init()
     import scarlett
-    from scarlett import __version__
     from scarlett.constants import *
+    from scarlett import __version__
     import scarlett.basics.voice
     from scarlett.basics.voice import Voice
     from scarlett.listener.gstlisteneri import GstListenerImproved
@@ -27,6 +28,7 @@ import sys
 # see details from: http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
 import textwrap
 from functools import wraps
+import time
 
 def trace(func):
     """Tracing wrapper to log when function enter/exit happens.
@@ -48,6 +50,7 @@ class ScarlettBot(object):
     _last_send_time    = time.time()
 
     def __init__(self):
+        self.loop = None
         scarlett.set_stream_logger('scarlett')
         scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
         self.scarlett_version_info = textwrap.dedent('''\
@@ -63,23 +66,29 @@ class ScarlettBot(object):
 
         scarlett.log.debug(Fore.GREEN + "VERSION INFO: \n\n" + self.scarlett_version_info)
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
-        #Tracer()()
         self._brain = scarlett.connect_brain()
         self._voice = scarlett.connect_voice(self._brain)
         scarlett.basics.voice.play_block('pi-listening')
-        self.listener = GstListener("gst",self._brain,self._voice,False)
+        self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
     @trace
     def main(self):
         """Main method used to start scarlett application."""
         # All PyGTK applications must have a gtk.main(). Control ends here
         # and waits for an event to occur (like a key press or mouse event).
-        gtk.main()
+        # OLD # gtk.main()
+        self.loop = gobject.MainLoop()
+
+        try:
+          self.loop.run()
+        except KeyboardInterrupt:
+            self.destroy()
 
     @trace
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
-        gtk.main_quit()
+        # OLD # gtk.main_quit()
+        self.loop.quit() # OLD # gobject.mainloop.quit()
 
 def main():
     """Launch application."""
@@ -90,7 +99,8 @@ def main():
     @trace
     def sigint_handler(*args):
         """Exit on Ctrl+C"""
-        gtk.main_quit()
+        #gtk.main_quit()
+        self.loop.quit()
 
     signal.signal(signal.SIGINT, sigint_handler)
 
