@@ -10,9 +10,9 @@ import logging
 import logging.config
 import scarlett.errors
 
-__author__ = 'Malcolm Jones'
-__email__ = '@bossjones'
-__version__ = '0.2.0'
+__author__  = 'Malcolm Jones'
+__email__   = 'bossjones@theblacktonystark.com'
+__version__ = '0.3.0'
 Version = __version__  # for backware compatibility
 
 # http://bugs.python.org/issue7980
