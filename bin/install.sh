@@ -377,6 +377,15 @@ pip install -r requirements_dev.txt --use-mirrors
 pip install -r requirements.txt --use-mirrors
 pip install --allow-all-external -r requirements.txt
 
+# fix gtk virtualenv setup
+# SEE: https://bitbucket.org/ruamel/venvgtk
+# SEE: https://pypi.python.org/pypi/ruamel.venvgtk
+
+sudo apt-get install -y libpoppler-glib-dev python-gtk2 python-cairo-dev python-gobject-dev python-gobject
+sudo apt-get install -y python-gtk2-dev
+pip install ruamel.venvgtk
+
+
 # install gstreamer 1.2
 ### #!/bin/bash
 ###
