@@ -38,11 +38,18 @@ class GstListenerImproved(threading.Thread):
 
     def __init__(self, lis_type, brain, voice, override_parse=False, **kwargs):
         # Init thread class
-        super(GstListenerImproved, self).__init__(kwargs)
+        #### DISABLED FOR NOW # super(GstListenerImproved, self).__init__(kwargs)
+
+        # Init thread class
+        threading.Thread.__init__(self)
         self._stopevent = threading.Event()
 
         self.wit_thread = None
         self.loop = None
+
+        ### NOT SURE IF NEEDED, BORROWED FROM TIMESLIDE # # a lock to wait wait for gstreamer thread to be ready
+        ### NOT SURE IF NEEDED, BORROWED FROM TIMESLIDE # self.discovered_cond = threading.Condition(threading.Lock())
+        ### NOT SURE IF NEEDED, BORROWED FROM TIMESLIDE # self.discovered = False
 
         scarlett.log.debug(Fore.YELLOW + 'Starting up GstListenerImproved')
         self.brain = brain
@@ -109,6 +116,7 @@ class GstListenerImproved(threading.Thread):
 
         # Start thread
         self.start()
+        #self.run()
 
     def run(self):
         """
@@ -198,7 +206,7 @@ class GstListenerImproved(threading.Thread):
             if self.failed > 4:
                 # reset pipline
                 self.scarlett_reset_listen()
-                self.voice.speak(
+                ScarlettTalk.speak(
                     " %s , if you need me, just say my name." %
                     (self.config.get('scarlett', 'owner')))
 
