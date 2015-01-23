@@ -3,6 +3,7 @@ import time
 import datetime
 from scarlett.features import *
 import scarlett.basics.voice
+from scarlett.basics.talk import ScarlettTalk
 
 
 class FeatureTime(Feature):
@@ -27,12 +28,13 @@ class FeatureTime(Feature):
             Fore.YELLOW +
             "self.current_date: " +
             self.current_date)
-        self.voice.speak(self.current_time)
-        self.voice.speak(self.current_date)
+
+        ScarlettTalk.speak(self.current_time)
+        ScarlettTalk.speak(self.current_date)
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))
 
     def get_current_time(self):

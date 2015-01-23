@@ -7,6 +7,7 @@ import socket
 import time
 import os
 import scarlett.basics.voice
+from scarlett.basics.talk import ScarlettTalk
 
 try:
     os.path.expanduser('~')
@@ -64,7 +65,7 @@ class FeatureHueLights(Feature):
         self.light_play()
         lights_list = self.b.get_light_objects('list')
         for light in lights_list:
-            self.voice.speak(light.name)
+            ScarlettTalk.speak(light.name)
             time.sleep(2)
 
     def brighten_light(self, light_name):
@@ -95,9 +96,9 @@ class FeatureHueLights(Feature):
             scarlett.log.debug(Fore.YELLOW + "" + (l.name))
 
     def light_play(self, cmd="hue_lights"):
-        self.voice.play('pi-response')
+        scarlett.basics.voice.play_block('pi-response')
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))

@@ -12,7 +12,6 @@ import getopt
 import tempfile
 import json
 import glob
-import tempfile
 import subprocess
 import pygst
 pygst.require("0.10")

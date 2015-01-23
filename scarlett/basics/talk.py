@@ -12,6 +12,7 @@ import threading
 #import gettext
 from Queue import Queue
 from time import sleep
+import subprocess
 from subprocess import call
 # import urllib
 # from urllib import urlencode, urlopen
@@ -32,6 +33,7 @@ class ScarlettTalk(threading.Thread):
 
     def __init__(self):
         if self.__instance is not None:
+            scarlett.log.debug(Fore.RED + "Scarlett Talk singleton can\'t be created twice !")
             raise Exception("Scarlett Talk singleton can't be created twice !")
 
         # Init thread class
@@ -52,11 +54,13 @@ class ScarlettTalk(threading.Thread):
     def _start(self):
         # Create singleton
         if self.__instance is None:
+            scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_start")
             self.__instance = ScarlettTalk()
 
     def _speak(self, msg, block = True):
         # Queue message
         if self.__instance is not None:
+            scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_speak")
             self.__instance.queue.put(msg)
 
             # Waits the end
@@ -64,6 +68,7 @@ class ScarlettTalk(threading.Thread):
                 self.__instance.queue.join()
 
     def _stop(self):
+        scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_stop")
         # Raise stop event
         if self.__instance is not None:
             self.__instance._stopevent.set()
@@ -91,11 +96,15 @@ class ScarlettTalk(threading.Thread):
             # Get message
             data = self.queue.get()
 
+            scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_run:before self.engine")
             # espeak TTS
             if self.engine == "espeak":
+                scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_run:inside self.engine")
                 text = ''.join(e for e in data if e.isalpha() or e.isspace())
+                scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_run:inside self.engine: text = %s" % (text))
                 # TODO: Figure out if better to remove shell=True
-                call(['/usr/bin/espeak', '-ven+f3', '-k5', '-s150', '"'+ text + '"', '2>&1'])
+                #call(['/usr/bin/espeak', '-ven+f3', '-k5', '-s150', '"'+ text + '"', '2>&1'], shell=True)
+                subprocess.Popen('espeak -ven+f3 -k5 -s150 "{}" 2>&1'.format(text), shell=True).wait()
                 #process = subprocess.Popen(['espeak'], stdin=subprocess.PIPE )
 
             self.queue.task_done()

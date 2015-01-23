@@ -2,6 +2,7 @@ import scarlett
 import time
 from scarlett.features import *
 import scarlett.basics.voice
+from scarlett.basics.talk import ScarlettTalk
 
 
 class FeatureTv(Feature):
@@ -20,6 +21,6 @@ class FeatureTv(Feature):
 
     def tv_play(self, cmd):
         #self.keyword_identified = 0
-        self.voice.play('pi-response')
+        scarlett.basics.voice.play_block('pi-response')
         # REFACTOR # self.arduino.write(cmd)
         self.time.sleep(2)

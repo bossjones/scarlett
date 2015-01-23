@@ -56,7 +56,7 @@ class GstListenerImproved(threading.Thread):
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))
         self.lis_type = lis_type
         self.voice = voice
@@ -116,7 +116,6 @@ class GstListenerImproved(threading.Thread):
 
         # Start thread
         self.start()
-        #self.run()
 
     def run(self):
         """
@@ -159,7 +158,7 @@ class GstListenerImproved(threading.Thread):
                 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))
         #self.scarlett_start_listen()
 
@@ -188,7 +187,7 @@ class GstListenerImproved(threading.Thread):
             # redis implementation # self.keyword_identified = 1
             self.keyword_identified = int(
                 self.brain.set_brain_item_r(
-                    'scarlett_main_keyword_identified',
+                    'm_keyword_match',
                     1))
             scarlett.basics.voice.play_block('pi-listening')
         else:
@@ -222,7 +221,7 @@ class GstListenerImproved(threading.Thread):
         else:
             self.commander.check_cmd(hyp)
             self.keyword_identified = int(
-                self.brain.get_brain_item('scarlett_main_keyword_identified'))
+                self.brain.get_brain_item('m_keyword_match'))
             scarlett.log.debug(
                 Fore.RED +
                 "AFTER run_cmd, self.keyword_identified = %i" %
@@ -278,8 +277,8 @@ class GstListenerImproved(threading.Thread):
         scarlett.log.debug(Fore.YELLOW + "Inside get_voice")
         return self.voice
 
-    def destroy_listener(self):
-        gtk.main_quit()
+    # def destroy_listener(self):
+    #     gtk.main_quit()
 
     def get_pipeline_state(self):
         return self.pipeline.get_state()

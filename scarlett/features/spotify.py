@@ -1,6 +1,7 @@
 import scarlett
 from scarlett.features import *
 import scarlett.basics.voice
+from scarlett.basics.talk import ScarlettTalk
 
 
 class FeatureSpotify(Feature):
@@ -16,4 +17,4 @@ class FeatureSpotify(Feature):
 
     def spotify_play(self, cmd):
         #self.keyword_identified = 0
-        self.voice.play('pi-response')
+        scarlett.basics.voice.play_block('pi-response')

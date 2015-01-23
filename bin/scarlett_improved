@@ -30,6 +30,11 @@ import textwrap
 from functools import wraps
 import time
 
+import sys
+from IPython.core import ultratb
+sys.excepthook = ultratb.FormattedTB(mode='Verbose',
+     color_scheme='Linux', call_pdb=1)
+
 def trace(func):
     """Tracing wrapper to log when function enter/exit happens.
     :param func: Function to wrap
@@ -69,6 +74,7 @@ class ScarlettBot(object):
         self._brain = scarlett.connect_brain()
         self._voice = scarlett.connect_voice(self._brain)
         scarlett.basics.voice.play_block('pi-listening')
+        ScarlettTalk.speak("helllllllllllloooo")
         self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
     @trace

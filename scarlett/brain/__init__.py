@@ -37,7 +37,7 @@ class ScarlettBrain(object):
 
         if flush:
             self.wipe_brain()
-            self.set_brain_item('scarlett_main_keyword_identified', 0)
+            self.set_brain_item('m_keyword_match', 0)
             self.set_brain_item('scarlett_successes', 0)
             self.set_brain_item('scarlett_failed', 0)
 
@@ -52,11 +52,11 @@ class ScarlettBrain(object):
 
     def set_keyword_identified(self, keyword_value):
         return self.redis_server.set(
-            "scarlett_main_keyword_identified",
+            "m_keyword_match",
             keyword_value)
 
     def get_keyword_identified(self):
-        return self.redis_server.get("scarlett_main_keyword_identified")
+        return self.redis_server.get("m_keyword_match")
 
     def set_brain_item(self, key, value):
         return self.redis_server.set(key, value)

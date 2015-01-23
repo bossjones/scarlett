@@ -32,7 +32,7 @@ class GstListener(Listener):
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))
         self.lis_type = lis_type
         self.voice = voice
@@ -107,7 +107,7 @@ class GstListener(Listener):
                 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))
         #self.scarlett_start_listen()
 
@@ -136,7 +136,7 @@ class GstListener(Listener):
             # redis implementation # self.keyword_identified = 1
             self.keyword_identified = int(
                 self.brain.set_brain_item_r(
-                    'scarlett_main_keyword_identified',
+                    'm_keyword_match',
                     1))
             scarlett.basics.voice.play_block('pi-listening')
         else:
@@ -170,7 +170,7 @@ class GstListener(Listener):
         else:
             self.commander.check_cmd(hyp)
             self.keyword_identified = int(
-                self.brain.get_brain_item('scarlett_main_keyword_identified'))
+                self.brain.get_brain_item('m_keyword_match'))
             scarlett.log.debug(
                 Fore.RED +
                 "AFTER run_cmd, self.keyword_identified = %i" %
