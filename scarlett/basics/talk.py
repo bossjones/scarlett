@@ -20,6 +20,8 @@ from scarlett.basics import *
 from scarlett.constants import *
 import scarlett.basics.voice
 
+import os
+
 class ScarlettTalk(threading.Thread):
     """
     Talk class is a singleton managing TTS for the client
@@ -65,6 +67,7 @@ class ScarlettTalk(threading.Thread):
 
             # Waits the end
             if block == True:
+                scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_stop:queue.join")
                 self.__instance.queue.join()
 
     def _stop(self):
@@ -104,7 +107,18 @@ class ScarlettTalk(threading.Thread):
                 scarlett.log.debug(Fore.YELLOW + "ScarlettTalk:_run:inside self.engine: text = %s" % (text))
                 # TODO: Figure out if better to remove shell=True
                 #call(['/usr/bin/espeak', '-ven+f3', '-k5', '-s150', '"'+ text + '"', '2>&1'], shell=True)
-                subprocess.Popen('espeak -ven+f3 -k5 -s150 "{}" 2>&1'.format(text), shell=True).wait()
+
+                # redirect to devnull
+                # source: http://stackoverflow.com/questions/11269575/how-to-hide-output-of-subprocess-in-python-2-7
+                FNULL = open(os.devnull, 'w')
+
+                try:
+                  ### subprocess.Popen('espeak -ven+f3 -k5 -s150 "{}" 2>&1'.format(text), shell=True).wait()
+                  _text = '"{}"'.format(text)
+                  subprocess.call(['/usr/bin/espeak', '-ven+f3', '-k5', '-s150', _text], stdout=FNULL, stderr=subprocess.STDOUT ) # , shell=True
+                except Exception:
+                  scarlett.log.debug(Fore.RED + "Something wrong with espeak command")
+
                 #process = subprocess.Popen(['espeak'], stdin=subprocess.PIPE )
 
             self.queue.task_done()
