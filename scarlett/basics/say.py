@@ -43,7 +43,7 @@ def say(sound):
     scarlett.log.debug(Fore.YELLOW + 'SOUND: ' + sound)
     global __ESPEAK__
 
-    # Create player once
+    # Create espeak once
     if __ESPEAK__ is None:
         espk_pipeline = 'espeak name=source ! autoaudiosink'
         __ESPEAK__ = gst.parse_launch(espk_pipeline)
@@ -54,7 +54,7 @@ def say(sound):
         bus.connect('message::eos', eos_handler)
         bus.connect('message::error', eos_handler)
 
-    # Stop previous play if any
+    # Stop previous espeak if any
     else:
         __ESPEAK__.set_state(gst.STATE_READY)
 
@@ -66,9 +66,9 @@ def say(sound):
     #source.set_property("rate",165)
 
     source.props.pitch = 50
-    source.props.rate = 165
+    source.props.rate = 100
     source.props.voice = "en+f3"
-    source.props.text = sound;
+    source.props.text = sound
 
     #subprocess.Popen('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
 
@@ -91,11 +91,11 @@ def say_block(sound):
 
 def say_free():
     """
-    Free player resource
+    Free espeak resource
     """
     global __ESPEAK__
 
-    # Delete player
+    # Delete espeak
     if __ESPEAK__ is not None:
         __ESPEAK__.set_state(gst.STATE_NULL)
         __ESPEAK__ = None

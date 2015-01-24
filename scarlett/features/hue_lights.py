@@ -8,6 +8,7 @@ import time
 import os
 import scarlett.basics.voice
 from scarlett.basics.talk import ScarlettTalk
+import scarlett.basics.say as scarlett_says
 
 try:
     os.path.expanduser('~')
@@ -65,7 +66,7 @@ class FeatureHueLights(Feature):
         self.light_play()
         lights_list = self.b.get_light_objects('list')
         for light in lights_list:
-            ScarlettTalk.speak(light.name)
+            scarlett_says.say_block(light.name)
             time.sleep(2)
 
     def brighten_light(self, light_name):

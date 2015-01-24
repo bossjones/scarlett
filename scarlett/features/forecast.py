@@ -7,6 +7,7 @@ from scarlett.features import *
 import forecastio
 import scarlett.basics.voice
 from scarlett.basics.talk import ScarlettTalk
+import scarlett.basics.say as scarlett_says
 
 
 class FeatureForecast(Feature):
@@ -38,7 +39,7 @@ class FeatureForecast(Feature):
         fio_hourly = "%s degrees fahrenheit" % (
             forecast.hourly().data[0].temperature)
         fio_hourly = fio_hourly.replace(";", "\;")
-        ScarlettTalk.speak(fio_hourly)
+        scarlett_says.say_block(fio_hourly)
 
         scarlett.log.debug(Fore.YELLOW + "===========Hourly Data=========")
         by_hour = forecast.hourly()
@@ -48,7 +49,7 @@ class FeatureForecast(Feature):
             (by_hour.summary))
         fio_summary = "Hourly Summary: %s" % (by_hour.summary)
         fio_summary = fio_summary.replace(";", "\;")
-        ScarlettTalk.speak(fio_summary)
+        scarlett_says.say_block(fio_summary)
 
 
         scarlett.log.debug(Fore.YELLOW + "===========Daily Data=========")

@@ -3,6 +3,7 @@ from scarlett.features import *
 import ystockquote
 import scarlett.basics.voice
 from scarlett.basics.talk import ScarlettTalk
+import scarlett.basics.say as scarlett_says
 
 
 class FeatureStock(Feature):
@@ -22,7 +23,7 @@ class FeatureStock(Feature):
 
     def stock_play(self, stock='ADBE'):
         scarlett.log.debug(Fore.YELLOW + "" + self.stock_price_string)
-        ScarlettTalk.speak(self.stock_price)
+        scarlett_says.say_block(self.stock_price)
         return 0
 
     def get_stock_price(self, stock='ADOBE'):

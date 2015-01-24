@@ -18,6 +18,7 @@ try:
     from scarlett.basics.voice import Voice
     from scarlett.listener.gstlisteneri import GstListenerImproved
     from scarlett.basics.talk import ScarlettTalk
+    import scarlett.basics.say as scarlett_says
 except:
     gobjectnotimported = True
 
@@ -74,7 +75,7 @@ class ScarlettBot(object):
         self._brain = scarlett.connect_brain()
         self._voice = scarlett.connect_voice(self._brain)
         scarlett.basics.voice.play_block('pi-listening')
-        ScarlettTalk.speak("helllllllllllloooo")
+        #scarlett_says.say_block("helllllllllllloooo")
         self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
     @trace

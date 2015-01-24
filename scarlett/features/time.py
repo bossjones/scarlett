@@ -4,7 +4,7 @@ import datetime
 from scarlett.features import *
 import scarlett.basics.voice
 from scarlett.basics.talk import ScarlettTalk
-
+import scarlett.basics.say as scarlett_says
 
 class FeatureTime(Feature):
 
@@ -29,8 +29,8 @@ class FeatureTime(Feature):
             "self.current_date: " +
             self.current_date)
 
-        ScarlettTalk.speak(self.current_time)
-        ScarlettTalk.speak(self.current_date)
+        scarlett_says.say_block(self.current_time)
+        scarlett_says.say_block(self.current_date)
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
