@@ -25,6 +25,8 @@ from scarlett.constants import *
 import gobject
 gobject.threads_init()
 
+from gettext import gettext as _
+
 # Create a gtreamer espeak
 __ESPEAK__ = None
 
@@ -34,6 +36,9 @@ def eos_handler(bus, message):
     __ESPEAK__.set_state(gst.STATE_READY)
     main_loop.quit()
 
+def gstmessage_cb(bus, message, __ESPEAK__):
+    if message.type in (gst.MESSAGE_EOS, gst.MESSAGE_ERROR):
+        __ESPEAK__.set_state(gst.STATE_NULL)
 
 def say(sound):
     """
@@ -51,6 +56,7 @@ def say(sound):
         # Connect End Of Stream handler on bus
         bus = __ESPEAK__.get_bus()
         bus.add_signal_watch()
+        bus.connect('message', gstmessage_cb, __ESPEAK__)
         bus.connect('message::eos', eos_handler)
         bus.connect('message::error', eos_handler)
 
@@ -58,17 +64,19 @@ def say(sound):
     else:
         __ESPEAK__.set_state(gst.STATE_READY)
 
-    #filename = '%s/static/sounds/%s.wav' % (PWD, sound)
-
     # Play file
     source = __ESPEAK__.get_by_name("source")
-    #source.set_property("text","{}".format(sound))
-    #source.set_property("rate",165)
 
+    ####################################################################################
+    # all writable properties(including text) make sense only at start playing;
+    # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
+    # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
+    # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
+    ####################################################################################
     source.props.pitch = 50
     source.props.rate = 100
     source.props.voice = "en+f3"
-    source.props.text = sound
+    source.props.text = _('{}'.format(sound))
 
     #subprocess.Popen('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
 
