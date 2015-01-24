@@ -386,6 +386,81 @@ sudo apt-get install -y python-gtk2-dev
 pip install ruamel.venvgtk
 
 
+# install espeak plugin
+sudo apt-get install libespeak-dev python-espeak espeak-data espeak-dbg -y
+
+##############################################################################################################
+# HOW TO INSTALL gst-plugins-espeak : gstreamer 1.0
+# source: http://download.sugarlabs.org/sources/honey/gst-plugins-espeak/gst-plugins-espeak-0.4.0.tar.gz
+##############################################################################################################
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+export LD_LIBRARY_PATH=/usr/local/lib
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
+
+mkdir -p ~/packages
+cd ~/packages
+wget http://download.sugarlabs.org/sources/honey/gst-plugins-espeak/gst-plugins-espeak-0.4.0.tar.gz
+tar xvf gst-plugins-espeak-0.4.0.tar.gz
+cd gst-plugins-espeak-0.4.0
+./configure
+make
+sudo make install
+
+##############################################################################################################
+# For GStreamer 0.10.x, stay on v0.3.5x version
+# source: http://download.sugarlabs.org/sources/honey/gst-plugins-espeak/gst-plugins-espeak-0.3.5.tar.gz
+##############################################################################################################
+
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+export LD_LIBRARY_PATH=/usr/local/lib
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+
+mkdir ~/packages
+cd ~/packages
+wget http://download.sugarlabs.org/sources/honey/gst-plugins-espeak/gst-plugins-espeak-0.3.5.tar.gz
+tar xvf gst-plugins-espeak-0.3.5.tar.gz
+cd gst-plugins-espeak-0.3.5
+./configure
+make
+sudo make install
+
+##############################################################################################################
+# working gst-launch
+##############################################################################################################
+
+gst-launch-0.10 espeak text="hello mister mister mister" ! autoaudiosink
+
+###
+
+##############################################################################################################
+# Installing the ladspa plugin support
+# The ladspa gst-bad plugins contains a few cool filters. In my example, i use the "speed" filter to controll the pitch of the output voice. This part will cover how to make the ladspa filters working.
+##############################################################################################################
+
+##############################################################################################################
+# *) install the ladspa headers and the "gst-bad" plugins
+##############################################################################################################
+
+sudo apt-get install ladspa-sdk gstreamer0.10-plugins-bad gstreamer0.10-plugins-bad-multiverse
+
+##############################################################################################################
+# *) download and install the latest ladspa sources from http://www.ladspa.org/download
+##############################################################################################################
+wget http://www.ladspa.org/download/cmt_src.tgz
+tar xvf cmt_src.tgz
+cd cmt/src
+make
+sudo make install
+cd ../..
+wget http://www.ladspa.org/download/ladspa_sdk.tgz
+tar xvf ladspa_sdk.tgz
+cd ladspa_sdk/src
+make
+sudo make install
+
+
 # install gstreamer 1.2
 ### #!/bin/bash
 ###
