@@ -101,7 +101,7 @@ class ScarlettBot(dbus.service.Object):
         try:
           self.loop.run()
         except KeyboardInterrupt:
-            self.destroy()
+            self.Exit()
 
     @trace
     @dbus.service.method('org.scarlettapp.scarlettdaemon')
