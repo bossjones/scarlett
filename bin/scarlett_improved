@@ -4,13 +4,20 @@ import signal
 gobjectnotimported = False
 
 try:
+    import dbus
+    import dbus.service
     from dbus.mainloop.glib import DBusGMainLoop
+    from dbus.mainloop.glib import threads_init
+    import gobject
+    # Initialize gtk threading
+    gobject.threads_init()
     # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
     DBusGMainLoop(set_as_default=True)
-    import gobject
+    threads_init()
     import pygst
     pygst.require('0.10')
-    gobject.threads_init()
+    #gobject.threads_init()
+    #threads_init()
     import scarlett
     from scarlett.constants import *
     from scarlett import __version__
@@ -49,13 +56,17 @@ def trace(func):
         return result
     return wrapper
 
-class ScarlettBot(object):
+class ScarlettBot(dbus.service.Object):
     """ Actual scarlett bot object that has a brain, voice, etc """
+    DBUS_NAME = 'org.scarlettapp.scarlettdaemon'
+    DBUS_PATH = '/org/scarlettapp/scarlettdaemon'
 
     _scarlett_services = []
     _last_send_time    = time.time()
 
     def __init__(self):
+        bus_name = dbus.service.BusName('org.scarlettapp.scarlettdaemon', bus=dbus.SessionBus())
+        dbus.service.Object.__init__(self, bus_name, '/org/scarlettapp/scarlettdaemon')
         self.loop = None
         scarlett.set_stream_logger('scarlett')
         scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
@@ -79,6 +90,7 @@ class ScarlettBot(object):
         self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
     @trace
+    @dbus.service.method('org.scarlettapp.scarlettdaemon')
     def main(self):
         """Main method used to start scarlett application."""
         # All PyGTK applications must have a gtk.main(). Control ends here
@@ -92,10 +104,19 @@ class ScarlettBot(object):
             self.destroy()
 
     @trace
+    @dbus.service.method('org.scarlettapp.scarlettdaemon')
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
+        self.remove_from_connection()
         # OLD # gtk.main_quit()
         self.loop.quit() # OLD # gobject.mainloop.quit()
+
+    @dbus.service.method("org.scarlettapp.scarlettdaemon",
+                         in_signature='', out_signature='')
+    def Exit(self):
+        scarlett.log.debug(Fore.YELLOW + "Exit signal occurred")
+        self.remove_from_connection()
+        self.loop.quit()
 
 def main():
     """Launch application."""
