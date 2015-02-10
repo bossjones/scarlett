@@ -1,7 +1,7 @@
 import scarlett
 from scarlett.constants import *
-from scarlett.errors import ProtocolError
-from IPython.core.debugger import Tracer
+#from scarlett.errors import ProtocolError
+#from IPython.core.debugger import Tracer
 
 # Protocol specific constants
 NULL_CHAR = '\x00'

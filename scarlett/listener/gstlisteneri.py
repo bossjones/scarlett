@@ -13,8 +13,11 @@ DBusGMainLoop(set_as_default=True)
 import gst, os
 import threading
 
-import scarlett.basics.voice
-from scarlett.basics.talk import ScarlettTalk
+# import scarlett speaker
+import scarlett.basics.say as scarlett_says
+
+# import new scarlett Brain
+from scarlett.brain.scarlettbraini import ScarlettBrainImproved
 
 # source: http://stackoverflow.com/questions/8005765/how-to-get-duration-of-steaming-data-with-gstreamer
 # LETS TRY USING THIS: # gobject.threads_init()
@@ -34,6 +37,71 @@ class GstListenerImproved(threading.Thread):
 
     """
     Controls all actions involving pocketsphinx, stt, and tts.
+
+    Borrowed from mcfletch-listener:
+
+    Holds the PocketSphinx Pipeline we'll use for recognition
+
+    The idea here is that the Gstreamer/PocketSphinx back-end is isolated from
+    the GUI code, with the idea that we might be able to add in another backend
+    at some point in the future...
+
+    Here's the gst-inspect from the pocketsphinx component:
+
+    Element Properties:
+      hmm                 : Directory containing acoustic model parameters
+                            flags: readable, writable
+                            String. Default: "/usr/share/pocketsphinx/model/hmm/wsj1"
+      lm                  : Language model file
+                            flags: readable, writable
+                            String. Default: "/usr/share/pocketsphinx/model/lm/wsj/wlist5o.3e-7.vp.tg.lm.DMP"
+      lmctl               : Language model control file (for class LMs)
+                            flags: readable, writable
+                            String. Default: null
+      lmname              : Language model name (to select LMs from lmctl)
+                            flags: readable, writable
+                            String. Default: "default"
+      dict                : Dictionary File
+                            flags: readable, writable
+                            String. Default: "/usr/share/pocketsphinx/model/lm/wsj/wlist5o.dic"
+      fsg                 : Finite state grammar file
+                            flags: readable, writable
+                            String. Default: null
+      fsg-model           : Finite state grammar object (fsg_model_t *)
+                            flags: writable
+                            Pointer. Write only
+      fwdflat             : Enable Flat Lexicon Search
+                            flags: readable, writable
+                            Boolean. Default: false
+      bestpath            : Enable Graph Search
+                            flags: readable, writable
+                            Boolean. Default: false
+      maxhmmpf            : Maximum number of HMMs searched per frame
+                            flags: readable, writable
+                            Integer. Range: 1 - 100000 Default: 1000
+      maxwpf              : Maximum number of words searched per frame
+                            flags: readable, writable
+                            Integer. Range: 1 - 100000 Default: 10
+      dsratio             : Evaluate acoustic model every N frames
+                            flags: readable, writable
+                            Integer. Range: 1 - 10 Default: 1
+      latdir              : Output Directory for Lattices
+                            flags: readable, writable
+                            String. Default: null
+      lattice             : Word lattice object for most recent result
+                            flags: readable
+                            Boxed pointer of type "PSLattice"
+      decoder             : The underlying decoder
+                            flags: readable
+                            Boxed pointer of type "PSDecoder"
+      configured          : Set this to finalize configuration
+                            flags: readable, writable
+                            Boolean. Default: false
+
+    Adaptation/Training still needs to be looked into...
+
+        http://cmusphinx.sourceforge.net/wiki/tutorialadapt
+
     """
 
     def __init__(self, lis_type, brain, voice, override_parse=False, **kwargs):
@@ -104,16 +172,6 @@ class GstListenerImproved(threading.Thread):
         #scarlett.log.debug(Fore.YELLOW + "After Message to Bus ----------->")
         #bus.connect("message::eos", self._on_bus_message_eos)
 
-### HOLD UP #        # Scarlett's greetings
-### HOLD UP #        self.voice.greetings_play()
-### HOLD UP #        scarlett.log.debug(
-### HOLD UP #            Fore.YELLOW +
-### HOLD UP #            "KEYWORDS WE'RE LOOKING FOR: " +
-### HOLD UP #            self.config.get(
-### HOLD UP #                'scarlett',
-### HOLD UP #                'owner'))
-### HOLD UP #         self.pipeline.set_state(gst.STATE_PLAYING)
-
         # Start thread
         self.start()
 
@@ -121,7 +179,7 @@ class GstListenerImproved(threading.Thread):
         """
         Listener main loop
         """
-        ScarlettTalk.speak("Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands")
+        scarlett_says.say_block("Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands")
         self.pipeline.set_state(gst.STATE_PLAYING)
         scarlett.log.debug(Fore.YELLOW +
             "KEYWORD: " +
@@ -135,7 +193,7 @@ class GstListenerImproved(threading.Thread):
         """
         Stop listener.
         """
-        ScarlettTalk.speak('Goodbye....')
+        scarlett_says.speak_block('Goodbye....')
 
         # Stop everything
         self.pipeline.set_state(gst.STATE_NULL)
@@ -160,10 +218,10 @@ class GstListenerImproved(threading.Thread):
             self.brain.set_brain_item_r(
                 'm_keyword_match',
                 0))
-        #self.scarlett_start_listen()
 
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
+        pass
 
     def result(self, hyp, uttid):
         """Forward result signals on the bus to the main thread."""
@@ -179,7 +237,6 @@ class GstListenerImproved(threading.Thread):
                 "UTTID-IS-SOMETHING:" +
                 uttid +
                 "\n")
-            # redis implementation # self.failed = 0
             self.failed = int(
                 self.brain.set_brain_item_r(
                     'scarlett_failed',
@@ -191,7 +248,6 @@ class GstListenerImproved(threading.Thread):
                     1))
             scarlett.basics.voice.play_block('pi-listening')
         else:
-            # redis implementation # self.failed += 1
             self.failed_temp = int(
                 self.brain.get_brain_item('scarlett_failed')) + 1
             self.failed = int(
@@ -229,7 +285,6 @@ class GstListenerImproved(threading.Thread):
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function")
-        ### DISABLED # TODO: SEE IF WE NEED THIS # self.pipeline.set_state(gst.STATE_PAUSED)
         scarlett.basics.voice.play_block('pi-listening')
         valve.set_property('drop', False)
         valve.set_property('drop', True)
@@ -237,7 +292,6 @@ class GstListenerImproved(threading.Thread):
     # def cancel_listening(self, valve):
     def cancel_listening(self):
         scarlett.log.debug(Fore.YELLOW + "Inside cancel_listening function")
-        #valve.set_property('drop', False)
         self.scarlett_reset_listen()
         scarlett.log.debug(Fore.YELLOW + "self.failed = %i" % (self.failed))
         scarlett.log.debug(
@@ -276,9 +330,6 @@ class GstListenerImproved(threading.Thread):
     def get_voice(self):
         scarlett.log.debug(Fore.YELLOW + "Inside get_voice")
         return self.voice
-
-    # def destroy_listener(self):
-    #     gtk.main_quit()
 
     def get_pipeline_state(self):
         return self.pipeline.get_state()
@@ -358,24 +409,24 @@ class GstListenerImproved(threading.Thread):
     # self._stop_speech_recognition()
 
     def __result__(self, listener, text, uttid):
-        scarlett.log.debug(Fore.YELLOW + "Inside __result__")
         """We're inside __result__"""
+        scarlett.log.debug(Fore.YELLOW + "Inside __result__")
         struct = gst.Structure('result')
         struct.set_value('hyp', text)
         struct.set_value('uttid', uttid)
         listener.post_message(gst.message_new_application(listener, struct))
 
     def __partial_result__(self, listner, text, uttid):
-        scarlett.log.debug(Fore.YELLOW + "Inside __partial_result__")
         """We're inside __partial_result__"""
+        scarlett.log.debug(Fore.YELLOW + "Inside __partial_result__")
         struct = gst.Structure('partial_result')
         struct.set_value('hyp', text)
         struct.set_value('uttid', uttid)
         listener.post_message(gst.message_new_application(listener, struct))
 
     def __run_cmd__(self, listener, text, uttid):
-        scarlett.log.debug(Fore.YELLOW + "Inside __run_cmd__")
         """We're inside __run_cmd__"""
+        scarlett.log.debug(Fore.YELLOW + "Inside __run_cmd__")
         struct = gst.Structure('result')
         struct.set_value('hyp', text)
         struct.set_value('uttid', uttid)

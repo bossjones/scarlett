@@ -1,39 +1,19 @@
 # -*- coding: UTF-8 -*-
 
-# NOTE: Borrowed a great deal of knowledge from LISA project.
-
-import gobject
-gobject.threads_init()
-
 # Imports
 import scarlett
+import thread
 import threading
-#import os
-#import gettext
-from Queue import Queue
-from time import sleep
-import subprocess
-from subprocess import call
+import time
+import redis
+
 from scarlett.basics import *
 from scarlett.constants import *
 import scarlett.basics.voice
 
-import os
-import time
-import redis
 import redis.connection
-from json import loads, dumps
-
-import os
-
-# singleton decorator
-def singleton(myClass):
-    instances = {}
-    def getInstance(*args, **kwargs):
-      if myClass not in instances:
-          instances[myClass] = myClass(*args,**kwargs)
-      return instances[myClass]
-    return getInstance
+from scarlett.utils import singleton
+#from json import loads, dumps
 
 @singleton
 class ScarlettBrainImproved(redis.Redis):
@@ -41,30 +21,35 @@ class ScarlettBrainImproved(redis.Redis):
     Wrapper for Redis pub-sub that uses a pipeline internally
     for buffering message publishing. A thread is run that
     periodically flushes the buffer pipeline.
+
+    We can override the following:
+    self, host='localhost', port=6379,
+                 db=0, password=None, socket_timeout=None,
+                 socket_connect_timeout=None,
+                 socket_keepalive=None, socket_keepalive_options=None,
+                 connection_pool=None, unix_socket_path=None,
+                 encoding='utf-8', encoding_errors='strict',
+                 charset=None, errors=None,
+                 decode_responses=False, retry_on_timeout=False,
+                 ssl=False, ssl_keyfile=None, ssl_certfile=None,
+                 ssl_cert_reqs=None, ssl_ca_certs=None
+
     """
 
     def __init__(self, *args, **kwargs):
         super(ScarlettBrainBuffered, self).__init__(*args, **kwargs)
         self.buffer = self.pipeline()
+        # A factory function that returns a new primitive lock object.
+        # Once a thread has acquired it, subsequent attempts to acquire
+        # it block, until it is released; any thread may release it.
         self.lock = threading.Lock()
-        # A factory function that returns a new event object. An event manages a flag that can be set to true with the set() method and reset to false with the clear() method. The wait() method blocks until the flag is true.
+        # A factory function that returns a new event object.
+        # An event manages a flag that can be set to true with the
+        # set() method and reset to false with the clear() method.
+        # The wait() method blocks until the flag is true.
+        #self._stopevent = threading.Event()
 
-        self.config = scarlett.config
-
-        # redis config
-        self.redis_host = scarlett.config.get('redis', 'host')
-        self.redis_port = scarlett.config.get('redis', 'port')
-        self.redis_db = scarlett.config.get('redis', 'db')
-        self.redis_server = redis.Redis(
-            host=self.redis_host,
-            port=self.redis_port,
-            db=self.redis_db)
-        self.brain_sub = redis.client.Redis(
-            host=self.redis_host,
-            port=self.redis_port,
-            db=self.redis_db)
         scarlett.log.debug(Fore.YELLOW + "initializing ScarlettBrain")
-        self.redis_server.set("name", "ScarlettBrain")
         self.flush = True
 
         if self.flush:
@@ -73,6 +58,14 @@ class ScarlettBrainImproved(redis.Redis):
             self.set_brain_item('scarlett_successes', 0)
             self.set_brain_item('scarlett_failed', 0)
 
+        # Start a new thread and return its identifier.
+        # The thread executes the function function with the argument
+        # list args (which must be a tuple). The optional kwargs
+        # argument specifies a dictionary of keyword arguments.
+        # When the function returns, the thread silently exits.
+        # When the function terminates with an unhandled exception,
+        # a stack trace is printed and then the thread exits (but other threads continue to run).
+        # thread.start_new_thread(function, args[, kwargs])
         thread.start_new_thread(self.flusher, ())
 
     def flusher(self):
@@ -82,6 +75,9 @@ class ScarlettBrainImproved(redis.Redis):
         while True:
             time.sleep(.2)
             with self.lock:
+                # the EXECUTE call sends all buffered commands
+                # to the server, returning a list of responses,
+                # one for each command.
                 self.buffer.execute()
 
     def publish(self, *args, **kwargs):
@@ -92,4 +88,34 @@ class ScarlettBrainImproved(redis.Redis):
         with self.lock:
             self.buffer.publish(*args, **kwargs)
             if len(self.buffer.command_stack) >= 1000:
+                # the EXECUTE call sends all buffered commands
+                # to the server, returning a list of responses,
+                # one for each command.
                 self.buffer.execute()
+
+    def get_brain(self):
+        return self.client()
+
+    def set_keyword_identified(self, keyword_value):
+        return self.client().set(
+            name="m_keyword_match",
+            value=keyword_value)
+
+    def get_keyword_identified(self):
+        return self.client().get(name="m_keyword_match")
+
+    def set_brain_item(self, key, value):
+        return self.client().set(name=key, value=value)
+
+    def set_brain_item_r(self, key, value):
+        self.client().set(name=key, value=value)
+        return self.client().get(name=key)
+
+    def get_brain_item(self, key):
+        return self.client().get(name=key)
+
+    def remove_brain_item(self, key):
+        return self.client().delete(name=key)
+
+    def wipe_brain(self):
+        self.client().flushall()

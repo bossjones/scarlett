@@ -5,20 +5,11 @@ Scarlett Client Utils
 """
 
 import scarlett
-import os
-import sys
-import time
-import getopt
-import tempfile
-import json
-import glob
-import subprocess
 import pygst
 pygst.require("0.10")
 import gst
 import pygtk
 pygtk.require('2.0')
-import gtk
 from scarlett.basics import *
 from scarlett.constants import *
 

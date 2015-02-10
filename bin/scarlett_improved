@@ -38,11 +38,14 @@ import textwrap
 from functools import wraps
 import time
 
+from scarlett.brain.scarlettbraini import ScarlettBrainImproved
+
 import sys
 from IPython.core import ultratb
 sys.excepthook = ultratb.FormattedTB(mode='Verbose',
      color_scheme='Linux', call_pdb=1)
 
+# trace decorator
 def trace(func):
     """Tracing wrapper to log when function enter/exit happens.
     :param func: Function to wrap
@@ -81,15 +84,24 @@ class ScarlettBot(dbus.service.Object):
                                                       pymicro=sys.version_info.micro,
                                                       pygst_version=pygst._pygst_version))
 
-        scarlett.log.debug(Fore.GREEN + "VERSION INFO: \n\n" + self.scarlett_version_info)
+        scarlett.log.debug(
+            Fore.GREEN +
+            "VERSION INFO: \n\n" +
+            self.scarlett_version_info
+            )
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
-        self._brain = scarlett.connect_brain()
+
+        self._brain = ScarlettBrainImproved(
+            host=scarlett.config.get('redis', 'host'),
+            port=scarlett.config.get('redis', 'port'),
+            db=scarlett.config.get('redis', 'db')
+            )
         self._voice = scarlett.connect_voice(self._brain)
         scarlett.basics.voice.play_block('pi-listening')
         #scarlett_says.say_block("helllllllllllloooo")
         self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
-    @trace
+    #@trace
     @dbus.service.method('org.scarlettapp.scarlettdaemon')
     def main(self):
         """Main method used to start scarlett application."""
@@ -103,7 +115,7 @@ class ScarlettBot(dbus.service.Object):
         except KeyboardInterrupt:
             self.Exit()
 
-    @trace
+    #@trace
     @dbus.service.method('org.scarlettapp.scarlettdaemon')
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")

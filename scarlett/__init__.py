@@ -1,8 +1,7 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from scarlett.core.config import Config, ScarlettConfigLocations
-import scarlett.plugin
+#### DISABLED UNTIL READY # import scarlett.plugin
 import datetime
 import os
 import platform
@@ -78,51 +77,51 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     log = logger
 
 
-def connect_voice(brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_voice")
-    from scarlett.basics.voice import Voice
-    return Voice(brain)
+# def connect_voice(brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_voice")
+#     from scarlett.basics.voice import Voice
+#     return Voice(brain)
 
 
-def connect_forecastio(voice, brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_forecastio")
-    from scarlett.features.forecast import FeatureForecast
-    return FeatureForecast(voice, brain)
+# def connect_forecastio(voice, brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_forecastio")
+#     from scarlett.features.forecast import FeatureForecast
+#     return FeatureForecast(voice, brain)
 
 
-def connect_wordnik(voice, brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_wordnik")
+# def connect_wordnik(voice, brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_wordnik")
 
 
-def connect_nltk(voice, brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_nltk")
+# def connect_nltk(voice, brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_nltk")
 
 
-def connect_hue(voice, brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_hue")
-    from scarlett.features.hue_lights import FeatureHueLights
-    return FeatureHueLights(voice, brain)
+# def connect_hue(voice, brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_hue")
+#     from scarlett.features.hue_lights import FeatureHueLights
+#     return FeatureHueLights(voice, brain)
 
 
-def connect_time(voice, brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_time")
-    from scarlett.features.time import FeatureTime
-    return FeatureTime(voice, brain)
+# def connect_time(voice, brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_time")
+#     from scarlett.features.time import FeatureTime
+#     return FeatureTime(voice, brain)
 
 
-def connect_wa(voice, brain, **kwargs):
-    global log
-    scarlett.log.debug("connect_wa")
+# def connect_wa(voice, brain, **kwargs):
+#     global log
+#     scarlett.log.debug("connect_wa")
 
 
-def connect_brain():
-    global log
-    scarlett.log.debug("connect_brain")
-    from scarlett.brain import ScarlettBrain
-    return ScarlettBrain(brain_name="DeepThought", flush=True)
+# def connect_brain():
+#     global log
+#     scarlett.log.debug("connect_brain")
+#     from scarlett.brain import ScarlettBrain
+#     return ScarlettBrain(brain_name="DeepThought", flush=True)
