@@ -59,6 +59,13 @@ def trace(func):
         return result
     return wrapper
 
+# TODO: Add a callback to make changes to brain object
+# TODO: Add a callback to run scarlett_says.say_block("BLAH")
+# source: http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
+
+class ScarlettBotException(dbus.DBusException):
+    _dbus_error_name = 'org.scarlettapp.scarlettbotexception'
+
 class ScarlettBot(dbus.service.Object):
     """ Actual scarlett bot object that has a brain, voice, etc """
     DBUS_NAME = 'org.scarlettapp.scarlettdaemon'
@@ -102,7 +109,8 @@ class ScarlettBot(dbus.service.Object):
         self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
     #@trace
-    @dbus.service.method('org.scarlettapp.scarlettdaemon')
+    @dbus.service.method('org.scarlettapp.scarlettdaemon',
+        in_signature='', out_signature='')
     def main(self):
         """Main method used to start scarlett application."""
         # All PyGTK applications must have a gtk.main(). Control ends here
@@ -115,8 +123,8 @@ class ScarlettBot(dbus.service.Object):
         except KeyboardInterrupt:
             self.Exit()
 
-    #@trace
-    @dbus.service.method('org.scarlettapp.scarlettdaemon')
+    @dbus.service.method('org.scarlettapp.scarlettdaemon',
+        in_signature='', out_signature='')
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         self.remove_from_connection()
@@ -139,7 +147,6 @@ def main():
     @trace
     def sigint_handler(*args):
         """Exit on Ctrl+C"""
-        #gtk.main_quit()
         self.loop.quit()
 
     signal.signal(signal.SIGINT, sigint_handler)
