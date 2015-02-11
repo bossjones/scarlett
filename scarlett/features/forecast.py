@@ -6,7 +6,6 @@ import scarlett
 from scarlett.features import *
 import forecastio
 import scarlett.basics.voice
-from scarlett.basics.talk import ScarlettTalk
 import scarlett.basics.say as scarlett_says
 
 
