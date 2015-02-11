@@ -106,9 +106,6 @@ class GstListenerImproved(threading.Thread):
 
     def __init__(self, lis_type, brain, voice, override_parse=False, **kwargs):
         # Init thread class
-        #### DISABLED FOR NOW # super(GstListenerImproved, self).__init__(kwargs)
-
-        # Init thread class
         threading.Thread.__init__(self)
         self._stopevent = threading.Event()
 
