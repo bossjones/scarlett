@@ -2,12 +2,10 @@
 
 import scarlett
 from scarlett.features import *
-from phue import Bridge
 import socket
 import time
 import os
 import scarlett.basics.voice
-from scarlett.basics.talk import ScarlettTalk
 import scarlett.basics.say as scarlett_says
 
 try:
@@ -16,6 +14,21 @@ try:
 except (AttributeError, ImportError):
     # This is probably running on App Engine.
     expanduser = (lambda x: x)
+
+def service_init(voice, brain):
+    """ Gets the Hue lights. """
+    try:
+        from phue import Bridge
+    except ImportError:
+        scarlett.log.exception(Fore.RED +
+                        "Sorry, had an issue connecting to phue Bridge, make sure you register the app first")
+        # source: http://stackoverflow.com/questions/6190776/what-is-the-best-way-to-exit-a-function-which-has-no-return-value-in-python-be
+        # exits function
+        return
+
+        service = FeatureHueLights(voice, brain)
+
+    return service
 
 class FeatureHueLights(Feature):
 
@@ -40,8 +53,9 @@ class FeatureHueLights(Feature):
             self.b = Bridge(
                 ip=self.hue_bridge,
                 config_file_path=self.hue_config)
-        except socket.error:  # Error connecting using Phue
-            scarlett.log.debug(
+        except socket.error:
+            # Error connecting using Phue
+            scarlett.log.exception(
                 Fore.YELLOW +
                 "Sorry, had an issue connecting to phue Bridge, make sure you register the app first")
 
