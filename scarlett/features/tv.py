@@ -2,8 +2,8 @@ import scarlett
 import time
 from scarlett.features import *
 import scarlett.basics.voice
-from scarlett.basics.talk import ScarlettTalk
-
+#from scarlett.basics.talk import ScarlettTalk
+import scarlett.basics.say as scarlett_says
 
 class FeatureTv(Feature):
 
