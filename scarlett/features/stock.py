@@ -2,7 +2,6 @@ import scarlett
 from scarlett.features import *
 import ystockquote
 import scarlett.basics.voice
-from scarlett.basics.talk import ScarlettTalk
 import scarlett.basics.say as scarlett_says
 
 
