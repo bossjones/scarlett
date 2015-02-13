@@ -8,12 +8,14 @@ try:
     import dbus.service
     from dbus.mainloop.glib import DBusGMainLoop
     from dbus.mainloop.glib import threads_init
+    import subprocess
+    from subprocess import call
     import gobject
     # Initialize gtk threading
     gobject.threads_init()
     # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
-    DBusGMainLoop(set_as_default=True)
     threads_init()
+    DBusGMainLoop(set_as_default=True)
     import pygst
     pygst.require('0.10')
     #gobject.threads_init()
@@ -38,12 +40,15 @@ import textwrap
 from functools import wraps
 import time
 
+import pprint
+
+import redis
 from scarlett.brain.scarlettbraini import ScarlettBrainImproved
 
 import sys
 from IPython.core import ultratb
 sys.excepthook = ultratb.FormattedTB(mode='Verbose',
-     color_scheme='Linux', call_pdb=1)
+     color_scheme='Linux', call_pdb=True, ostream=sys.__stdout__)
 
 # trace decorator
 def trace(func):
@@ -63,39 +68,61 @@ def trace(func):
 # TODO: Add a callback to run scarlett_says.say_block("BLAH")
 # source: http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
 
+# TODO: Evaluate all dbus CLI setting options
+# source: http://stackoverflow.com/questions/5819667/help-me-setup-a-cron-job-on-ubuntu
+
 class ScarlettBotException(dbus.DBusException):
     _dbus_error_name = 'org.scarlettapp.scarlettbotexception'
 
 class ScarlettBot(dbus.service.Object):
     """ Actual scarlett bot object that has a brain, voice, etc """
+
     DBUS_NAME = 'org.scarlettapp.scarlettdaemon'
     DBUS_PATH = '/org/scarlettapp/scarlettdaemon'
 
     _scarlett_services = []
     _last_send_time    = time.time()
 
+    #loop = None
+
     def __init__(self):
-        bus_name = dbus.service.BusName('org.scarlettapp.scarlettdaemon', bus=dbus.SessionBus())
-        dbus.service.Object.__init__(self, bus_name, '/org/scarlettapp/scarlettdaemon')
+
+        #session_bus = dbus.SessionBus()
+
+        bus_name = dbus.service.BusName(
+            'org.scarlettapp.scarlettdaemon',
+            bus=dbus.SessionBus()
+            )
+
+        dbus.service.Object.__init__(
+            self,
+            bus_name,
+            '/org/scarlettapp/scarlettdaemon'
+            )
+
         self.loop = None
+
         scarlett.set_stream_logger('scarlett')
-        scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
+
         self.scarlett_version_info = textwrap.dedent('''\
                                            Scarlett {version} ({platform})
                                            Python {pymajor}.{pyminor}.{pymicro}
                                            PyGst {pygst_version}
-                                           '''.format(version=__version__,
-                                                      platform=sys.platform,
-                                                      pymajor=sys.version_info.major,
-                                                      pyminor=sys.version_info.minor,
-                                                      pymicro=sys.version_info.micro,
-                                                      pygst_version=pygst._pygst_version))
+                                           '''.format(
+                                            version=__version__,
+                                            platform=sys.platform,
+                                            pymajor=sys.version_info.major,
+                                            pyminor=sys.version_info.minor,
+                                            pymicro=sys.version_info.micro,
+                                            pygst_version=pygst._pygst_version
+                                            ))
 
         scarlett.log.debug(
             Fore.GREEN +
             "VERSION INFO: \n\n" +
             self.scarlett_version_info
             )
+
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
 
         self._brain = ScarlettBrainImproved(
@@ -103,10 +130,18 @@ class ScarlettBot(dbus.service.Object):
             port=scarlett.config.get('redis', 'port'),
             db=scarlett.config.get('redis', 'db')
             )
-        self._voice = scarlett.connect_voice(self._brain)
+
+        #self._voice = scarlett.connect_voice(self._brain)
+
+        scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
+
         scarlett.basics.voice.play_block('pi-listening')
+
         #scarlett_says.say_block("helllllllllllloooo")
-        self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
+
+        #self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
+
+
 
     #@trace
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
@@ -138,6 +173,78 @@ class ScarlettBot(dbus.service.Object):
         self.remove_from_connection()
         self.loop.quit()
 
+    def set_session_bus_env(self):
+        """
+        We need to get the dbus environment variable for
+        scarlett_improved to work These environment variables
+        are stored in $HOME/.dbus/session-bus there may be old
+        sessions stored in .dbus/session-bus, we need to
+        determine which session to use
+        """
+
+        env = os.environ.copy()
+        # Fetch all sessions in $HOME/.dbus/session-bus
+        dbus_dir=os.path.join(env['HOME'],'.dbus/session-bus')
+        dbus_sessions=[]
+        for filename in os.listdir(dbus_dir):
+            filepath = os.path.join(dbus_dir,filename)
+            print "filename: %s" % (filepath)
+            session=dict()
+            with open(filepath, 'r') as f:
+                for line in f.readlines():
+                    if re.match('^#',line):
+                        continue
+                    var,value=line.strip().split('=',1)
+                    session[var]=value
+            dbus_sessions.append(session)
+
+        # Determine which dbus session to use
+        # Check pid to see if it is alive
+        # If pid is alive see if the name contains dbus-daemon
+        for s in dbus_sessions:
+            pid=s['DBUS_SESSION_BUS_PID']
+
+            if os.path.exists('/proc/{0}'.format(pid)):
+                with open('/proc/{0}/cmdline'.format(pid)) as f:
+                    cmdline = f.readline().strip()
+            else:
+                print "DBUS process must be dead"
+                # DBUS process must be dead
+                continue
+
+            if re.search('dbus-daemon',cmdline):
+                env['DBUS_SESSION_BUS_ADDRESS'] = s['DBUS_SESSION_BUS_ADDRESS']
+                env['DBUS_SESSION_BUS_PID'] = s['DBUS_SESSION_BUS_PID']
+                env['DBUS_SESSION_BUS_WINDOWID'] = s['DBUS_SESSION_BUS_WINDOWID']
+
+                # show value of session bus
+                scarlett.log.debug(Fore.YELLOW +
+                    s['DBUS_SESSION_BUS_ADDRESS'])
+                scarlett.log.debug(Fore.YELLOW +
+                    s['DBUS_SESSION_BUS_PID'])
+                scarlett.log.debug(Fore.YELLOW +
+                    s['DBUS_SESSION_BUS_WINDOWID'])
+
+                # set value of environment
+                os.environ['DBUS_SESSION_BUS_ADDRESS'] = env['    DBUS_SESSION_BUS_ADDRESS']
+                os.environ['DBUS_SESSION_BUS_PID'] = env['DBUS_SESSION_BUS_PID']
+                os.environ['DBUS_SESSION_BUS_WINDOWID'] = env['    DBUS_SESSION_BUS_WINDOWID']
+                break
+
+        return
+
+def set_dbus_launch_shell():
+    # source: http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
+    p = subprocess.Popen('dbus-launch',
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+
+    for var in p.stdout:
+      sp = var.split('=', 1)
+      print sp
+      os.environ[sp[0]] = sp[1][:-1]
+
 def main():
     """Launch application."""
     logging.basicConfig(
@@ -147,14 +254,46 @@ def main():
     @trace
     def sigint_handler(*args):
         """Exit on Ctrl+C"""
-        self.loop.quit()
+        # Unregister handler, next Ctrl-C will kill app
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+        #self.loop.quit()
+        scarlett.basics.voice.play_free()
+        scarlett_daemon.Exit()
 
     signal.signal(signal.SIGINT, sigint_handler)
 
+    # create scarlett_daemon runner
     scarlett_daemon = ScarlettBot()
-    scarlett_daemon.main()
+
+    try:
+
+       scarlett_daemon.main()
+
+    finally:
+
+       scarlett.basics.voice.play_free()
+
 
 # If the program is run directly or passed as an argument to the python
-# interpreter then create a HelloWorld instance and show it
+# interpreter then create a scarlettBot instance and show it
 if __name__ == "__main__":
+    # Set up and parse command-line args.
+    global scarlett_cli_args
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--detect-session-bus", action="store_true", default=False)
+
+    #parser.add_argument("--num-clients", type=int, default=default_num_clients)
+    #parser.add_argument("--num-seconds", type=int, default=10)
+    #parser.add_argument("--num-channels", type=int, default=50)
+    #parser.add_argument("--message-size", type=int, default=20)
+    #parser.add_argument("--redis", action="store_true")
+    #parser.add_argument("--unbuffered", action="store_true")
+    #parser.add_argument("--quiet", action="store_true")
+
+    scarlett_cli_args = parser.parse_args()
+
+    if scarlett_cli_args.detect_session_bus:
+       set_dbus_launch_shell()
+
     main()
