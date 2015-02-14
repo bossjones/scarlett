@@ -2,13 +2,15 @@ import scarlett
 import time
 import datetime
 from scarlett.features import *
-import scarlett.basics.voice
-import scarlett.basics.say as scarlett_says
+#import scarlett.basics.voice
+#import scarlett.basics.say as scarlett_says
 
 import gobject
 
 import dbus
 import dbus.service
+
+from scarlett.events import scarlett_event
 
 class FeatureTime(gobject.GObject):
     """Time plugin wrapper to exchange messages with py-dbus.
@@ -19,11 +21,11 @@ class FeatureTime(gobject.GObject):
     """
 
     __gproperties__ = {
-         'state' : (
-                   gobject.TYPE_BOOLEAN, # type
+         'time_state' : (
+                   gobject.TYPE_STRING, # type
                    'State of feature Time', # nick name
                    'Returns whether feature is on/off', # description
-                   False, # default value
+                   'off', # default value
                    gobject.PARAM_READWRITE
                    ),
          'kw_match' : (
@@ -56,23 +58,24 @@ class FeatureTime(gobject.GObject):
                       )
     }
 
-    __gsignals__ = { 'time-started' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_BOOLEAN,))
+    __gsignals__ = { 'time-started' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_STRING,))
     }
 
     capability = []
 
-    def __init__(self, voice, brain, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         # Initialize to be able to emit signals
-        gobject.GObject.__init__(self,args, kwargs)
-        self.state = True # device is on
-        self.kw_match = False # set to true when keyword identified
+        gobject.GObject.__init__(self)
+        self.time_state = 'on' # device is on
+        self.kw_match   = False # set to true when keyword identified
         #super(FeatureTime, self).__init__(args, kwargs)
         self._name = "time"
-        self.voice = voice
-        self.brain = brain
         self.now = self.set_now()
         self.now_time = self.get_current_time()
         self.now_date = self.get_current_date()
+        scarlett.log.debug(
+            Fore.YELLOW +
+            "FeatureTime CREATED")
 
     # GObject translates all the underscore characters to hyphen
     # characters so if you have a property called background_color,
@@ -80,8 +83,8 @@ class FeatureTime(gobject.GObject):
     def do_get_property(self, property):
         if property.name == 'kw-match':
             return self.kw_match
-        elif property.name == 'state':
-            return self.state
+        elif property.name == 'time-state':
+            return self.time_state
         elif property.name == 'now-time':
             return self.now_time
         elif property.name == 'now-date':
@@ -90,16 +93,16 @@ class FeatureTime(gobject.GObject):
             raise AttributeError, 'unknown property %s' % property.name
 
     def do_set_property(self, property, value):
-         if property.name == 'kw-match':
+         if property == 'kw-match':
              self.kw_match = value
-         elif property.name == 'state':
-             self.state = value
-         elif property.name == 'now-time':
+         elif property == 'time-state':
+             self.time_state = value
+         elif property == 'now-time':
              self.now_time = value
-         elif property.name == 'now-date':
+         elif property == 'now-date':
              self.now_date = value
          else:
-             raise AttributeError, 'unknown property %s' % property.name
+             raise AttributeError, 'unknown property %s' % property
 
     def time_play(self, cmd='time'):
         self.current_time = self.get_current_time()
@@ -113,13 +116,16 @@ class FeatureTime(gobject.GObject):
             "self.current_date: " +
             self.current_date)
 
-        scarlett_says.say_block(self.current_time)
-        scarlett_says.say_block(self.current_date)
-        self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
-        self.keyword_identified = int(
-            self.brain.set_brain_item_r(
-                'm_keyword_match',
-                0))
+        ## TODO: 2/13/2015 # Move all speaking logic to the main thread
+        ### TODO # scarlett_says.say_block(self.current_time)
+        ### TODO # scarlett_says.say_block(self.current_date)
+
+        ## TODO: 2/13/2015 # Move all brain logic to the main thread
+        ### TODO # self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
+        ### TODO # self.keyword_identified = int(
+        ### TODO #     self.brain.set_brain_item_r(
+        ### TODO #         'm_keyword_match',
+        ### TODO #         0))
 
     def get_current_time(self):
         self.now = self.set_now()
@@ -147,7 +153,11 @@ class FeatureTime(gobject.GObject):
             now_time)
 
     def start(self):
-        self.emit('time-started', self.get_property('now-time'))
+        # register service start
+        register_sstart = scarlett_event("service_state",
+            data=self.get_property('time-state')
+            )
+        self.emit('time-started', register_sstart)
 
 # Register to be able to emit signals
 gobject.type_register(FeatureTime)

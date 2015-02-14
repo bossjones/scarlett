@@ -45,6 +45,9 @@ import pprint
 import redis
 from scarlett.brain.scarlettbraini import ScarlettBrainImproved
 
+import ast
+
+# drops you down into pdb if exception is thrown
 import sys
 from IPython.core import ultratb
 sys.excepthook = ultratb.FormattedTB(mode='Verbose',
@@ -131,7 +134,13 @@ class ScarlettBot(dbus.service.Object):
             db=scarlett.config.get('redis', 'db')
             )
 
-        #self._voice = scarlett.connect_voice(self._brain)
+        # enable services
+        if scarlett_cli_args.enable_feature == "time":
+            from scarlett.features.time import FeatureTime
+            self.time = FeatureTime()
+            self.time.connect(
+            'time-started', self.time_started_cb)
+            self.time.start()
 
         scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
 
@@ -141,9 +150,30 @@ class ScarlettBot(dbus.service.Object):
 
         #self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
+    @trace
+    def time_started_cb(self, time_feature, message):
+        """Handle message send by webbrowser.
+
+        :param time_feature: TimeFeature object that sent the message
+        :type time_feature: scarlett.Feature
+        :param message: Message containing event data
+        :type message: dict
+
+        """
+        scarlett.log.debug(Fore.GREEN + "(time -> gtk) %s", message)
+
+        # At the moment we don't want to restrict types till we get this
+        # working fully
+        ## DISABLED # assert isinstance(message, dict)
+        event = ast.literal_eval(message)
+
+        if event['event_type'] == 'service_state':
+           scarlett.log.debug(Fore.GREEN +
+                "RECIEVED: service_state from time-started: {}".format(event[    'data']))
+        else:
+            raise ValueError('Unknown scarlettTime message: {}'.format(event)    )
 
 
-    #@trace
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
         in_signature='', out_signature='')
     def main(self):
@@ -163,7 +193,6 @@ class ScarlettBot(dbus.service.Object):
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         self.remove_from_connection()
-        # OLD # gtk.main_quit()
         self.loop.quit() # OLD # gobject.mainloop.quit()
 
     @dbus.service.method("org.scarlettapp.scarlettdaemon",
@@ -254,7 +283,9 @@ def main():
     @trace
     def sigint_handler(*args):
         """Exit on Ctrl+C"""
+
         # Unregister handler, next Ctrl-C will kill app
+        # TOD: figure out if this is really needed or not
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
         #self.loop.quit()
@@ -282,14 +313,7 @@ if __name__ == "__main__":
     global scarlett_cli_args
     parser = argparse.ArgumentParser()
     parser.add_argument("--detect-session-bus", action="store_true", default=False)
-
-    #parser.add_argument("--num-clients", type=int, default=default_num_clients)
-    #parser.add_argument("--num-seconds", type=int, default=10)
-    #parser.add_argument("--num-channels", type=int, default=50)
-    #parser.add_argument("--message-size", type=int, default=20)
-    #parser.add_argument("--redis", action="store_true")
-    #parser.add_argument("--unbuffered", action="store_true")
-    #parser.add_argument("--quiet", action="store_true")
+    parser.add_argument("--enable-feature", default="time")
 
     scarlett_cli_args = parser.parse_args()
 

@@ -18,6 +18,26 @@ PRIORITY_NONE = None
 PRIORITY_LOW = 'LOW'
 PRIORITY_HIGH = 'HIGH'
 
+# Borrowed this constants from HOMEASSISTANT
+# If we're accessing an event that is local vs remote via the bus
+EVENT_SCARLETT_START = "scarlett_start"
+EVENT_SCARLETT_STOP = "scarlett_stop"
+EVENT_STATE_CHANGED = "state_changed"
+EVENT_TIME_CHANGED = "time_changed"
+EVENT_CALL_SERVICE = "call_service"
+EVENT_SERVICE_EXECUTED = "service_executed"
+EVENT_SERVICE_REGISTER = "service_register"
+EVENT_PLATFORM_DISCOVERED = "platform_discovered"
+
+# #### STATES ####
+STATE_ON = 'on'
+STATE_OFF = 'off'
+STATE_HOME = 'home'
+STATE_NOT_HOME = 'not_home'
+STATE_UNKNOWN = "unknown"
+STATE_OPEN = 'open'
+STATE_CLOSED = 'closed'
+
 # Request state is currently unknown, either unsubmitted or connection failed
 JOB_UNKNOWN = 'UNKNOWN'
 JOB_PENDING = 'PENDING'  # Request has been submitted, pending handle

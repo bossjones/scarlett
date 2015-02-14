@@ -12,10 +12,10 @@ from scarlett.constants import *
 import scarlett.basics.voice
 
 import redis.connection
-from scarlett.utils import singleton
+from scarlett.util import singleton
 #from json import loads, dumps
 
-@singleton
+#@singleton
 class ScarlettBrainImproved(redis.Redis):
     """
     Wrapper for Redis pub-sub that uses a pipeline internally
@@ -37,7 +37,7 @@ class ScarlettBrainImproved(redis.Redis):
     """
 
     def __init__(self, *args, **kwargs):
-        super(ScarlettBrainBuffered, self).__init__(*args, **kwargs)
+        super(ScarlettBrainImproved, self).__init__(*args, **kwargs)
         self.buffer = self.pipeline()
         # A factory function that returns a new primitive lock object.
         # Once a thread has acquired it, subsequent attempts to acquire
@@ -50,9 +50,9 @@ class ScarlettBrainImproved(redis.Redis):
         #self._stopevent = threading.Event()
 
         scarlett.log.debug(Fore.YELLOW + "initializing ScarlettBrain")
-        self.flush = True
+        self.scarlett_flush = True
 
-        if self.flush:
+        if self.scarlett_flush:
             self.wipe_brain()
             self.set_brain_item('m_keyword_match', 0)
             self.set_brain_item('scarlett_successes', 0)
@@ -93,29 +93,29 @@ class ScarlettBrainImproved(redis.Redis):
                 # one for each command.
                 self.buffer.execute()
 
-    def get_brain(self):
-        return self.client()
+    # def get_brain(self):
+    #     return self
 
     def set_keyword_identified(self, keyword_value):
-        return self.client().set(
+        return self.set(
             name="m_keyword_match",
             value=keyword_value)
 
     def get_keyword_identified(self):
-        return self.client().get(name="m_keyword_match")
+        return self.get(name="m_keyword_match")
 
     def set_brain_item(self, key, value):
-        return self.client().set(name=key, value=value)
+        return self.set(name=key, value=value)
 
     def set_brain_item_r(self, key, value):
-        self.client().set(name=key, value=value)
-        return self.client().get(name=key)
+        self.set(name=key, value=value)
+        return self.get(name=key)
 
     def get_brain_item(self, key):
-        return self.client().get(name=key)
+        return self.get(name=key)
 
     def remove_brain_item(self, key):
-        return self.client().delete(name=key)
+        return self.delete(name=key)
 
     def wipe_brain(self):
-        self.client().flushall()
+        self.flushall()

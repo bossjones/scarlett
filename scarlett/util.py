@@ -131,3 +131,4 @@ def get_local_ip():
 # except Exception:
 # print "Gstreamer Pocketsphinx plugins not found !!! \n\n\n"
 # return False
+

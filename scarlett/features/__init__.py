@@ -6,15 +6,19 @@ from scarlett.constants import *
 
 class Feature(object):
 
-    def __init__(self, voice, brain):
-        self.voice = voice
-        self.brain = brain
+    def __init__(self):
+        pass
+        #self.voice = voice
+        #self.brain = brain
 
     @property
     def name(self):
         return self._name
 
     def __str__(self):
+        return "Scarlett Feature is %s" % (self.name)
+
+    def format_event(self):
         return "Scarlett Feature is %s" % (self.name)
 
     def module_exists(self, module_name):
