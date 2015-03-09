@@ -28,6 +28,13 @@ EVENT_CALL_SERVICE = "call_service"
 EVENT_SERVICE_EXECUTED = "service_executed"
 EVENT_SERVICE_REGISTER = "service_register"
 EVENT_PLATFORM_DISCOVERED = "platform_discovered"
+EVENT_SCARLETT_SAY = "scarlett_speak"
+EVENT_BRAIN_UPDATE = "scarlett_brain_update"
+EVENT_BRAIN_CHECK = "scarlett_brain_check"
+
+# event location
+EVENT_LOCAL  = "LOCAL"
+EVENT_REMOTE = "REMOTE"
 
 # #### STATES ####
 STATE_ON = 'on'
@@ -37,6 +44,7 @@ STATE_NOT_HOME = 'not_home'
 STATE_UNKNOWN = "unknown"
 STATE_OPEN = 'open'
 STATE_CLOSED = 'closed'
+STATE_FEATURE_REGISTERED = 'feature_registered'
 
 # Request state is currently unknown, either unsubmitted or connection failed
 JOB_UNKNOWN = 'UNKNOWN'
