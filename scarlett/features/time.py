@@ -12,6 +12,19 @@ import dbus.service
 
 from scarlett.events import scarlett_event
 
+from scarlett.constants import ( EVENT_SCARLETT_START,
+                                 EVENT_SCARLETT_STOP,
+                                 EVENT_STATE_CHANGED,
+                                 EVENT_TIME_CHANGED,
+                                 EVENT_CALL_SERVICE,
+                                 EVENT_SERVICE_EXECUTED,
+                                 EVENT_SERVICE_REGISTER,
+                                 EVENT_PLATFORM_DISCOVERED,
+                                 EVENT_SCARLETT_SAY,
+                                 EVENT_BRAIN_UPDATE,
+                                 EVENT_BRAIN_CHECK
+                               )
+
 class FeatureTime(gobject.GObject):
     """Time plugin wrapper to exchange messages with py-dbus.
 
@@ -31,6 +44,13 @@ class FeatureTime(gobject.GObject):
          'kw_match' : (
                     gobject.TYPE_BOOLEAN, # type
                     'Keyword Match', # nick name
+                    'Boolean value for keyword', # description
+                    False, # default value
+                    gobject.PARAM_READWRITE
+                    ),
+         'svc_kw_match' : (
+                    gobject.TYPE_BOOLEAN, # type
+                    'Service Keyword Match', # nick name
                     'Boolean value for keyword', # description
                     False, # default value
                     gobject.PARAM_READWRITE
@@ -55,10 +75,42 @@ class FeatureTime(gobject.GObject):
                         'String of message were sending to espeak', # description
                         None, # default value
                         gobject.PARAM_READWRITE
+                      ),
+         'unique_id' : (
+                        gobject.TYPE_STRING, # type
+                        'Unique ID', # nick name
+                        'Value of obj unique id', # description
+                        None, # default value
+                        gobject.PARAM_READWRITE
+                      ),
+         'name' : (
+                        gobject.TYPE_STRING, # type
+                        'Obj Name', # nick name
+                        'Name of Obj', # description
+                        None, # default value
+                        gobject.PARAM_READWRITE
+                      ),
+         'state' : (
+                        gobject.TYPE_STRING, # type
+                        'Objects state', # nick name
+                        'State of object', # description
+                        None, # default value
+                        gobject.PARAM_READWRITE
+                      ),
+         'state_attributes' : (
+                        gobject.TYPE_STRING, # type
+                        'State attributes', # nick name
+                        'Value of geature obj state attrs', # description
+                        None, # default value
+                        gobject.PARAM_READWRITE
                       )
     }
 
-    __gsignals__ = { 'time-started' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_STRING,))
+    __gsignals__ = {
+    'time-started' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_STRING,)),
+    'kw-match-set' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_STRING,)),
+    'svc-kw-match-set' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_STRING,)),
+    'service-say' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_STRING,))
     }
 
     capability = []
@@ -68,14 +120,17 @@ class FeatureTime(gobject.GObject):
         gobject.GObject.__init__(self)
         self.time_state = 'on' # device is on
         self.kw_match   = False # set to true when keyword identified
+        self.svc_kw_match = False
         #super(FeatureTime, self).__init__(args, kwargs)
-        self._name = "time"
+        self.name = "scarlett_time"
         self.now = self.set_now()
         self.now_time = self.get_current_time()
         self.now_date = self.get_current_date()
         scarlett.log.debug(
             Fore.YELLOW +
             "FeatureTime CREATED")
+        self.state = None
+        self.state_attributes = {}
 
     # GObject translates all the underscore characters to hyphen
     # characters so if you have a property called background_color,
@@ -83,24 +138,40 @@ class FeatureTime(gobject.GObject):
     def do_get_property(self, property):
         if property.name == 'kw-match':
             return self.kw_match
+        elif property.name == 'svc-kw-match':
+            return self.svc_kw_match
         elif property.name == 'time-state':
             return self.time_state
         elif property.name == 'now-time':
             return self.now_time
         elif property.name == 'now-date':
             return self.now_date
+        elif property.name == 'name':
+            return self.name
+        elif property.name == 'state':
+            return self.state
+        elif property.name == 'state-attribute':
+            return self.state_attributes
         else:
             raise AttributeError, 'unknown property %s' % property.name
 
     def do_set_property(self, property, value):
          if property == 'kw-match':
              self.kw_match = value
+         elif property == 'svc-kw-match':
+             self.svc_kw_match = value
          elif property == 'time-state':
              self.time_state = value
          elif property == 'now-time':
              self.now_time = value
          elif property == 'now-date':
              self.now_date = value
+         elif property == 'name':
+             self.name = value
+         elif property == 'state':
+             self.state = value
+         elif property == 'state-attributes':
+             self.state_attributes = value
          else:
              raise AttributeError, 'unknown property %s' % property
 
@@ -115,6 +186,14 @@ class FeatureTime(gobject.GObject):
             Fore.YELLOW +
             "self.current_date: " +
             self.current_date)
+
+        # emit scarlett_speak
+        say_current_time = scarlett_event("scarlett_speak",
+            data=self.get_property('now-time')
+            )
+        self.emit('service-say', say_current_time)
+
+        # set brain back to normal
 
         ## TODO: 2/13/2015 # Move all speaking logic to the main thread
         ### TODO # scarlett_says.say_block(self.current_time)

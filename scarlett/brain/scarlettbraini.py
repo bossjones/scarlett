@@ -93,8 +93,31 @@ class ScarlettBrainImproved(redis.Redis):
                 # one for each command.
                 self.buffer.execute()
 
-    # def get_brain(self):
-    #     return self
+    def set(self, *args, **kwargs):
+        """
+        Overrides publish to use the buffer set, flushing
+        it when the defined buffer size is reached.
+        """
+        with self.lock:
+            self.buffer.set(*args, **kwargs)
+            if len(self.buffer.command_stack) >= 1000:
+                # the EXECUTE call sends all buffered commands
+                # to the server, returning a list of responses,
+                # one for each command.
+                self.buffer.execute()
+
+    def get(self, *args, **kwargs):
+        """
+        Overrides publish to use the buffer get, flushing
+        it when the defined buffer size is reached.
+        """
+        with self.lock:
+            self.buffer.get(*args, **kwargs)
+            if len(self.buffer.command_stack) >= 1000:
+                # the EXECUTE call sends all buffered commands
+                # to the server, returning a list of responses,
+                # one for each command.
+                self.buffer.execute()
 
     def set_keyword_identified(self, keyword_value):
         return self.set(
