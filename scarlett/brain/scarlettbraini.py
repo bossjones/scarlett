@@ -12,7 +12,7 @@ from scarlett.constants import *
 import scarlett.basics.voice
 
 import redis.connection
-from scarlett.util import singleton
+#from scarlett.util import singleton
 #from json import loads, dumps
 
 #@singleton
