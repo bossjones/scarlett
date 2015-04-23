@@ -7,13 +7,13 @@ Vagrant.configure("2")  do |config|
   # name
   # CHANGME
   config.vm.hostname = "scarlettpi-system7"
+  config.vm.boot_timeout = 400
 
   # networking
-  #config.vm.network "private_network", ip: "192.168.5.10"
-  config.vm.network :public_network
-  config.vm.network "forwarded_port", guest: 80, host: 8180
-  config.vm.network "forwarded_port", guest: 443, host: 4443
+  config.vm.network "public_network", :bridge => 'en0: Wi-Fi (AirPort)'
   config.vm.network "forwarded_port", guest: 19360, host: 1936
+  config.vm.network "forwarded_port", guest: 139, host: 1139
+  config.vm.network "forwarded_port", guest: 8081, host: 8881
 
   config.ssh.username = "pi"
   config.ssh.host = "127.0.0.1"
@@ -23,6 +23,8 @@ Vagrant.configure("2")  do |config|
   config.ssh.forward_x11 = true
   #config.ssh.pty = true
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
+  config.vm.provision "shell", path: "./bootstrap/start_anaconda.sh"
 
   config.vm.provider :virtualbox do |vb|
     # Don't boot with headless mode
