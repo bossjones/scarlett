@@ -60,3 +60,4 @@ compile/
 *.bundle
 *.vendor
 Gemfile.lock
+.vagrant/
