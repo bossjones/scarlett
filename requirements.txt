@@ -7,8 +7,8 @@ httplib2
 redis
 hiredis
 # source: https://pythonhosted.org/python-stdnet/backends/redis.html
-python-stdnet
+#python-stdnet
 pulsar==0.9.1
-gevent
-greenlet
-taba
+#gevent
+#greenlet
+#taba
