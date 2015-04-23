@@ -25,6 +25,11 @@ from scarlett.constants import ( EVENT_SCARLETT_START,
                                  EVENT_BRAIN_CHECK
                                )
 
+SCARLETT_FEATURE = 'time'
+
+def setup_feature(ss):
+    pass
+
 class FeatureTime(gobject.GObject):
     """Time plugin wrapper to exchange messages with py-dbus.
 
