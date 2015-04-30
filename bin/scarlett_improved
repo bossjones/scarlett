@@ -91,7 +91,6 @@ class ScarlettBot(dbus.service.Object):
     DBUS_PATH = '/org/scarlettapp/scarlettdaemon'
 
     _scarlett_services = []
-    _last_send_time    = time.time()
 
     #loop = None
 
