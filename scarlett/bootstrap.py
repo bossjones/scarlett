@@ -81,6 +81,7 @@ def setup_feature(ss, scarlett_feature):
     feature = get_feature(scarlett_feature)
 
     try:
+        # setup a scarlett feature
         if feature.setup(ss):
             ss.features.append(feature.SCARLETT_FEATURE)
 
