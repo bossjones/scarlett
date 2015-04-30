@@ -112,6 +112,7 @@ def get_feature(feature_name):
 
     _check_ready()
 
+    # TODO: Add base features here as well including voice, scarlettbrain, etc
     potential_paths = ['scarlett.features.{}'.format(feature_name)]
 
     for path in potential_paths:
