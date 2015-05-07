@@ -62,20 +62,6 @@ from IPython.core import ultratb
 sys.excepthook = ultratb.FormattedTB(mode='Verbose',
      color_scheme='Linux', call_pdb=True, ostream=sys.__stdout__)
 
-# trace decorator
-#### DISABLED # def trace(func):
-#### DISABLED #     """Tracing wrapper to log when function enter/exit happens.
-#### DISABLED #     :param func: Function to wrap
-#### DISABLED #     :type func: callable
-#### DISABLED #     """
-#### DISABLED #     @wraps(func)
-#### DISABLED #     def wrapper(*args, **kwargs):
-#### DISABLED #         logging.debug(Fore.GREEN + 'Start {!r}'. format(func.__name__))
-#### DISABLED #         result = func(*args, **kwargs)
-#### DISABLED #         logging.debug(Fore.GREEN + 'End {!r}'. format(func.__name__))
-#### DISABLED #         return result
-#### DISABLED #     return wrapper
-
 # TODO: Add a callback to make changes to brain object
 # TODO: Add a callback to run scarlett_says.say_block("BLAH")
 # source: http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm

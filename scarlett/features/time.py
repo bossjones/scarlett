@@ -2,8 +2,6 @@ import scarlett
 import time
 import datetime
 from scarlett.features import *
-#import scarlett.basics.voice
-#import scarlett.basics.say as scarlett_says
 
 import gobject
 
