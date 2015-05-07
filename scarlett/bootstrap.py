@@ -38,6 +38,8 @@ REGISTERED_FEATURES = []
 
 _FEATURE_CACHE = {}
 
+READY = False
+
 # insert path so we can access things w/o having to re-install everything
 # sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -54,7 +56,7 @@ def ready(ss,feature_name=None):
 
     if feature_name == None:
 
-       AVAILABLE_features.extend(
+       REGISTERED_FEATURES.extend(
            item[1] for item in
            pkgutil.iter_modules(features.__path__, 'scarlett.features.'))
 
@@ -74,6 +76,7 @@ def setup_feature(ss, scarlett_feature):
     """ Setup a feature for Scarlett. """
     # Check if already loaded
     if scarlett_feature in ss.features:
+        scarlett.log.info(Fore.YELLOW + "feature %s failed to initialize", scarlett_feature)
         return
 
     _ensure_scarlett_ready(ss)
@@ -82,10 +85,13 @@ def setup_feature(ss, scarlett_feature):
 
     try:
         # setup a scarlett feature
-        if feature.setup(ss):
+        if feature.setup_feature(ss):
             ss.features.append(feature.SCARLETT_FEATURE)
 
-            scarlett.log.info("feature %s initialized", scarlett_feature)
+            scarlett.log.info(Fore.YELLOW + "feature %s initialized", scarlett_feature)
+
+            pp = pprint.PrettyPrinter(indent=4)
+            pp.pprint(ss.features)
 
             # if group.SCARLETT_FEATURE not in feature.DEPENDENCIES:
             #     ss.pool.add_worker()
@@ -96,12 +102,15 @@ def setup_feature(ss, scarlett_feature):
             return True
 
         else:
-            scarlett.log.error("feature %s failed to initialize", scarlett_feature)
+            scarlett.log.error(Fore.RED + "feature %s failed to initialize", scarlett_feature)
 
     except Exception:
-        scarlett.log.exception("Error during setup of feature %s", scarlett_feature)
+        scarlett.log.exception(Fore.RED + "Error during setup of feature %s", scarlett_feature)
 
     return False
+
+def connect_to_scarlett(ss, scarlett_feature):
+    pass
 
 def get_feature(feature_name):
     """ Tries to load specified feature.

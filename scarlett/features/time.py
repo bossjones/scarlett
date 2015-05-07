@@ -32,7 +32,7 @@ _TIME_INSTANCE=None
 
 def setup_feature(ss):
     if _TIME_INSTANCE == None:
-        _TIME_INSTANCE=FeatureTime()
+        _TIME_INSTANCE = FeatureTime()
 
     return _TIME_INSTANCE
 
