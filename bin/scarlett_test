@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+
+# Define number of MINIMUM worker threads.
+# During bootstrap of HA (see bootstrap.from_config_dict()) worker threads
+# will be added for each component that polls devices.
+MIN_WORKER_THREAD = 2
+
+import signal
+gobjectnotimported = False
+
+try:
+    import dbus
+    import dbus.service
+    from dbus.mainloop.glib import DBusGMainLoop
+    from dbus.mainloop.glib import threads_init
+    import subprocess
+    from subprocess import call
+    import gobject
+    # Initialize gtk threading
+    gobject.threads_init()
+    # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
+    threads_init()
+    DBusGMainLoop(set_as_default=True)
+    import pygst
+    pygst.require('0.10')
+    #gobject.threads_init()
+    #threads_init()
+    import scarlett
+    from scarlett.constants import *
+    from scarlett import __version__
+    from scarlett import ScarlettSystem
+    import scarlett.basics.voice
+    from scarlett.basics.voice import Voice
+    import scarlett.bootstrap
+    from scarlett.listener.gstlisteneri import GstListenerImproved
+    from scarlett.basics.talk import ScarlettTalk
+    import scarlett.basics.say as scarlett_says
+except:
+    gobjectnotimported = True
+
+import logging
+import argparse
+import sys
+# will use this to trace when functions begin and end
+# see details from: http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
+import textwrap
+from functools import wraps
+import time
+
+import pprint
+
+import redis
+from scarlett.brain.scarlettbraini import ScarlettBrainImproved
+
+import ast
+
+import scarlett.util as util
+
+# drops you down into pdb if exception is thrown
+import sys
+from IPython.core import ultratb
+sys.excepthook = ultratb.FormattedTB(mode='Verbose',
+     color_scheme='Linux', call_pdb=True, ostream=sys.__stdout__)
+
+# trace decorator
+#### DISABLED # def trace(func):
+#### DISABLED #     """Tracing wrapper to log when function enter/exit happens.
+#### DISABLED #     :param func: Function to wrap
+#### DISABLED #     :type func: callable
+#### DISABLED #     """
+#### DISABLED #     @wraps(func)
+#### DISABLED #     def wrapper(*args, **kwargs):
+#### DISABLED #         logging.debug(Fore.GREEN + 'Start {!r}'. format(func.__name__))
+#### DISABLED #         result = func(*args, **kwargs)
+#### DISABLED #         logging.debug(Fore.GREEN + 'End {!r}'. format(func.__name__))
+#### DISABLED #         return result
+#### DISABLED #     return wrapper
+
+# TODO: Add a callback to make changes to brain object
+# TODO: Add a callback to run scarlett_says.say_block("BLAH")
+# source: http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
+
+# TODO: Evaluate all dbus CLI setting options
+# source: http://stackoverflow.com/questions/5819667/help-me-setup-a-cron-job-on-ubuntu
+
+def set_dbus_launch_shell():
+    # source: http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
+    p = subprocess.Popen('dbus-launch',
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+
+    for var in p.stdout:
+      sp = var.split('=', 1)
+      print sp
+      os.environ[sp[0]] = sp[1][:-1]
+
+# If the program is run directly or passed as an argument to the python
+# interpreter then create a scarlettBot instance and show it
+if __name__ == "__main__":
+
+    # Set up and parse command-line args.
+    global scarlett_cli_args
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--detect-session-bus", action="store_true", default=False)
+    parser.add_argument("--enable-feature", default="time")
+
+    scarlett_cli_args = parser.parse_args()
+
+    if scarlett_cli_args.detect_session_bus:
+       set_dbus_launch_shell()
+
+    def sigint_handler(*args):
+        """Exit on Ctrl+C"""
+
+        # Unregister handler, next Ctrl-C will kill app
+        # TOD: figure out if this is really needed or not
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+        scarlett.basics.voice.play_free()
+        scarlett_daemon.Exit()
+
+    signal.signal(signal.SIGINT, sigint_handler)
+
+    # create scarlett_daemon runner
+    scarlett_daemon = scarlett.bootstrap.system_boot()
+
+    try:
+
+       scarlett_daemon.main()
+
+    finally:
+
+       scarlett.basics.voice.play_free()
+
