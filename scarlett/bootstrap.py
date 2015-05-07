@@ -211,6 +211,9 @@ def system_boot(ss=None):
 
     _features_to_register = tuple(_feat_enable_config.split(','))
 
+    # eliminate anything that isn't a string
+    _features_to_register = [x for x in _features_to_register if isinstance(x, basestring)]
+
     for scarlett_feature in _features_to_register(_features_to_register):
         setup_feature(ss, scarlett_feature)
 
