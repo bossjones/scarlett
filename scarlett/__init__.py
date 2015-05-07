@@ -187,9 +187,9 @@ class ScarlettSystem(dbus.service.Object):
         #self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
     def connect_features(self):
+        scarlett.log.info(Fore.GREEN + "would connect feature")
         pass
 
-    #@trace
     def scarlett_event_cb(self, scarlett_obj, message):
         """Handle message send by webbrowser.
 

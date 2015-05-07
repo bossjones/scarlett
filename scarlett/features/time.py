@@ -12,6 +12,8 @@ import dbus.service
 
 from scarlett.events import scarlett_event
 
+from colorama import init, Fore, Back, Style
+
 from scarlett.constants import ( EVENT_SCARLETT_START,
                                  EVENT_SCARLETT_STOP,
                                  EVENT_STATE_CHANGED,
@@ -28,9 +30,10 @@ from scarlett.constants import ( EVENT_SCARLETT_START,
 SCARLETT_FEATURE = 'FeatureTime'
 CONNECT_NAME = 'time-started'
 
-_TIME_INSTANCE=None
+_TIME_INSTANCE = None
 
 def setup_feature(ss):
+    global _TIME_INSTANCE
     if _TIME_INSTANCE == None:
         _TIME_INSTANCE = FeatureTime()
 

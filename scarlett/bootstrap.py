@@ -15,6 +15,7 @@ import scarlett.errors
 import pkgutil
 import importlib
 import sys
+import pprint
 
 try:
     import dbus
@@ -214,7 +215,7 @@ def system_boot(ss=None):
     # eliminate anything that isn't a string
     _features_to_register = [x for x in _features_to_register if isinstance(x, basestring)]
 
-    for scarlett_feature in _features_to_register(_features_to_register):
+    for scarlett_feature in _features_to_register:
         setup_feature(ss, scarlett_feature)
 
     return ss
