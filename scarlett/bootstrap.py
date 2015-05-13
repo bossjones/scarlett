@@ -99,6 +99,7 @@ def setup_feature(ss, scarlett_feature):
 
             # TODO: this might be the perfect area to do a worker creation and
             # to do a gobject.GObject.connect
+            connect_to_scarlett(ss,feature)
 
             return True
 
@@ -110,8 +111,9 @@ def setup_feature(ss, scarlett_feature):
 
     return False
 
-def connect_to_scarlett(ss, scarlett_feature):
-    pass
+def connect_to_scarlett(ss, sf):
+    sf._INSTANCE.connect(sf.CONNECT_NAME, ss.scarlett_event_cb)
+    sf._INSTANCE.start()
 
 def get_feature(feature_name):
     """ Tries to load specified feature.
