@@ -97,8 +97,6 @@ def setup_feature(ss, scarlett_feature):
             # if group.SCARLETT_FEATURE not in feature.DEPENDENCIES:
             #     ss.pool.add_worker()
 
-            # TODO: this might be the perfect area to do a worker creation and
-            # to do a gobject.GObject.connect
             connect_to_scarlett(ss,feature)
 
             return True
