@@ -170,14 +170,6 @@ class ScarlettSystem(dbus.service.Object):
         ### DISABLED FOR NOW #     db=scarlett.config.get('redis', 'db')
         ### DISABLED FOR NOW #     )
 
-        # enable services
-        #### DISABLED # if scarlett_cli_args.enable_feature == "time":
-        #### DISABLED #     from scarlett.features.time import FeatureTime
-        #### DISABLED #     self.time = FeatureTime()
-        #### DISABLED #     self.time.connect(
-        #### DISABLED #     'time-started', self.scarlett_event_cb)
-        #### DISABLED #     self.time.start()
-
         #scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
 
         #scarlett.basics.voice.play_block('pi-listening')
