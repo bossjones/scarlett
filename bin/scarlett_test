@@ -120,4 +120,3 @@ if __name__ == "__main__":
     finally:
 
        scarlett.basics.voice.play_free()
-
