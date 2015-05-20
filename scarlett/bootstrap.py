@@ -41,6 +41,9 @@ _FEATURE_CACHE = {}
 
 READY = False
 
+# Scarlett core modules, required to get her up and running
+CORE_MODULES = ['scarlett.brain.scarlettbrainfsm','scarlett.basics.say','scarlett.basics.voice','scarlett.listener.gstlisteneri']
+
 # insert path so we can access things w/o having to re-install everything
 # sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
