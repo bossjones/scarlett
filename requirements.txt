@@ -12,3 +12,4 @@ pulsar==0.9.1
 #gevent
 #greenlet
 #taba
+transitions==0.2.5
