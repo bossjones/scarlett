@@ -8,6 +8,7 @@ import forecastio
 import scarlett.basics.voice
 import scarlett.basics.say as scarlett_says
 
+SCARLETT_ROLE = 'weather'
 
 class FeatureForecast(Feature):
 

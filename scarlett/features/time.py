@@ -25,6 +25,8 @@ from scarlett.constants import ( EVENT_SCARLETT_START,
                                  EVENT_BRAIN_CHECK
                                )
 
+SCARLETT_ROLE = 'time'
+
 SCARLETT_FEATURE = 'FeatureTime'
 CONNECT_NAME = 'time-started'
 
@@ -130,10 +132,9 @@ class FeatureTime(gobject.GObject):
     def __init__(self, *args, **kwargs):
         # Initialize to be able to emit signals
         gobject.GObject.__init__(self)
-        self.time_state = 'on' # device is on
-        self.kw_match   = False # set to true when keyword identified
+        self.time_state = 'on'  # device is on
+        self.kw_match   = False  # set to true when keyword identified
         self.svc_kw_match = False
-        #super(FeatureTime, self).__init__(args, kwargs)
         self.name = "scarlett_time"
         self.now = self.set_now()
         self.now_time = self.get_current_time()

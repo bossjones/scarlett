@@ -1,5 +1,3 @@
-# #!/usr/bin/env python
-
 # import scarlett
 # from scarlett.features import *
 # import socket
