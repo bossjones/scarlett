@@ -25,6 +25,8 @@ from scarlett.constants import *
 import gobject
 gobject.threads_init()
 
+SCARLETT_ROLE = 'sound_player'
+
 # Create a gstreamer playerbin
 __PLAYER__ = None
 

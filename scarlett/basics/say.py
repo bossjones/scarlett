@@ -18,6 +18,8 @@ gobject.threads_init()
 
 from gettext import gettext as _
 
+SCARLETT_ROLE = 'speaker'
+
 # Create a gtreamer espeak
 __ESPEAK__ = None
 
