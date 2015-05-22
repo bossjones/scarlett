@@ -6,15 +6,13 @@ import thread
 import threading
 import time
 import redis
-import time
 
 from transitions import Machine
-import random
 
 SCARLETT_ROLE = 'brain'
 
 BRAIN_NAME = 'fsm'
-BRAIN_OBJECT = 'ScarlettBrainFSM'
+CORE_OBJECT = 'ScarlettBrainFSM'
 
 _INSTANCE = None
 
@@ -29,12 +27,11 @@ def setup_core(ss):
     return _INSTANCE
 
 class ScarlettBrainFSM(redis.Redis):
-    """
-    Wrapper for Redis buffered commands that uses a pipeline internally
-    for buffering messages. A thread is run that
-    periodically flushes the buffer pipeline.
-    """
-
+  """
+  Wrapper for Redis buffered commands that uses a pipeline internally
+  for buffering messages. A thread is run that
+  periodically flushes the buffer pipeline.
+  """
   states = ['initalize', 'ready','running', 'is_checking_states', 'time_change', 'done_checking_states']
 
   def __init__(self, *args, **kwargs):
@@ -51,10 +48,10 @@ class ScarlettBrainFSM(redis.Redis):
     """
     super(ScarlettBrainFSM, self).__init__(*args, **kwargs)
 
-    self.name = brain.scarlettbrainfsm.SCARLETT_ROLE
+    self.name = scarlett.brain.scarlettbrainfsm.SCARLETT_ROLE
 
     # Initalize the state machine
-    self.machine = Machine(model=self, states=brain.scarlettbrainfsm.ScarlettBrainFSM.states, initial='initalize')
+    self.machine = Machine(model=self, states=scarlett.brain.scarlettbrainfsm.ScarlettBrainFSM.states, initial='initalize')
 
     # startup transition
     self.machine.add_transition(trigger='startup', source='initalize', dest='ready')
@@ -83,8 +80,8 @@ class ScarlettBrainFSM(redis.Redis):
 
   def is_ready(self):
     """ Ensures that  """
-      if self.state == 'ready':
-        return True
-      else:
-        return False
+    if self.state == 'ready':
+      return True
+    else:
+      return False
 
