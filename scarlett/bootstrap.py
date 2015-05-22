@@ -16,6 +16,7 @@ import pkgutil
 import importlib
 import sys
 import pprint
+import scarlett
 
 try:
     import dbus
@@ -35,17 +36,17 @@ try:
 except:
     gobjectnotimported = True
 
+# All scarlett feature objects that have been registered
 REGISTERED_FEATURES = []
 
+# All scarlett feature that have already been initalized and cached
 _FEATURE_CACHE = {}
 
+# Prereqs required to begin importing features
 READY = False
 
 # Scarlett core modules, required to get her up and running
-CORE_MODULES = ['scarlett.brain.scarlettbrainfsm','scarlett.basics.say','scarlett.basics.voice','scarlett.listener.gstlisteneri']
-
-# insert path so we can access things w/o having to re-install everything
-# sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+CORE_MODULES = {'brain':'scarlett.brain.scarlettbrainfsm.','player':'scarlett.basics.say.','speaker':'scarlett.basics.voice.','listener':'scarlett.listener.gstlisteneri.'}
 
 scarlett.set_stream_logger('scarlett')
 
@@ -69,6 +70,55 @@ def ready(ss,feature_name=None):
        REGISTERED_FEATURES.append(feature_name)
 
     READY = True
+
+def setup_core_feature(ss,mod_name):
+    global CORE_MODULES
+    """ Setup core feature for Scarlett. Eg. Brain, Speaker, Player, Listener"""
+
+    core_module_path = CORE_MODULES[mod_name]
+
+    modules = pkgutil.iter_modules(scarlett.__path__, CORE_MODULES[mod_name])
+
+    for module_loader, name, ispkg in modules:
+        print module_loader
+        print "\n"
+        print name
+        print "\n"
+
+    pass
+
+def get_core_feature(mod_name):
+
+    # TODO: Add base features here as well including voice, scarlettbrain, etc
+    potential_paths = ['scarlett.features.{}'.format(feature_name)]
+
+    for path in potential_paths:
+        # Validate here that root feature exists
+        # If path contains a '.' we are specifying a sub-feature
+        # Using rsplit we get the parent feature from sub-feature
+        root_comp = path.rsplit(".", 1)[0] if '.' in feature_name else path
+        scarlett.log.info(Fore.GREEN + "root_comp: %s" % root_comp)
+
+        # if root_comp not in AVAILABLE_features:
+        #     continue
+
+        try:
+            module = importlib.import_module(path)
+
+            scarlett.log.info(Fore.GREEN + "Loaded %s from %s" % (feature_name, path))
+
+            _FEATURE_CACHE[feature_name] = module
+
+            return module
+
+        except ImportError:
+            scarlett.log.debug(
+                Fore.RED + "Error loading %s. Make sure all "
+                 "dependencies are installed" % path)
+
+    scarlett.log.debug(Fore.RED + "Unable to find feature %s" % feature_name)
+
+    return None
 
 def set_feature(feature_name, feature):
     """ Sets a feature in the cache. """
@@ -156,51 +206,6 @@ def get_feature(feature_name):
     scarlett.log.debug(Fore.RED + "Unable to find feature %s" % feature_name)
 
     return None
-
-# DISABLED # def _setup_features(ss):
-# DISABLED #
-# DISABLED #     del REGISTERED_FEATURES[:]
-# DISABLED #
-# DISABLED #     #_feat_enable_config = scarlett.config.get('features','enable')
-# DISABLED #
-# DISABLED #     #_features_to_register = tuple(_feat_enable_config.split(','))
-# DISABLED #
-# DISABLED #     # REGISTERED_FEATURES.extend(
-# DISABLED #     #     item[1] for item in
-# DISABLED #     #     pkgutil.iter_modules(features.__path__, 'scarlett.features.'))
-# DISABLED #
-# DISABLED #     REGISTERED_FEATURES.append('time')
-# DISABLED #
-# DISABLED #     feature_name = REGISTERED_FEATURES[0]
-# DISABLED #
-# DISABLED #     # First check custom, then built-in
-# DISABLED #     potential_paths = ['scarlett.features.{}'.format(REGISTERED_FEATURES[0])]
-# DISABLED #
-# DISABLED #     for path in potential_paths:
-# DISABLED #         # Validate here that root feature exists
-# DISABLED #         # If path contains a '.' we are specifying a sub-feature
-# DISABLED #         # Using rsplit we get the parent feature from sub-feature
-# DISABLED #         root_comp = path.rsplit(".", 1)[0] if '.' in feature_name else path
-# DISABLED #
-# DISABLED #         # if root_comp not in REGISTERED_FEATURES:
-# DISABLED #         #    continue
-# DISABLED #
-# DISABLED #         try:
-# DISABLED #             module = importlib.import_module(path)
-# DISABLED #
-# DISABLED #             scarlett.log.info(Fore.GREEN + "Loaded %s from %s", feature_name, path)
-# DISABLED #
-# DISABLED #             _FEATURE_CACHE[feature_name] = module
-# DISABLED #
-# DISABLED #             return module
-# DISABLED #
-# DISABLED #         except ImportError:
-# DISABLED #             scarlett.log.debug(
-# DISABLED #                 Fore.RED + "Error loading %s. Make sure all "
-# DISABLED #                  "dependencies are installed" % path)
-# DISABLED #             scarlett.log.debug(Fore.RED + "Unable to find feature %s" % feature_name)
-# DISABLED #
-# DISABLED #     return None
 
 def system_boot(ss=None):
     """ initalize a new instance of ScarlettSystem if it doesnt already
