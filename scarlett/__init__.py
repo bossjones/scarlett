@@ -139,6 +139,11 @@ class ScarlettSystem(dbus.service.Object):
         self.loop = None
         # DISABLED FOR NOW # self.pool = pool = create_worker_pool()
 
+        # These will later be populated w/ scarlett core objects in the ./bin/scarlett_improved
+        self.brain   = None
+        self.player  = None
+        self.speaker = None
+
         scarlett.set_stream_logger('scarlett')
 
         self.scarlett_version_info = textwrap.dedent('''\
@@ -161,6 +166,9 @@ class ScarlettSystem(dbus.service.Object):
             "VERSION INFO: \n\n" +
             self.scarlett_version_info
             )
+
+        # reserved for things like scarlett's brain, listener, player, speaker
+        self.base_services = []
 
         self.features = []
 
