@@ -2,7 +2,7 @@
 
 # Imports
 import scarlett
-import thread
+#import thread
 import threading
 import time
 import redis
@@ -17,11 +17,15 @@ CORE_OBJECT = 'ScarlettBrainFSM'
 _INSTANCE = None
 
 def setup_core(ss):
+    print scarlett.config.get('redis', 'host')
+    print scarlett.config.get('redis', 'port')
+    print scarlett.config.getint('redis', 'db')
+
     global _INSTANCE
     if _INSTANCE == None:
         _INSTANCE = ScarlettBrainFSM(host=scarlett.config.get('redis', 'host'),
           port=scarlett.config.get('redis', 'port'),
-          db=scarlett.config.get('redis', 'db')
+          db=scarlett.config.getint('redis', 'db')
         )
 
     return _INSTANCE
@@ -77,6 +81,9 @@ class ScarlettBrainFSM(redis.Redis):
           print('Doing something imporant in the background')
 
           time.sleep(self.interval)
+
+  def hello(self):
+    print 'hello hello hello!'
 
   def is_ready(self):
     """ Ensures that  """
