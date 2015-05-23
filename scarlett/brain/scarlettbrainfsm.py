@@ -21,11 +21,13 @@ logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-9s) %(message)s',)
 
 def setup_core(ss):
-    print scarlett.config.get('redis', 'host')
-    print scarlett.config.get('redis', 'port')
-    print scarlett.config.getint('redis', 'db')
+
+    logging.info("redis_host: {}".format(scarlett.config.get('redis', 'host')))
+    logging.info("redis_port: {}".format(scarlett.config.get('redis', 'port')))
+    logging.info("redis_db: {}".format(scarlett.config.getint('redis', 'db')))
 
     global _INSTANCE
+
     if _INSTANCE == None:
         _INSTANCE = ScarlettBrainFSM(host=scarlett.config.get('redis', 'host'),
           port=scarlett.config.get('redis', 'port'),
@@ -75,6 +77,7 @@ class ScarlettBrainFSM(redis.Redis):
 
   def run(self):
       """ Method that runs forever """
+      logging.debug('running with %s and %s', self.args, self.kwargs)
       while True:
           # Do something
           print('Doing something imporant in the background')
