@@ -65,8 +65,6 @@ CORE_MODULES = {
   }
 }
 
-scarlett.set_stream_logger('scarlett')
-
 def ready(ss,feature_name=None):
     """ Prepares the loading of features. """
     global READY

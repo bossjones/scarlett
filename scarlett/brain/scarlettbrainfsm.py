@@ -6,6 +6,7 @@ import scarlett
 import threading
 import time
 import redis
+import logging
 
 from transitions import Machine
 
@@ -15,6 +16,9 @@ BRAIN_NAME = 'fsm'
 CORE_OBJECT = 'ScarlettBrainFSM'
 
 _INSTANCE = None
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-9s) %(message)s',)
 
 def setup_core(ss):
     print scarlett.config.get('redis', 'host')
@@ -69,11 +73,6 @@ class ScarlettBrainFSM(redis.Redis):
     # Check interval, in seconds
     self.interval = 1
 
-    # function to run in background, self.run
-    thread = threading.Thread(target=self.run, args=())
-    thread.daemon = True                            # Daemonize thread
-    thread.start()                                  # Start the execution
-
   def run(self):
       """ Method that runs forever """
       while True:
@@ -81,6 +80,13 @@ class ScarlettBrainFSM(redis.Redis):
           print('Doing something imporant in the background')
 
           time.sleep(self.interval)
+
+  def thread_runner(self):
+    """ Call this function when we're ready to start this thread  """
+    # function to run in background, self.run
+    thread = threading.Thread(target=self.run, args=())
+    thread.daemon = True                            # Daemonize thread
+    thread.start()                                  # Start the execution
 
   def hello(self):
     print 'hello hello hello!'
