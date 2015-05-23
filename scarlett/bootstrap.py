@@ -141,6 +141,9 @@ def setup_core_feature(ss,mod_name):
                   instance = loaded_class
                   instance.hello()
 
+                  # TODO: Add a connect function to the scarlett system
+                  # HERE
+
                   return instance
 
                 except ImportError:
