@@ -92,6 +92,7 @@ class ScarlettBrainFSM(redis.Redis):
     # function to run in background, self.run
     thread = threading.Thread(name=self.name,target=self.run, args=())
     thread.daemon = True                            # Daemonize thread
+    #thread.setDaemon(True)
     thread.start()                                  # Start the execution
 
   def hello(self):
