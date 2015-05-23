@@ -75,19 +75,22 @@ class ScarlettBrainFSM(redis.Redis):
     # Check interval, in seconds
     self.interval = 1
 
+    logging.debug('running with %s and %s', args, kwargs)
+
   def run(self):
       """ Method that runs forever """
       logging.debug('running with %s and %s', self.args, self.kwargs)
       while True:
+          logging.debug('Starting')
           # Do something
           print('Doing something imporant in the background')
-
           time.sleep(self.interval)
+          logging.debug('Exiting')
 
   def thread_runner(self):
     """ Call this function when we're ready to start this thread  """
     # function to run in background, self.run
-    thread = threading.Thread(target=self.run, args=())
+    thread = threading.Thread(name=self.name,target=self.run, args=())
     thread.daemon = True                            # Daemonize thread
     thread.start()                                  # Start the execution
 
