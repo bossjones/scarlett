@@ -46,7 +46,24 @@ _FEATURE_CACHE = {}
 READY = False
 
 # Scarlett core modules, required to get her up and running
-CORE_MODULES = {'brain':'scarlett.brain.scarlettbrainfsm.','player':'scarlett.basics.say.','speaker':'scarlett.basics.voice.','listener':'scarlett.listener.gstlisteneri.'}
+CORE_MODULES = {
+  'brain':{
+    'module_path':'scarlett.brain.',
+    'module_name':'scarlettbrainfsm'
+   },
+  'player':{
+    'module_path':'scarlett.basics.',
+    'module_name':'say'
+  },
+  'speaker':{
+    'module_path':'scarlett.basics.',
+    'module_name':'voice'
+  },
+  'listener':{
+    'module_path':'scarlett.listener.',
+    'module_name':'gstlisteneri'
+  }
+}
 
 scarlett.set_stream_logger('scarlett')
 
@@ -71,54 +88,64 @@ def ready(ss,feature_name=None):
 
     READY = True
 
+def folder_name_to_str(core_feature_name):
+    return CORE_MODULES[core_feature_name]['module_path'].split('.')[1]
+
+def module_name_to_str(core_feature_name):
+    return CORE_MODULES[core_feature_name]['module_name']
+
+def module_path_to_str(core_feature_name):
+    return '{}'.format(CORE_MODULES[core_feature_name]['module_path'])
+
+def potential_path_to_str(core_feature_name):
+    return 'scarlett.{}.{}'.format(folder_name_to_str(core_feature_name),module_name_to_str(core_feature_name))
+
 def setup_core_feature(ss,mod_name):
-    global CORE_MODULES
     """ Setup core feature for Scarlett. Eg. Brain, Speaker, Player, Listener"""
+    global CORE_MODULES
 
-    core_module_path = CORE_MODULES[mod_name]
+    core_feature_name = mod_name
+    # folder_name = folder_name_to_str(core_feature_name)
+    # module_name = module_name_to_str(core_feature_name)
+    module_paths = module_path_to_str(core_feature_name)
+    potential_paths = potential_path_to_str(core_feature_name)
 
-    modules = pkgutil.iter_modules(scarlett.__path__, CORE_MODULES[mod_name])
+    if core_feature_name == 'brain':
+        modules = pkgutil.iter_modules(scarlett.brain.__path__, module_paths)
+    elif core_feature_name == 'speaker':
+        modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
+    elif core_feature_name == 'player':
+        modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
+    elif core_feature_name == 'listener':
+        modules = pkgutil.iter_modules(scarlett.listener.__path__, module_paths)
+    else:
+        scarlett.log.debug(Fore.RED + "Error loading {}.".format(core_feature_name))
+        return False
 
-    for module_loader, name, ispkg in modules:
-        print module_loader
-        print "\n"
-        print name
-        print "\n"
+    for module_loader, mod_name, ispkg in modules:
 
-    pass
+        if mod_name not in sys.modules and mod_name == potential_paths:
+                try:
+                  # Import module
+                  # eg: scarlett.brain.scarlettbrainfsm
+                  loaded_mod = importlib.import_module(potential_paths)
 
-def get_core_feature(mod_name):
+                  # Load class from imported module
+                  # eg: ScarlettBrainFSM
+                  class_name = loaded_mod
+                  print class_name
 
-    # TODO: Add base features here as well including voice, scarlettbrain, etc
-    potential_paths = ['scarlett.features.{}'.format(feature_name)]
+                  loaded_class = getattr(loaded_mod, 'setup_core')(ss)
 
-    for path in potential_paths:
-        # Validate here that root feature exists
-        # If path contains a '.' we are specifying a sub-feature
-        # Using rsplit we get the parent feature from sub-feature
-        root_comp = path.rsplit(".", 1)[0] if '.' in feature_name else path
-        scarlett.log.info(Fore.GREEN + "root_comp: %s" % root_comp)
+                  # Create an instance of the class
+                  instance = loaded_class
+                  instance.hello()
 
-        # if root_comp not in AVAILABLE_features:
-        #     continue
+                  return instance
 
-        try:
-            module = importlib.import_module(path)
-
-            scarlett.log.info(Fore.GREEN + "Loaded %s from %s" % (feature_name, path))
-
-            _FEATURE_CACHE[feature_name] = module
-
-            return module
-
-        except ImportError:
-            scarlett.log.debug(
-                Fore.RED + "Error loading %s. Make sure all "
-                 "dependencies are installed" % path)
-
-    scarlett.log.debug(Fore.RED + "Unable to find feature %s" % feature_name)
-
-    return None
+                except ImportError:
+                  scarlett.log.debug(Fore.RED + "Module load FAILED: {}".format(potential_paths))
+                return False
 
 def set_feature(feature_name, feature):
     """ Sets a feature in the cache. """
