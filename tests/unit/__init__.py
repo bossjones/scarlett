@@ -12,15 +12,11 @@ import tempfile
 
 import logging
 import scarlett
-from scarlett.constants import *
-
+import scarlett.bootstrap
 
 class ScarlettTestCase(unittest.TestCase):
 
-    """A unittest.TestCase subclass that saves and restores Anaconda
-    global configuration. This allows tests to make temporary
-    modifications that will then be automatically removed when the test
-    completes. Hardcoding with mir for the moment till everything works
+    """Base test class for ScarlettSystem
     """
 
     connection_class = None
@@ -28,13 +24,8 @@ class ScarlettTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         super(ScarlettTestCase, cls).setUpClass()
-        # ScarlettTestCase you follow Python's logging module's documentation's
-        # recommendation about naming your module's logs after the module's
-        # __name__,the following getLogger call should fetch the same logger
-        # you use in the scarlett module
         scarlett_log = logging.getLogger(scarlett.__name__)
         cls._scarlett_log_handler = MockLoggingHandler(level='DEBUG')
-        # scarlett_log.addHandler(cls.scarlett_log_handler)
         scarlett_log.addHandler(MockLoggingHandler())
         cls.scarlett_log_messages = cls._scarlett_log_handler.messages
 
@@ -42,15 +33,7 @@ class ScarlettTestCase(unittest.TestCase):
         super(ScarlettTestCase, self).setUp()
         self._scarlett_log_handler.reset()
         import scarlett
-        self.scarlett = scarlett
-
-    # Source: http://stackoverflow.com/questions/899067/how-should-i-verify-a-log-message-when-testing-python-code-under-nose/20553331#20553331
-    # TODO: TEST LOG MESSAGES # def test_scarlett_objects_fromble_nicely(self):
-    # TODO: TEST LOG MESSAGES #     # Do a bunch of frombling with scarlett objects
-    # TODO: TEST LOG MESSAGES #     # Now check that they've logged 5 frombling messages at the INFO level
-    # TODO: TEST LOG MESSAGES #     self.assertEqual(len(self.scarlett_log_messages['info']), 5)
-    # TODO: TEST LOG MESSAGES #     for info_message in self.scarlett_log_messages['info']:
-    # TODO: TEST LOG MESSAGES #         self.assertIn('fromble', info_message)
+        #self.scarlett = scarlett.bootstrap.system_boot()
 
     def assert_request_parameters(self, params, ignore_params_values=None):
         """Verify the actual parameters sent to the service API."""

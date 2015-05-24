@@ -32,6 +32,9 @@ CONNECT_NAME = 'time-started'
 
 _INSTANCE = None
 
+# TODO: Is this needed ?
+# gobject.threads_init()
+
 def setup_feature(ss):
     global _INSTANCE
     if _INSTANCE == None:

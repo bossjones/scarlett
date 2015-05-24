@@ -40,8 +40,6 @@ from scarlett.brain.scarlettbraini import ScarlettBrainImproved
 
 import ast
 
-import scarlett.util as util
-
 # drops you down into pdb if exception is thrown
 import sys
 
@@ -126,14 +124,14 @@ class ScarlettSystem(dbus.service.Object):
     def __init__(self):
 
         bus_name = dbus.service.BusName(
-            'org.scarlettapp.scarlettdaemon',
+            ScarlettSystem.DBUS_NAME,
             bus=dbus.SessionBus()
             )
 
         dbus.service.Object.__init__(
             self,
             bus_name,
-            '/org/scarlettapp/scarlettdaemon'
+            ScarlettSystem.DBUS_PATH
             )
 
         self.loop = None
