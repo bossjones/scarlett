@@ -28,7 +28,8 @@ install:
 # 5.24.2015 START
 - travis_retry sudo apt-get install -qq build-essential autotools-dev automake autoconf libtool autopoint libxml2-dev zlib1g-dev libglib2.0-dev pkg-config bison flex python git gtk-doc-tools libasound2-dev libgudev-1.0-dev libxt-dev libvorbis-dev libcdparanoia-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev iso-codes libgtk-3-dev libraw1394-dev libiec61883-dev libavc1394-dev libv4l-dev libcairo2-dev libcaca-dev libspeex-dev libpng-dev libshout3-dev libjpeg-dev libaa1-dev libflac-dev libdv4-dev libtag1-dev libwavpack-dev libpulse-dev libsoup2.4-dev libbz2-dev libcdaudio-dev libdc1394-22-dev ladspa-sdk libass-dev libcurl4-gnutls-dev libdca-dev libdirac-dev libdvdnav-dev libexempi-dev libexif-dev libfaad-dev libgme-dev libgsm1-dev libiptcdata0-dev libkate-dev libmimic-dev libmms-dev libmodplug-dev libmpcdec-dev libofa0-dev libopus-dev librsvg2-dev librtmp-dev libschroedinger-dev libslv2-dev libsndfile1-dev libsoundtouch-dev libspandsp-dev libx11-dev libxvidcore-dev libzbar-dev libzvbi-dev liba52-0.7.4-dev libcdio-dev libdvdread-dev libmad0-dev libmp3lame-dev libmpeg2-4-dev libopencore-amrnb-dev libopencore-amrwb-dev libsidplay1-dev libtwolame-dev libx264-dev
 - travis_retry sudo apt-get install -qq libgirepository1.0-dev gstreamer1.0-plugins-good gir1.2-clutter-1.0 gir1.2-clutter-gst-1.0 gir1.2-gtkclutter-1.0 gir1.2-gtksource-3.0 gir1.2-vte-2.90 gir1.2-webkit-1.0 gir1.2-webkit-3.0
-
+- travis_retry sudo apt-get install -qq git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+- travis_retry sudo apt-get install -qq libglib2.0-*
 # 5.24.2015 STOP
 
 - travis_retry sudo apt-get install git libcairo2-dev libgtk2.0-dev libglib2.0-dev
@@ -40,6 +41,8 @@ install:
 - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
 - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
 - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
+
+# install py2cairo
 - wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
 - tar xf py2cairo-1.10.0.tar.bz2
 - cd py2cairo-1.10.0
@@ -47,13 +50,28 @@ install:
 - "./waf build > /dev/null"
 - "./waf install > /dev/null"
 - cd ..
-- wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2
-- tar xf pygobject-2.28.6.tar.bz2
-- cd pygobject-2.28.6
-- "./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null"
+
+#### OLD # # install pygobject
+#### OLD # - wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2
+#### OLD # - tar xf pygobject-2.28.6.tar.bz2
+#### OLD # - cd pygobject-2.28.6
+#### OLD # - "./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null"
+#### OLD # - make > /dev/null
+#### OLD # - make install > /dev/null
+#### OLD # - cd ..
+
+# Install the latest version of glib (2.32.4 is required)
+# Install glib
+- wget http://ftp.acc.umu.se/pub/gnome/sources/glib/2.32/glib-2.32.4.tar.xz
+- tar xvf glib-2.32.4.tar.xz
+- cd glib-2.32.4
+- "./configure --prefix=$VIRT_ROOT > /dev/null"
 - make > /dev/null
 - make install > /dev/null
 - cd ..
+- sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
+
+# install pygtk
 - wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
 - tar xf pygtk-2.24.0.tar.bz2
 - cd pygtk-2.24.0
@@ -61,6 +79,8 @@ install:
 - make > /dev/null
 - make install > /dev/null
 - cd ..
+
+# installing more package dependencies
 - travis_retry sudo apt-get -qq install git build-essential automake libtool itstool
   gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
 - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
@@ -90,18 +110,52 @@ install:
   python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
 - travis_retry sudo apt-get -qq install python2.7-dev
 - travis_retry sudo apt-get -qq install bison
-- export LD_LIBRARY_PATH=$VIRT_ROOT/lib
-- export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
-- export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
-- wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
-- tar xf gst-python-0.10.22.tar.bz2
-- cd gst-python-0.10.22
-- "./configure --prefix=$VIRT_ROOT"
+
+# install gstreamer-1.0
+- travis_retry sudo apt-get -qq install gstreamer1.0* libgstreamer1.0*
+- travis_retry sudo apt-get -qq install python-gst1.0 python-gst1.0-dbg python-gst1.0-dev python-gst1.0-rtsp python-pip python-setuptools
+- travis_retry sudo apt-get install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+- travis_retry sudo apt-get install -qq libusb-1.0
+
+# OLD # # set env variables
+# OLD # - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
+# OLD # - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+# OLD # - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+
+# OLD # install gst-python
+# OLD # - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
+# OLD # - tar xf gst-python-0.10.22.tar.bz2
+# OLD # - cd gst-python-0.10.22
+# OLD # - "./configure --prefix=$VIRT_ROOT"
+# OLD # - make > /dev/null
+# OLD # - make install > /dev/null
+# OLD # - cd ..
+# OLD # - python -c 'import pygst'
+# OLD # - python -c 'import gst'
+
+# install gst-python
+- tar xvf gst-python-1.2.1.tar.gz
+- cd gst-python-1.2.1
+- #./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig
+- "./configure --prefix=$VIRT_ROOT > /dev/null"
 - make > /dev/null
 - make install > /dev/null
 - cd ..
-- python -c 'import pygst'
+
+- travis_retry git clone https://github.com/bossjones/bossjones-ruamel-venvgtk.git
+- cd bossjones-ruamel-venvgtk
+- python setup.py install
+- cd ..
+
+# import test
+- python -c 'from gi.repository import Gtk; print Gtk'
 - python -c 'import gst'
+
+# set env variables
+- export LD_LIBRARY_PATH=$VIRT_ROOT/lib
+- export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+- export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+
 - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
 - tar -zxf sphinxbase-0.8.tar.gz
 - cd sphinxbase-0.8
