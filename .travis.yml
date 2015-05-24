@@ -71,14 +71,14 @@ install:
 - cd ..
 - sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
 
-# install pygtk
-- wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
-- tar xf pygtk-2.24.0.tar.bz2
-- cd pygtk-2.24.0
-- "./configure --prefix=$VIRT_ROOT > /dev/null"
-- make > /dev/null
-- make install > /dev/null
-- cd ..
+#### DISABLED # # install pygtk
+#### DISABLED # - wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
+#### DISABLED # - tar xf pygtk-2.24.0.tar.bz2
+#### DISABLED # - cd pygtk-2.24.0
+#### DISABLED # - "./configure --prefix=$VIRT_ROOT > /dev/null"
+#### DISABLED # - make > /dev/null
+#### DISABLED # - make install > /dev/null
+#### DISABLED # - cd ..
 
 # installing more package dependencies
 - travis_retry sudo apt-get -qq install git build-essential automake libtool itstool
@@ -134,7 +134,8 @@ install:
 # OLD # - python -c 'import gst'
 
 # install gst-python
-- tar xvf gst-python-1.2.1.tar.gz
+- wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.bz2
+- tar xf gst-python-1.2.1.tar.bz2
 - cd gst-python-1.2.1
 - #./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig
 - "./configure --prefix=$VIRT_ROOT > /dev/null"
@@ -142,10 +143,13 @@ install:
 - make install > /dev/null
 - cd ..
 
-- travis_retry git clone https://github.com/bossjones/bossjones-ruamel-venvgtk.git
-- cd bossjones-ruamel-venvgtk
-- python setup.py install
-- cd ..
+# - travis_retry git clone https://github.com/bossjones/bossjones-ruamel-venvgtk.git
+# - cd bossjones-ruamel-venvgtk
+# - python setup.py install
+# - cd ..
+
+# This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
+- pip install ruamel.venvgtk
 
 # import test
 - python -c 'from gi.repository import Gtk; print Gtk'
