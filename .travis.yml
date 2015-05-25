@@ -119,7 +119,7 @@ install:
 #- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-base
 - travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-good
-- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-bad
+#- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-bad
 - travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get -qq install gstreamer1.0-alsa gstreamer1.0-doc gstreamer1.0-libav gstreamer1.0-libav-dbg gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-dbg gstreamer1.0-plugins-bad-doc gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-base-dbg gstreamer1.0-plugins-base-doc gstreamer1.0-plugins-good gstreamer1.0-plugins-good-dbg gstreamer1.0-plugins-good-doc gstreamer1.0-plugins-ugly gstreamer1.0-plugins-ugly-dbg gstreamer1.0-plugins-ugly-doc gstreamer1.0-pulseaudio gstreamer1.0-tools gstreamer1.0-x libgstreamer1.0-0 libgstreamer1.0-0-dbg libgstreamer1.0-dev
 - travis_retry sudo apt-get -qq install libglu1-mesa-dev
