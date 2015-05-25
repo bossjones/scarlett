@@ -80,33 +80,17 @@ install:
 #### DISABLED # - cd ..
 
 # installing more package dependencies
-- travis_retry sudo apt-get -qq install git build-essential automake libtool itstool
-  gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+- travis_retry sudo apt-get -qq install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
 - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
-- travis_retry sudo apt-get -qq install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa
-  gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
-  gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev
-  libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0
-  libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0
-  libgstrtspserver-0.10-dev libnice-dev
+- travis_retry sudo apt-get -qq install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0 libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0 libgstrtspserver-0.10-dev libnice-dev
 - travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
 - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio
 - travis_retry sudo apt-get -qq install gstreamer0.10-alsa
 - travis_retry sudo apt-get -qq install pavucontrol gstreamer0.10-pulseaudio pulseaudio
-- travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio libao4 libasound2-plugins
-  libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg
-  libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio
-  pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth
-  pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg
-  pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg
-  pulseaudio-utils
+- travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio libao4 libasound2-plugins libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg pulseaudio-utils
 - travis_retry sudo apt-get -qq install bison
-- travis_retry sudo apt-get -qq install autoconf automake bison build-essential libasound2-dev
-  libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside
-  python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib
-  python-simplejson
-- travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev
-  python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
+- travis_retry sudo apt-get -qq install autoconf automake bison build-essential libasound2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib python-simplejson
+- travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
 - travis_retry sudo apt-get -qq install python2.7-dev
 - travis_retry sudo apt-get -qq install bison
 
