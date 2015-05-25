@@ -130,8 +130,17 @@ install:
 - travis_retry sudo apt-get install -qq libglib2.0-*
 - travis_retry sudo apt-get install -qq apt-file
 - travis_retry sudo apt-get install -qq python-libxml2
-- travis_retry sudo apt-get install gnome-core-devel gnome-devel -qq && sudo apt-get install anjuta glade devhelp -qq && sudo apt-get install gstreamer0.10-plugins-bad gstreamer0.10-plugins-bad-multiverse -qq && sudo apt-get install libgtk-3-dev libgstreamer0.10-dev libclutter-1.0-dev libwebkitgtk-3.0-dev && libgda-5.0-dev -qq && sudo apt-get install libgtk-3-doc gstreamer0.10-doc libclutter-1.0-doc libgda-5.0-doc -qq && sudo apt-get install g++ -qq && sudo apt-get install libgtkmm-3.0-dev libgstreamermm-0.10-dev libgdamm5.0-dev -qq && sudo apt-get install libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc -qq && sudo apt-get install python python-gobject -qq && sudo apt-get install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison -qq
-- travis_retry sudo apt-get install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0 -qq
+- travis_retry sudo apt-get install -qq gnome-core-devel gnome-devel
+- travis_retry sudo apt-get install -qq anjuta glade devhelp
+- travis_retry sudo apt-get install -qq gstreamer0.10-plugins-bad gstreamer0.10-plugins-bad-multiverse
+- travis_retry sudo apt-get install -qq libgtk-3-dev libgstreamer0.10-dev libclutter-1.0-dev libwebkitgtk-3.0-dev libgda-5.0-dev
+- travis_retry sudo apt-get install -qq libgtk-3-doc gstreamer0.10-doc libclutter-1.0-doc libgda-5.0-doc
+- travis_retry sudo apt-get install -qq g++
+- travis_retry sudo apt-get install -qq libgtkmm-3.0-dev libgstreamermm-0.10-dev libgdamm5.0-dev
+- travis_retry sudo apt-get install -qq libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc
+- travis_retry sudo apt-get install -qq python python-gobject
+- travis_retry sudo apt-get install -qq git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+- travis_retry sudo apt-get install -qq gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
 - travis_retry sudo apt-get build-dep gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get install -qq libglu1-mesa-dev
 - travis_retry sudo apt-get install -qq automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
