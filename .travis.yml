@@ -149,7 +149,7 @@ install:
 # - cd ..
 
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
-- pip install ruamel.venvgtk
+#- pip install ruamel.venvgtk
 
 # import test
 - python -c 'from gi.repository import Gtk; print Gtk'
