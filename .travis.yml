@@ -21,7 +21,7 @@ install:
 - travis_retry sudo add-apt-repository -y ppa:gstreamer-developers/ppa
 # 5.24.2015 STOP
 
-- travis_retry sudo apt-get update
+- travis_retry sudo apt-get update -qq
 - travis_retry sudo apt-get install -qq bash-completion swig
 - travis_retry pip install tox sphinx nose
 
@@ -96,9 +96,29 @@ install:
 
 # install gstreamer-1.0
 - travis_retry sudo apt-get -qq install gstreamer1.0* libgstreamer1.0*
-#- travis_retry sudo apt-get -qq install python-gst1.0 python-gst1.0-dbg python-gst1.0-dev python-gst1.0-rtsp python-pip python-setuptools
-- travis_retry sudo apt-get install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-- travis_retry sudo apt-get install -qq libusb-1.0
+- travis_retry sudo apt-get -qq install python-gst1.0 python-gst1.0-dbg python-gst1.0-dev python-gst1.0-rtsp python-pip python-setuptools
+- travis_retry sudo apt-get -qq install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+- travis_retry sudo apt-get -qq install libusb-1.0
+
+##### all extra python packages 5.24.2015
+sudo apt-get install yelp-tools -qq
+sudo apt-get install python3 python3-dev -qq
+sudo apt-get install python-libxml2 -qq
+sudo apt-get install gnome-core-devel gnome-devel -qq
+sudo apt-get install anjuta glade devhelp -qq
+sudo apt-get install gstreamer0.10-plugins-bad gstreamer0.10-plugins-bad-multiverse -qq
+sudo apt-get install libgtk-3-dev libgstreamer0.10-dev libclutter-1.0-dev libwebkitgtk-3.0-dev libgda-5.0-dev -qq
+sudo apt-get install libgtk-3-doc gstreamer0.10-doc libclutter-1.0-doc libgda-5.0-doc -qq
+sudo apt-get install g++ -qq
+sudo apt-get install libgtkmm-3.0-dev libgstreamermm-0.10-dev libgdamm5.0-dev -qq
+sudo apt-get install libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc -qq
+sudo apt-get install python python-gobject -qq
+sudo apt-get install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison -qq
+sudo apt-get install libgirepository1.0-dev python3.2-dev python-gi-dev python3-cairo-dev libcairo2-dev python-gi-cairo libgdk-pixbuf2.0-dev libpulse-dev libgtk-3-dev libclutter-1.0-dev libclutter-gtk-1.0-dev libclutter-gst-1.0-0 libclutter-gst-1.0-dbg libclutter-gst-dev gir1.2-clutter-gst-1.0 libxml2-dev python-numpy gir1.2-clutter-1.0 -qq
+sudo apt-get install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0 -qq
+sudo apt-get -qq build-dep gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+sudo apt-get -qq install libglu1-mesa-dev
+##### all extra python packages 5.24.2015 END
 
 # OLD # # set env variables
 # OLD # - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
@@ -113,8 +133,7 @@ install:
 - make > /dev/null
 - make install > /dev/null
 - cd ..
-# OLD # - python -c 'import pygst'
-# OLD # - python -c 'import gst'
+
 
 ####### # install gst-python
 ####### - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz
@@ -126,10 +145,6 @@ install:
 ####### - make install
 ####### - cd ..
 
-# - travis_retry git clone https://github.com/bossjones/bossjones-ruamel-venvgtk.git
-# - cd bossjones-ruamel-venvgtk
-# - python setup.py install
-# - cd ..
 
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
 - pip install ruamel.venvgtk
@@ -137,6 +152,10 @@ install:
 # import test
 - python -c 'from gi.repository import Gtk; print Gtk'
 - python -c 'import gst'
+
+# import test modules
+#- python -c 'import pygst'
+#- python -c 'import gst'
 
 # set env variables
 - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
