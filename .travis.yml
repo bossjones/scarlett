@@ -18,7 +18,7 @@ install:
 - sh -c "echo -e \"\e[31mGSTREAMER VERSION $GSTREAMER\e[39;\""
 
 # 5.24.2015 START
-- travis_retry sudo add-apt-repository -qq ppa:gstreamer-developers/ppa
+- travis_retry sudo add-apt-repository -y ppa:gstreamer-developers/ppa
 # 5.24.2015 STOP
 
 - travis_retry sudo apt-get update
@@ -143,6 +143,7 @@ install:
 - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
 - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
 
+# sphinxbase
 - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
 - tar -zxf sphinxbase-0.8.tar.gz
 - cd sphinxbase-0.8
@@ -150,6 +151,8 @@ install:
 - make
 - sudo make install
 - cd ..
+
+# pocketsphinx
 - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
 - cd bossjones-pocketsphinx
 - "./configure"
