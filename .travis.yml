@@ -178,15 +178,15 @@ install:
 - cd ..
 
 
-####### # install gst-python
-####### - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz
-####### - tar xvf gst-python-1.2.1.tar.gz
-####### - cd gst-python-1.2.1
-####### #./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig
-####### - ./configure --prefix=$VIRT_ROOT
-####### - make
-####### - make install
-####### - cd ..
+# install gst-python
+- wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz
+- tar xvf gst-python-1.2.1.tar.gz
+- cd gst-python-1.2.1
+#./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig
+- ./configure --prefix=$VIRT_ROOT
+- make
+- make install
+- cd ..
 
 
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
