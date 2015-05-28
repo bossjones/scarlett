@@ -140,7 +140,7 @@ install:
 - travis_retry sudo apt-get install -qq libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc
 - travis_retry sudo apt-get install -qq python python-gobject
 - travis_retry sudo apt-get install -qq git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
-- travis_retry sudo apt-get install -qq gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alscda gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
+- travis_retry sudo apt-get install -qq gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
 - travis_retry sudo apt-get build-dep gstreamer1.0-plugins-base
 - travis_retry sudo apt-get build-dep gstreamer1.0-plugins-bad
 - travis_retry sudo apt-get build-dep gstreamer1.0-plugins-ugly
