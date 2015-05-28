@@ -140,8 +140,10 @@ install:
 - travis_retry sudo apt-get install -qq libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc
 - travis_retry sudo apt-get install -qq python python-gobject
 - travis_retry sudo apt-get install -qq git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
-- travis_retry sudo apt-get install -qq gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
-- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-base gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+- travis_retry sudo apt-get install -qq gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alscda gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
+- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-base
+- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-bad
+- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get install -qq libglu1-mesa-dev
 - travis_retry sudo apt-get install -qq automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
 - travis_retry sudo apt-get install -qq build-essential autotools-dev automake autoconf libtool autopoint libxml2-dev zlib1g-dev libglib2.0-dev pkg-config bison flex python git gtk-doc-tools libasound2-dev libgudev-1.0-dev libxt-dev libvorbis-dev libcdparanoia-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev iso-codes libgtk-3-dev libraw1394-dev libiec61883-dev libavc1394-dev libv4l-dev libcairo2-dev libcaca-dev libspeex-dev libpng-dev libshout3-dev libjpeg-dev libaa1-dev libflac-dev libdv4-dev libtag1-dev libwavpack-dev libpulse-dev libsoup2.4-dev libbz2-dev libcdaudio-dev libdc1394-22-dev ladspa-sdk libass-dev libcurl4-gnutls-dev libdca-dev libdirac-dev libdvdnav-dev libexempi-dev libexif-dev libfaad-dev libgme-dev libgsm1-dev libiptcdata0-dev libkate-dev libmimic-dev libmms-dev libmodplug-dev libmpcdec-dev libofa0-dev libopus-dev librsvg2-dev librtmp-dev libschroedinger-dev libslv2-dev libsndfile1-dev libsoundtouch-dev libspandsp-dev libx11-dev libxvidcore-dev libzbar-dev libzvbi-dev liba52-0.7.4-dev libcdio-dev libdvdread-dev libmad0-dev libmp3lame-dev libmpeg2-4-dev libopencore-amrnb-dev libopencore-amrwb-dev libsidplay1-dev libtwolame-dev libx264-dev
