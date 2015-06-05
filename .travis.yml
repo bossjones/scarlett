@@ -142,7 +142,7 @@ install:
 - travis_retry sudo apt-get install -qq git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
 - travis_retry sudo apt-get install -qq gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
 - travis_retry sudo apt-get build-dep gstreamer1.0-plugins-base
-- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-bad
+#- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-bad
 - travis_retry sudo apt-get build-dep gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get install -qq libglu1-mesa-dev
 - travis_retry sudo apt-get install -qq automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
@@ -150,6 +150,13 @@ install:
 - travis_retry sudo apt-get install -qq libgirepository1.0-dev gstreamer1.0-plugins-good gir1.2-clutter-1.0 gir1.2-clutter-gst-1.0 gir1.2-gtkclutter-1.0 gir1.2-gtksource-3.0 gir1.2-vte-2.90 gir1.2-webkit-1.0 gir1.2-webkit-3.0
 - travis_retry sudo apt-get install -qq gstreamer1.0 gstreamer1.0-plugins-base
 - travis_retry sudo apt-get install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+- travis_retry sudo apt-get install -qq libpoppler-glib-dev python-gtk2 python-cairo-dev python-gobject-dev python-gobject -y
+- travis_retry sudo apt-get install -qq automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
+- travis_retry sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
+
+# left over packages that were missing from old vagrant image, trying this out to see if this fixes things.
+- travis_retry sudo apt-get install -qq bogofilter-bdb bogofilter-common dbus-x11 dh-autoreconf faad gir1.2-gda-5.0 gnome-pkg-tools graphviz highlight highlight-common libacl1-dev libattr1-dev libavl-dev libavl1 libcap-dev libclutter-gst-1.0-dbg libclutter-gst-dev libcupsdriver1 libdigest-hmac-perl libgda-5.0-dev libgda-5.0-doc libgdamm-5.0-13 libgdamm5.0-dev libgdamm5.0-doc libgpgme11-dev libgsl0ldbl libgstreamermm-0.10-2 libgstreamermm-0.10-dev libgstreamermm-0.10-doc libiw-dev libjasper1 libmagic1 libmail-spf-perl libmpfr-dev libnet-dns-perl libnet-ip-perl libnetaddr-ip-perl libosmgpsmap-dev libosmgpsmap2 libpam0g-dev libpth-dev libpython3.2 libsasl2-dev libusb-1.0-0-dev libvala-0.12-0 libvala-0.14-0 libvaladoc0 libvpx-dev libwebp-dev libwebp2 libxml++2.6-2 libxml++2.6-dev libxv1 libyaml-dev ppp-dev python-osmgpsmap python3 python3-cairo python3-cairo-dev python3-dev python3-minimal python3.2 python3.2-dev python3.2-minimal ragel re2c spamassassin spamc texinfo texlive texlive-bibtex-extra texlive-math-extra valac valac-0.14 valadoc x11proto-xext-dev xmlto yelp-tools
+
 ##### all extra python packages 5.24.2015 END
 
 # install py2cairo
@@ -190,19 +197,6 @@ install:
 - make install > /dev/null
 - cd ..
 
-# OLD # # set env variables
-# OLD # - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
-# OLD # - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
-# OLD # - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
-
-# OLD # install gst-python
-# - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
-# - tar xf gst-python-0.10.22.tar.bz2
-# - cd gst-python-0.10.22
-# - "./configure --prefix=$VIRT_ROOT"
-# - make > /dev/null
-# - make install > /dev/null
-# - cd ..
 
 
 # install gst-python
@@ -210,11 +204,19 @@ install:
 - tar xvf gst-python-1.2.1.tar.gz
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
-#- "./configure --prefix=$VIRT_ROOT"
+- "./configure --prefix=$VIRT_ROOT"
 - make
 - make install
 - cd ..
 
+### DISABLED # # install gst-python 1.4.0
+### DISABLED # - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.4.0.tar.xz
+### DISABLED # - tar xvf gst-python-1.4.0.tar.xz
+### DISABLED # - cd gst-python-1.4.0/
+### DISABLED # - "./configure --prefix=$VIRT_ROOT"
+### DISABLED # - make
+### DISABLED # - make install
+### DISABLED # - cd ..
 
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
 - pip install --upgrade pip
