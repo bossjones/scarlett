@@ -189,7 +189,7 @@ install:
 - cd pygobject-2.28.6
 - ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
 - make > /dev/null
-- sudo make install > /dev/null
+- make install > /dev/null
 - cd ..
 
 # install pyxser
@@ -202,7 +202,7 @@ install:
 - cd glib-2.32.4
 - ./configure --prefix=$VIRT_ROOT > /dev/null
 - make > /dev/null
-- sudo make install > /dev/null
+- make install > /dev/null
 - cd ..
 - sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
 
