@@ -12,6 +12,9 @@ matrix:
       TOX_ENV: flake8
 services:
 - redis-server
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev python-numpy python-scipy
 install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
@@ -33,6 +36,8 @@ install:
 # 5.24.2015 STOP
 
 - travis_retry sudo apt-get install -qq git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+
+# These have to happen after the venv is activated
 - export MAIN_DIR=$(pwd)
 - export VIRT_ROOT=/home/travis/virtualenv/python$TRAVIS_PYTHON_VERSION
 - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
@@ -40,6 +45,11 @@ install:
 - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
 - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
 - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
+
+# Debug
+- env | sort
+- ls -l $VIRTUAL_ENV/include/*
+#- ls -l /opt/python/3.4.2/include/python3.4m
 
 ##### TESTING ### # install py2cairo
 ##### TESTING ### - wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
@@ -123,7 +133,7 @@ install:
 #- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-bad
 - travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get -qq install gstreamer1.0-alsa gstreamer1.0-doc gstreamer1.0-libav gstreamer1.0-libav-dbg gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-dbg gstreamer1.0-plugins-bad-doc gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-base-dbg gstreamer1.0-plugins-base-doc gstreamer1.0-plugins-good gstreamer1.0-plugins-good-dbg gstreamer1.0-plugins-good-doc gstreamer1.0-plugins-ugly gstreamer1.0-plugins-ugly-dbg gstreamer1.0-plugins-ugly-doc gstreamer1.0-pulseaudio gstreamer1.0-tools gstreamer1.0-x libgstreamer1.0-0 libgstreamer1.0-0-dbg libgstreamer1.0-dev
-- travis_retry sudo apt-get -qq install libglu1-mesa-dev
+- travis_retry sudo apt-get -qq install libglu1-mesa-dev python3-gi
 
 # extra steps recovered from bash_history
 - travis_retry sudo apt-get install -qq git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
@@ -179,7 +189,7 @@ install:
 - cd pygobject-2.28.6
 - ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
 - make > /dev/null
-- make install > /dev/null
+- sudo make install > /dev/null
 - cd ..
 
 # install pyxser
@@ -192,7 +202,7 @@ install:
 - cd glib-2.32.4
 - ./configure --prefix=$VIRT_ROOT > /dev/null
 - make > /dev/null
-- make install > /dev/null
+- sudo make install > /dev/null
 - cd ..
 - sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
 
@@ -227,6 +237,11 @@ install:
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
 - pip install --upgrade pip
 - pip install ruamel.venvgtk
+
+# Debug AFTER
+- env | sort
+- ls -l $VIRTUAL_ENV/include/*
+#- ls -l /opt/python/3.4.2/include/python3.4m
 
 # import test
 - python -c 'from gi.repository import Gtk; print Gtk'
