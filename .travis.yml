@@ -258,6 +258,7 @@ install:
 - ls -lta $VIRTUAL_ENV/lib/*
 - ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/
 - ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/*
+- _SERVERS=( gst-0.10 gstoption.so pygst.pth pygst.py gtk-2.0 glib gobject pygtk.pth pygtk.py pygtk.pyo cairo pocketsphinx.so sphinxbase.so ) && for i in "${_SERVERS[@]}"; do file $VIRTUAL_ENV/lib/python2.7/site-packages/$i; done
 #- ls -l /opt/python/3.4.2/include/python3.4m
 
 # import test
