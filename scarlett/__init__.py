@@ -9,7 +9,7 @@ import logging
 import logging.config
 import scarlett.errors
 
-# NOTE: take from scarlett_imporved
+# NOTE: take from scarlett_improved
 
 try:
     import dbus

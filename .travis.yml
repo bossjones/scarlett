@@ -48,7 +48,12 @@ install:
 
 # Debug
 - env | sort
-- ls -l $VIRTUAL_ENV/include/*
+- ls -lta $VIRTUAL_ENV/include/
+- ls -lta $VIRTUAL_ENV/include/*
+- ls -lta $VIRTUAL_ENV/lib/
+- ls -lta $VIRTUAL_ENV/lib/*
+- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/
+- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/*
 #- ls -l /opt/python/3.4.2/include/python3.4m
 
 ##### TESTING ### # install py2cairo
@@ -240,7 +245,12 @@ install:
 
 # Debug AFTER
 - env | sort
-- ls -l $VIRTUAL_ENV/include/*
+- ls -lta $VIRTUAL_ENV/include/
+- ls -lta $VIRTUAL_ENV/include/*
+- ls -lta $VIRTUAL_ENV/lib/
+- ls -lta $VIRTUAL_ENV/lib/*
+- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/
+- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/*
 #- ls -l /opt/python/3.4.2/include/python3.4m
 
 # import test
