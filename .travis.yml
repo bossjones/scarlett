@@ -246,29 +246,20 @@ install:
 ### DISABLED # - make install
 ### DISABLED # - cd ..
 
-# This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
-- pip install --upgrade pip
-- pip install ruamel.venvgtk
-
-# Debug AFTER
-- env | sort
-- ls -lta $VIRTUAL_ENV/include/
-- ls -lta $VIRTUAL_ENV/include/*
-- ls -lta $VIRTUAL_ENV/lib/
-- ls -lta $VIRTUAL_ENV/lib/*
-- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/
-- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/*
-- _SERVERS=( gst-0.10 gstoption.so pygst.pth pygst.py gtk-2.0 glib gobject pygtk.pth pygtk.py pygtk.pyo cairo pocketsphinx.so sphinxbase.so ) && for i in "${_SERVERS[@]}"; do file $VIRTUAL_ENV/lib/python2.7/site-packages/$i; done
-#- ls -l /opt/python/3.4.2/include/python3.4m
-
 # import test modules
 #- python -c 'import pygst'
 #- python -c 'import gst'
 
+### 6.6.2015
+### DISABLED # # set env variables
+### DISABLED # - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
+### DISABLED # - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+### DISABLED # - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-$GSTREAMER
+
 # set env variables
 - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
 - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
-- export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-$GSTREAMER
+- export GST_PLUGIN_PATH=$VIRT_ROOT/lib/gstreamer-$GSTREAMER
 
 # sphinxbase
 - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
@@ -291,6 +282,19 @@ install:
 - pip install -r requirements_plugins.txt --use-mirrors
 - pip install -r requirements_dev.txt --use-mirrors
 
+# This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
+- pip install --upgrade pip
+- pip install ruamel.venvgtk
+
+# Debug AFTER
+- env | sort
+- ls -lta $VIRTUAL_ENV/include/
+- ls -lta $VIRTUAL_ENV/include/*
+- ls -lta $VIRTUAL_ENV/lib/
+- ls -lta $VIRTUAL_ENV/lib/*
+- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/
+- ls -lta $VIRTUAL_ENV/lib/python2.7/site-packages/*
+- _SERVERS=( gst-0.10 gstoption.so pygst.pth pygst.py gtk-2.0 glib gobject pygtk.pth pygtk.py pygtk.pyo cairo pocketsphinx.so sphinxbase.so ) && for i in "${_SERVERS[@]}"; do file $VIRTUAL_ENV/lib/python2.7/site-packages/$i; done
 
 # import test
 - python -c 'from gi.repository import Gtk; print Gtk'
