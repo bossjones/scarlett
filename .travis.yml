@@ -265,7 +265,7 @@ install:
 - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
 - tar -zxf sphinxbase-0.8.tar.gz
 - cd sphinxbase-0.8
-- ./configure
+- ./configure --prefix=$VIRT_ROOT
 - make
 - sudo make install
 - cd ..
@@ -273,7 +273,7 @@ install:
 # pocketsphinx
 - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
 - cd bossjones-pocketsphinx
-- ./configure
+- ./configure --prefix=$VIRT_ROOT
 - make
 - sudo make install
 - cd ..
