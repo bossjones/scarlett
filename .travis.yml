@@ -5,7 +5,7 @@ matrix:
     env:
       TOX_ENV: py27
       COVERAGE: 1
-      GSTREAMER: 1.0
+      GSTREAMER: 0.10
       TEST_PEP8: 1
   - python: 2.7
     env:
@@ -210,7 +210,7 @@ install:
 # Install the latest version of glib (2.32.4 is required)
 # Install glib
 - wget http://ftp.acc.umu.se/pub/gnome/sources/glib/2.32/glib-2.32.4.tar.xz
-- tar xvf glib-2.32.4.tar.xz
+- tar xf glib-2.32.4.tar.xz
 - cd glib-2.32.4
 - ./configure --prefix=$VIRT_ROOT > /dev/null
 - make > /dev/null
@@ -229,12 +229,12 @@ install:
 
 # install gst-python
 - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz
-- tar xvf gst-python-1.2.1.tar.gz
+- tar xf gst-python-1.2.1.tar.gz
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
 - ./configure --prefix=$VIRT_ROOT
-- make
-- make install
+- make > /dev/null
+- make install > /dev/null
 - cd ..
 
 ### DISABLED # # install gst-python 1.4.0
@@ -266,16 +266,16 @@ install:
 - tar -zxf sphinxbase-0.8.tar.gz
 - cd sphinxbase-0.8
 - ./configure --prefix=$VIRT_ROOT
-- make
-- make install
+- make > /dev/null
+- make install > /dev/null
 - cd ..
 
 # pocketsphinx
 - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
 - cd bossjones-pocketsphinx
 - ./configure --prefix=$VIRT_ROOT
-- make
-- make install
+- make > /dev/null
+- make install > /dev/null
 - cd ..
 - sudo ldconfig
 - pip install -r requirements.txt --use-mirrors
