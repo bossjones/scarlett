@@ -267,7 +267,7 @@ install:
 - cd sphinxbase-0.8
 - ./configure --prefix=$VIRT_ROOT
 - make
-- sudo make install
+- make install
 - cd ..
 
 # pocketsphinx
@@ -275,7 +275,7 @@ install:
 - cd bossjones-pocketsphinx
 - ./configure --prefix=$VIRT_ROOT
 - make
-- sudo make install
+- make install
 - cd ..
 - sudo ldconfig
 - pip install -r requirements.txt --use-mirrors
