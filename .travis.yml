@@ -23,6 +23,8 @@ install:
 # 5.24.2015 START
 - travis_retry sudo add-apt-repository -y ppa:gstreamer-developers/ppa
 - travis_retry sudo apt-get update
+- pip install --upgrade pip
+
 # 5.24.2015 STOP
 
 - travis_retry sudo apt-get update -qq
@@ -266,16 +268,16 @@ install:
 - tar -zxf sphinxbase-0.8.tar.gz
 - cd sphinxbase-0.8
 - ./configure --prefix=$VIRT_ROOT
-- make > /dev/null
-- make install > /dev/null
+- make > /dev/null 2>&1
+- make install > /dev/null 2>&1
 - cd ..
 
 # pocketsphinx
 - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
 - cd bossjones-pocketsphinx
 - ./configure --prefix=$VIRT_ROOT
-- make > /dev/null
-- make install > /dev/null
+- make > /dev/null 2>&1
+- make install > /dev/null 2>&1
 - cd ..
 - sudo ldconfig
 - pip install -r requirements.txt --use-mirrors
@@ -283,7 +285,6 @@ install:
 - pip install -r requirements_dev.txt --use-mirrors
 
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
-- pip install --upgrade pip
 - pip install ruamel.venvgtk
 
 # Debug AFTER
