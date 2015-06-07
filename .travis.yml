@@ -5,7 +5,7 @@ matrix:
     env:
       TOX_ENV: py27
       COVERAGE: 1
-      GSTREAMER: 0.10
+      GSTREAMER: '0.10'
       TEST_PEP8: 1
   - python: 2.7
     env:
