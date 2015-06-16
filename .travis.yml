@@ -1,17 +1,14 @@
 language: python
 
-virtualenv:
-  system_site_packages: true
-
 matrix:
   include:
-  - python: 2.7
+  - python: "2.7_with_system_site_packages"
     env:
       TOX_ENV: py27
       COVERAGE: 1
       GSTREAMER: '0.10'
       TEST_PEP8: 1
-  - python: 2.7
+  - python: "2.7_with_system_site_packages"
     env:
       TOX_ENV: flake8
 services:
