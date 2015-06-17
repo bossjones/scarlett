@@ -189,21 +189,21 @@ install:
 - pip install numpy
 
 # install py2cairo
-- wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
+- curl -L "http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2" > py2cairo-1.10.0.tar.bz2
 - tar xf py2cairo-1.10.0.tar.bz2
 - cd py2cairo-1.10.0
 - ./waf configure --prefix=$VIRT_ROOT > /dev/null
-- ./waf build > /dev/null
-- ./waf install > /dev/null
+- ./waf build > /dev/null 2>&1
+- ./waf install > /dev/null 2>&1
 - cd ..
 
 # install pygobject
-- wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2
+- curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2" > pygobject-2.28.6.tar.bz2
 - tar xf pygobject-2.28.6.tar.bz2
 - cd pygobject-2.28.6
 - ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
-- make > /dev/null
-- make install > /dev/null
+- make > /dev/null 2>&1
+- make install > /dev/null 2>&1
 - cd ..
 
 # install pyxser
@@ -211,32 +211,32 @@ install:
 
 # Install the latest version of glib (2.32.4 is required)
 # Install glib
-- wget http://ftp.acc.umu.se/pub/gnome/sources/glib/2.32/glib-2.32.4.tar.xz
+- curl -L "http://ftp.acc.umu.se/pub/gnome/sources/glib/2.32/glib-2.32.4.tar.xz" > glib-2.32.4.tar.xz
 - tar xf glib-2.32.4.tar.xz
 - cd glib-2.32.4
 - ./configure --prefix=$VIRT_ROOT > /dev/null
-- make > /dev/null
-- make install > /dev/null
+- make > /dev/null 2>&1
+- make install > /dev/null 2>&1
 - cd ..
 - sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
 
 # install pygtk
-- wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
+- curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2" > pygtk-2.24.0.tar.bz2
 - tar xf pygtk-2.24.0.tar.bz2
 - cd pygtk-2.24.0
 - ./configure --prefix=$VIRT_ROOT > /dev/null
-- make > /dev/null
-- make install > /dev/null
+- make > /dev/null 2>&1
+- make install > /dev/null 2>&1
 - cd ..
 
 # install gst-python
-- wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz
+- curl -L "http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz" > gst-python-1.2.1.tar.gz
 - tar xf gst-python-1.2.1.tar.gz
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
 - ./configure --prefix=$VIRT_ROOT
-- sudo make > /dev/null
-- sudo make install > /dev/null
+- sudo make > /dev/null 2>&1
+- sudo make install > /dev/null 2>&1
 - cd ..
 
 ### DISABLED # # install gst-python 1.4.0
