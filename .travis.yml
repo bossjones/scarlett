@@ -1,21 +1,21 @@
 language: python
+python:
+    - "2.7_with_system_site_packages"
 
 matrix:
   include:
   - python: "2.7_with_system_site_packages"
-    env:
-      TOX_ENV: py27
-      COVERAGE: 1
-      GSTREAMER: '0.10'
-      TEST_PEP8: 1
+    env: TOX_ENV=py27 COVERAGE=1 GSTREAMER='0.10' TEST_PEP8=1
   - python: "2.7_with_system_site_packages"
-    env:
-      TOX_ENV: flake8
+    env: TOX_ENV=flake8
+
 services:
 - redis-server
+
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev python-numpy python-scipy
+
 install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
