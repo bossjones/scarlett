@@ -235,8 +235,8 @@ install:
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
 - ./configure --prefix=$VIRT_ROOT
-- make > /dev/null
-- make install > /dev/null
+- sudo make > /dev/null
+- sudo make install > /dev/null
 - cd ..
 
 ### DISABLED # # install gst-python 1.4.0
@@ -284,11 +284,11 @@ install:
 - pip install -r requirements_plugins.txt --use-mirrors
 - pip install -r requirements_dev.txt --use-mirrors
 
-# install scarlett and everything else first
-- python setup.py install
-
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
 - pip install ruamel.venvgtk
+
+# install scarlett and everything else first
+- python setup.py install
 
 # # Debug AFTER
 # - env | sort
