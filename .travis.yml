@@ -110,8 +110,7 @@ install:
 - travis_retry sudo apt-get -qq install gir1.2-gtk-3.0
 - travis_retry sudo apt-get -qq install python-dbus python-dbus-dev
 
-- travis_retry pip install tox sphinx nose
-- travis_retry pip install numpy
+- travis_retry pip install -q tox sphinx numpy
 
 # install py2cairo
 - curl -L "http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2" > py2cairo-1.10.0.tar.bz2
@@ -132,7 +131,7 @@ install:
 - cd ..
 
 # install pyxser
-- pip install https://github.com/eugeneai/pyxser/archive/master.zip
+- pip install -q https://github.com/eugeneai/pyxser/archive/master.zip
 
 # Install the latest version of glib (2.32.4 is required)
 # Install glib
@@ -186,9 +185,9 @@ install:
 - make install > /dev/null
 - cd ..
 - sudo ldconfig
-- pip install -r requirements.txt --use-mirrors
-- pip install -r requirements_plugins.txt --use-mirrors
-- pip install -r requirements_dev.txt --use-mirrors
+- pip install -q -r requirements.txt --use-mirrors
+- pip install -q -r requirements_plugins.txt --use-mirrors
+- pip install -q -r requirements_dev.txt --use-mirrors
 
 # This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
 - pip install ruamel.venvgtk
