@@ -108,7 +108,7 @@ install:
 - travis_retry sudo apt-get -qq install libmpg123-dev gstreamer1.0-plugins-ugly
 - travis_retry sudo apt-get -qq install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev python-lxml python-argparse libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk-3-dev
 - travis_retry sudo apt-get -qq install gir1.2-gtk-3.0
-- travis_retry sudo apt-get -qq install python-dbus python-dbus-d
+- travis_retry sudo apt-get -qq install python-dbus python-dbus-dev
 
 - travis_retry pip install tox sphinx nose
 - travis_retry pip install numpy
