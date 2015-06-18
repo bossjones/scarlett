@@ -195,7 +195,7 @@ install:
 # install scarlett and everything else first
 - python setup.py install
 
-- cd $VIRT_ROOT/site-packages
+- cd $VIRT_ROOT/lib/python2.7/site-packages/
 - ln -s /usr/lib/python2.7/dist-packages/glib
 - ln -s /usr/lib/python2.7/dist-packages/gobject
 - ln -s /usr/lib/python2.7/dist-packages/gst-0.10
