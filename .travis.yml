@@ -203,8 +203,8 @@ install:
 #- ln -s /usr/lib/python2.7/dist-packages/gtk-2.0
 - ln -s /usr/lib/python2.7/dist-packages/pygst.pth
 - ln -s /usr/lib/python2.7/dist-packages/pygst.py
-- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
-- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
+#- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
+#- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
 
 - python -c 'from gi.repository import Gtk; print Gtk'
 - python -c 'import gst'
