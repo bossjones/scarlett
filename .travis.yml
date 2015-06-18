@@ -195,8 +195,20 @@ install:
 # install scarlett and everything else first
 - python setup.py install
 
+- cd $VIRT_ROOT/site-packages
+- ln -s /usr/lib/python2.7/dist-packages/glib
+- ln -s /usr/lib/python2.7/dist-packages/gobject
+- ln -s /usr/lib/python2.7/dist-packages/gst-0.10
+- ln -s /usr/lib/python2.7/dist-packages/gstoption.so
+- ln -s /usr/lib/python2.7/dist-packages/gtk-2.0
+- ln -s /usr/lib/python2.7/dist-packages/pygst.pth
+- ln -s /usr/lib/python2.7/dist-packages/pygst.py
+- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
+- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
+
 - python -c 'from gi.repository import Gtk; print Gtk'
 - python -c 'import gst'
+
 
 - "[ ! -z $COVERAGE ] && pip install coveralls || true"
 script: if [[ $TEST_PEP8 == '1' ]]; then pep8 --repeat --show-source --exclude=.venv,.tox,dist,docs,build,*.egg
