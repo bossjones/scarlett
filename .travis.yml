@@ -206,6 +206,9 @@ install:
 #- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
 #- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
 
+# go back to home dir
+- cd $MAIN_DIR
+
 - python -c 'from gi.repository import Gtk; print Gtk'
 - python -c 'import gst'
 
