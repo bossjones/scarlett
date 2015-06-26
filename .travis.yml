@@ -26,7 +26,7 @@ install:
 - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
 - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
 - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
-- if [[ $USE_VENV_PREFIX == '1' ]]; then export SCARLETT_PREFIX='--prefix=$VIRT_ROOT'; else export SCARLETT_PREFIX=''; fi
+- if [[ $USE_VENV_PREFIX == '1' ]]; then export SCARLETT_PREFIX="--prefix=${VIRT_ROOT}"; else export SCARLETT_PREFIX=''; fi
 
 - travis_retry sudo add-apt-repository -y ppa:gstreamer-developers/ppa
 - travis_retry sudo apt-get -qq update
