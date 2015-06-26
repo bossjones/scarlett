@@ -3,7 +3,7 @@ language: python
 matrix:
   include:
   - python: "2.7_with_system_site_packages"
-    env: TOX_ENV=py27 COVERAGE=1 GSTREAMER='0.10' TEST_PEP8=0
+    env: TOX_ENV=py27 COVERAGE=1 GSTREAMER='0.10' TEST_PEP8=0 USE_VENV_PREFIX=0
   - python: "2.7_with_system_site_packages"
     env: TOX_ENV=flake8
 
@@ -26,6 +26,7 @@ install:
 - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
 - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
 - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
+- if [[ $USE_VENV_PREFIX == '1' ]]; then export SCARLETT_PREFIX='--prefix=$VIRT_ROOT'; else export SCARLETT_PREFIX=''; fi
 
 - travis_retry sudo add-apt-repository -y ppa:gstreamer-developers/ppa
 - travis_retry sudo apt-get -qq update
@@ -116,7 +117,7 @@ install:
 - curl -L "http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2" > py2cairo-1.10.0.tar.bz2
 - tar xf py2cairo-1.10.0.tar.bz2
 - cd py2cairo-1.10.0
-- ./waf configure --prefix=$VIRT_ROOT > /dev/null
+- ./waf configure $SCARLETT_PREFIX > /dev/null
 - ./waf build > /dev/null
 - ./waf install > /dev/null
 - cd ..
@@ -125,10 +126,10 @@ install:
 - curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2" > pygobject-2.28.6.tar.bz2
 - tar xf pygobject-2.28.6.tar.bz2
 - cd pygobject-2.28.6
-- ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
+- ./configure $SCARLETT_PREFIX --disable-introspection > /dev/null
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # install pyxser
 - pip install -q https://github.com/eugeneai/pyxser/archive/master.zip
@@ -138,30 +139,30 @@ install:
 - curl -L "http://ftp.acc.umu.se/pub/gnome/sources/glib/2.32/glib-2.32.4.tar.xz" > glib-2.32.4.tar.xz
 - tar xf glib-2.32.4.tar.xz
 - cd glib-2.32.4
-- ./configure --prefix=$VIRT_ROOT > /dev/null
+- ./configure $SCARLETT_PREFIX > /dev/null
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 - sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
 
 # install pygtk
 - curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2" > pygtk-2.24.0.tar.bz2
 - tar xf pygtk-2.24.0.tar.bz2
 - cd pygtk-2.24.0
-- ./configure --prefix=$VIRT_ROOT > /dev/null
+- ./configure $SCARLETT_PREFIX > /dev/null
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # install gst-python
 - curl -L "http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz" > gst-python-1.2.1.tar.gz
 - tar xf gst-python-1.2.1.tar.gz
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
-- ./configure --prefix=$VIRT_ROOT
+- ./configure $SCARLETT_PREFIX
 - sudo make > /dev/null
 - sudo make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # set env variables
 - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
@@ -172,15 +173,15 @@ install:
 - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
 - tar -zxf sphinxbase-0.8.tar.gz
 - cd sphinxbase-0.8
-- ./configure --prefix=$VIRT_ROOT
+- ./configure $SCARLETT_PREFIX
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # pocketsphinx
 - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
 - cd bossjones-pocketsphinx
-- ./configure --prefix=$VIRT_ROOT
+- ./configure $SCARLETT_PREFIX
 - make > /dev/null
 - make install > /dev/null
 - cd ..
