@@ -160,7 +160,7 @@ install:
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
 - ./configure $SCARLETT_PREFIX
-- make > /dev/null
+- sudo make > /dev/null
 - sudo make install > /dev/null
 - cd $MAIN_DIR
 
