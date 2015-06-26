@@ -3,7 +3,7 @@ language: python
 matrix:
   include:
   - python: "2.7_with_system_site_packages"
-    env: TOX_ENV=py27 COVERAGE=1 GSTREAMER='0.10' TEST_PEP8=0 USE_VENV_PREFIX=0
+    env: TOX_ENV=py27 COVERAGE=1 GSTREAMER='0.10' TEST_PEP8=0 USE_VENV_PREFIX=1
   - python: "2.7_with_system_site_packages"
     env: TOX_ENV=flake8
 
@@ -160,7 +160,7 @@ install:
 - cd gst-python-1.2.1
 #- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
 - ./configure $SCARLETT_PREFIX
-- sudo make > /dev/null
+- make > /dev/null
 - sudo make install > /dev/null
 - cd $MAIN_DIR
 
