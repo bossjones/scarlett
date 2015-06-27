@@ -119,7 +119,7 @@ install:
 - ./waf configure --prefix=$VIRT_ROOT > /dev/null
 - ./waf build > /dev/null
 - ./waf install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # install pygobject
 - curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2" > pygobject-2.28.6.tar.bz2
@@ -128,7 +128,7 @@ install:
 - ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # install pyxser
 - pip install -q https://github.com/eugeneai/pyxser/archive/master.zip
@@ -141,7 +141,7 @@ install:
 - ./configure --prefix=$VIRT_ROOT > /dev/null
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 - sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
 
 # install pygtk
@@ -151,7 +151,7 @@ install:
 - ./configure --prefix=$VIRT_ROOT > /dev/null
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # install gst-python
 - curl -L "http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz" > gst-python-1.2.1.tar.gz
@@ -161,7 +161,7 @@ install:
 - ./configure --prefix=$VIRT_ROOT
 - sudo make > /dev/null
 - sudo make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # set env variables
 - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
@@ -175,7 +175,7 @@ install:
 - ./configure --prefix=$VIRT_ROOT
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 
 # pocketsphinx
 - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
@@ -183,7 +183,7 @@ install:
 - ./configure --prefix=$VIRT_ROOT
 - make > /dev/null
 - make install > /dev/null
-- cd ..
+- cd $MAIN_DIR
 - sudo ldconfig
 - pip install -q -r requirements.txt --use-mirrors
 - pip install -q -r requirements_plugins.txt --use-mirrors
