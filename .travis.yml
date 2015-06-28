@@ -224,6 +224,9 @@ install:
 # go back to home dir
 - cd $MAIN_DIR
 
+- sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
+- python -c 'import pygst'
+- python -c 'import gst'
 - python -c 'from gi.repository import Gtk; print Gtk'
 - python -c 'import gst'
 
