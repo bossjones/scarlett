@@ -163,13 +163,6 @@ install:
 - sudo make install > /dev/null
 - cd $MAIN_DIR
 
-# 2nd time is the charm?
-- cd gst-python-1.2.1
-- ./configure
-- make
-- make install
-- cd $MAIN_DIR
-
 # set env variables
 - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
 - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
@@ -202,6 +195,9 @@ install:
 # install scarlett and everything else first
 - python setup.py install
 
+- ls -lta /usr/include/gstreamer-0.10/
+- ls -lta /usr/share/pyshared | grep pygst
+
 - cd $VIRT_ROOT/lib/python2.7/site-packages/
 #- ln -s /usr/lib/python2.7/dist-packages/glib
 #- ln -s /usr/lib/python2.7/dist-packages/gobject
@@ -210,6 +206,7 @@ install:
 #- ln -s /usr/lib/python2.7/dist-packages/gtk-2.0
 - ln -s /usr/lib/python2.7/dist-packages/pygst.pth
 - ln -s /usr/lib/python2.7/dist-packages/pygst.py
+- ln -s /usr/lib/python2.7/dist-packages/pygst.pyc
 #- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
 #- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
 
