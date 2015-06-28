@@ -7,6 +7,10 @@ matrix:
   - python: "2.7_with_system_site_packages"
     env: TOX_ENV=flake8
 
+cache:
+ - apt
+ - python
+
 services:
 - redis-server
 
@@ -198,32 +202,15 @@ install:
 - ls -lta /usr/include/gstreamer-0.10/
 - ls -lta /usr/share/pyshared | grep pygst
 - ls -lta $VIRT_ROOT/lib/python2.7/
-
 - cd $VIRT_ROOT/lib/python2.7/site-packages/
-#- ln -s /usr/lib/python2.7/dist-packages/glib
-#- ln -s /usr/lib/python2.7/dist-packages/gobject
 - ln -s /usr/lib/python2.7/dist-packages/gst-0.10
 - ln -s /usr/lib/python2.7/dist-packages/gstoption.so
-#- ln -s /usr/lib/python2.7/dist-packages/gtk-2.0
 - ln -s /usr/lib/python2.7/dist-packages/pygst.pth
 - ln -s /usr/lib/python2.7/dist-packages/pygst.py
 - ln -s /usr/lib/python2.7/dist-packages/pygst.pyc
-#- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
-#- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
-
-# /usr/include/gstreamer-0.10/gst/pygst.h
-# /usr/include/gstreamer-0.10/gst/pygstexception.h
-# /usr/include/gstreamer-0.10/gst/pygstminiobject.h
-# /usr/include/gstreamer-0.10/gst/pygstvalue.h
-# /usr/lib/python2.7/dist-packages/pygst.pth
-# /usr/lib/python2.7/dist-packages/pygst.py
-# /usr/lib/python2.7/dist-packages/pygst.pyc
-# /usr/share/pyshared/pygst.pth
-# /usr/share/pyshared/pygst.py
 
 # go back to home dir
 - cd $MAIN_DIR
-
 - sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
 - python -c 'import pygst'
 - python -c 'import gst'
@@ -234,11 +221,23 @@ install:
 script: if [[ $TEST_PEP8 == '1' ]]; then pep8 --repeat --show-source --exclude=.venv,.tox,dist,docs,build,*.egg
   scarlett;fi;find ./tests/unit/ -name '*.py' -exec chmod -x {} \; && python tests/test.py
 
-## NOTE: fuck tox, its screwing with everything
-##script: if [[ $TEST_PEP8 == '1' ]]; then pep8 --repeat --show-source --exclude=.venv,.tox,dist,docs,build,*.egg
-##  scarlett;fi; tox -e ${TOX_ENV}
 after_success:
 - "[ ! -z $COVERAGE ] && coveralls || true"
 notifications:
   slack:
     secure: WwqeVdCpCF8UNnZURer9niMubvLYrANcUoZfl3oEzWtkVKSxZgL4dzkuzi8o85U9kM8rwlBZ/OK7Rit7JA6GcvmIJWCQdxqZPnk3yo0T1HqOtBAgyIlqOJXqyKtYp8t7+wfQ402pF1BAUDyi/HlqyKIx2jeGzOYwH7oHQW9mK6Y=
+
+
+### NOTE: ADD THIS LATER # after_success:
+### NOTE: ADD THIS LATER #   # Test building deployable packages
+### NOTE: ADD THIS LATER #   - pwd && cd src
+### NOTE: ADD THIS LATER #   - python setup.py bdist_egg
+### NOTE: ADD THIS LATER #   - python setup.py sdist
+### NOTE: ADD THIS LATER #   - cd ..
+### NOTE: ADD THIS LATER #   # Test installing the built packages
+### NOTE: ADD THIS LATER #   - pwd && cd src/dist
+### NOTE: ADD THIS LATER #   - pip install freeseer-*.tar.gz
+### NOTE: ADD THIS LATER #   - echo "y" | pip uninstall freeseer
+### NOTE: ADD THIS LATER #   - easy_install freeseer-*.egg
+### NOTE: ADD THIS LATER #   - echo "y" | pip uninstall freeseer
+### NOTE: ADD THIS LATER #   - cd ../..
