@@ -166,8 +166,8 @@ install:
 # 2nd time is the charm?
 - cd gst-python-1.2.1
 - ./configure
-- sudo make
-- sudo make
+- make
+- make install
 - cd $MAIN_DIR
 
 # set env variables
