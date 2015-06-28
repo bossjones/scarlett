@@ -16,3 +16,7 @@ autopep8==1.0.4
 #git-pylint-commit-hook==2.0.3
 responses==0.3.0
 #coveralls>=0.4.1
+futures
+pycares
+pycurl
+flake8
