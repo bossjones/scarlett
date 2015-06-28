@@ -28,6 +28,7 @@ lint:
 	flake8 scarlett tests
 
 test:
+	find ./tests/unit/ -name '*.py' -exec chmod -x {} +
 	python tests/test.py
 
 test-all:
