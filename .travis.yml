@@ -157,10 +157,17 @@ install:
 - curl -L "http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz" > gst-python-1.2.1.tar.gz
 - tar xf gst-python-1.2.1.tar.gz
 - cd gst-python-1.2.1
-- "./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig"
+- ./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig
 #- ./configure --prefix=$VIRT_ROOT
 - sudo make > /dev/null
 - sudo make install > /dev/null
+- cd $MAIN_DIR
+
+# 2nd time is the charm?
+- cd gst-python-1.2.1
+- ./configure
+- sudo make
+- sudo make
 - cd $MAIN_DIR
 
 # set env variables
@@ -205,6 +212,16 @@ install:
 - ln -s /usr/lib/python2.7/dist-packages/pygst.py
 #- ln -s /usr/lib/python2.7/dist-packages/pygtk.pth
 #- ln -s /usr/lib/python2.7/dist-packages/pygtk.py
+
+# /usr/include/gstreamer-0.10/gst/pygst.h
+# /usr/include/gstreamer-0.10/gst/pygstexception.h
+# /usr/include/gstreamer-0.10/gst/pygstminiobject.h
+# /usr/include/gstreamer-0.10/gst/pygstvalue.h
+# /usr/lib/python2.7/dist-packages/pygst.pth
+# /usr/lib/python2.7/dist-packages/pygst.py
+# /usr/lib/python2.7/dist-packages/pygst.pyc
+# /usr/share/pyshared/pygst.pth
+# /usr/share/pyshared/pygst.py
 
 # go back to home dir
 - cd $MAIN_DIR
