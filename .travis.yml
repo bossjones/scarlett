@@ -142,16 +142,16 @@ install:
 - make > /dev/null
 - make install > /dev/null
 - cd $MAIN_DIR
-- sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
+- sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev libasound2-dev libjack-dev
 
-# install pygtk
-- curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2" > pygtk-2.24.0.tar.bz2
-- tar xf pygtk-2.24.0.tar.bz2
-- cd pygtk-2.24.0
-- travis_retry ./configure --prefix=$VIRT_ROOT > /dev/null
-- travis_retry make
-- travis_retry make install
-- cd $MAIN_DIR
+### # install pygtk
+### - curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2" > pygtk-2.24.0.tar.bz2
+### - tar xf pygtk-2.24.0.tar.bz2
+### - cd pygtk-2.24.0
+### - travis_retry ./configure --prefix=$VIRT_ROOT > /dev/null
+### - travis_retry make
+### - travis_retry make install
+### - cd $MAIN_DIR
 
 # install gst-python
 - curl -L "http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz" > gst-python-1.2.1.tar.gz
