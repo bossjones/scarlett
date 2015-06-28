@@ -61,3 +61,4 @@ compile/
 *.vendor
 Gemfile.lock
 .vagrant/
+.idea
