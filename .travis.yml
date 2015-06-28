@@ -197,6 +197,7 @@ install:
 
 - ls -lta /usr/include/gstreamer-0.10/
 - ls -lta /usr/share/pyshared | grep pygst
+- ls -lta $VIRT_ROOT/lib/python2.7/
 
 - cd $VIRT_ROOT/lib/python2.7/site-packages/
 #- ln -s /usr/lib/python2.7/dist-packages/glib
