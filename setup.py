@@ -11,7 +11,6 @@ from scarlett import __version__ as version
 try:
     #from setuptools import setup, find_packages
     from setuptools import setup
-    # might need this later
     extra = dict(test_suite="tests.test.suite", include_package_data=True)
 except ImportError:
     from distutils.core import setup
