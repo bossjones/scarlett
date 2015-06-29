@@ -1,7 +1,7 @@
 import scarlett
 from scarlett.constants import *
-from scarlett.errors import ProtocolError
-from IPython.core.debugger import Tracer
+#from scarlett.errors import ProtocolError
+#from IPython.core.debugger import Tracer
 
 # Protocol specific constants
 NULL_CHAR = '\x00'
@@ -11,6 +11,13 @@ MAGIC_REQ_STRING = '%sREQ' % NULL_CHAR
 # def get_command_name(cmd_type):
 # return SCARLETT_COMMAND_TO_NAME.get(cmd_type, cmd_type)
 
+# source: http://stackoverflow.com/questions/1176136/convert-string-to-python-class-object
+# Convert string to Python class object?
+import sys
+
+# this returns a python class object based on its name
+def str_to_class(str):
+    return reduce(getattr, str.split("."), sys.modules[__name__])
 
 class Command(object):
 

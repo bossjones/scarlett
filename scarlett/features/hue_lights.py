@@ -1,103 +1,117 @@
-#!/usr/bin/env python
+# import scarlett
+# from scarlett.features import *
+# import socket
+# import time
+# import os
+# import scarlett.basics.voice
+# import scarlett.basics.say as scarlett_says
 
-import scarlett
-from scarlett.features import *
-from phue import Bridge
-import socket
-import time
-import os
-import scarlett.basics.voice
+# try:
+#     os.path.expanduser('~')
+#     expanduser = os.path.expanduser
+# except (AttributeError, ImportError):
+#     # This is probably running on App Engine.
+#     expanduser = (lambda x: x)
 
-try:
-    os.path.expanduser('~')
-    expanduser = os.path.expanduser
-except (AttributeError, ImportError):
-    # This is probably running on App Engine.
-    expanduser = (lambda x: x)
+# def service_init(voice, brain):
+#     """ Gets the Hue lights. """
+#     try:
+#         from phue import Bridge
+#     except ImportError:
+#         scarlett.log.exception(Fore.RED +
+#                         "Sorry, had an issue connecting to phue Bridge, make sure you register the app first")
+#         # source: http://stackoverflow.com/questions/6190776/what-is-the-best-way-to-exit-a-function-which-has-no-return-value-in-python-be
+#         # exits function
+#         return
 
-class FeatureHueLights(Feature):
+#         service = FeatureHueLights(voice, brain)
 
-    capability = []
+#     return service
 
-    def __init__(self, voice, brain, hue_dotfile='.python_hue',*args, **kwargs):
-        super(FeatureHueLights, self).__init__(args, kwargs)
-        self._light_objects = []
-        self._name = "hue"
-        self.voice = voice
-        self.brain = brain
-        self.hue_dotfile = hue_dotfile
-        self.hue_config = os.path.join(expanduser('~'), self.hue_dotfile)
-        self.hue_bridge = "{0}".format(scarlett.config.get('hue', 'bridge'))
+# class FeatureHueLights(Feature):
 
-        # add test for unauthorized user
-        # [{u'error': {u'address': u'/',
-        # u'description': u'unauthorized user',
-        # u'type': 1}}]
+#     capability = []
 
-        try:
-            self.b = Bridge(
-                ip=self.hue_bridge,
-                config_file_path=self.hue_config)
-        except socket.error:  # Error connecting using Phue
-            scarlett.log.debug(
-                Fore.YELLOW +
-                "Sorry, had an issue connecting to phue Bridge, make sure you register the app first")
+#     def __init__(self, voice, brain, hue_dotfile='.python_hue',*args, **kwargs):
+#         super(FeatureHueLights, self).__init__(args, kwargs)
+#         self._light_objects = []
+#         self._name = "hue"
+#         self.voice = voice
+#         self.brain = brain
+#         self.hue_dotfile = hue_dotfile
+#         self.hue_config = os.path.join(expanduser('~'), self.hue_dotfile)
+#         self.hue_bridge = "{0}".format(scarlett.config.get('hue', 'bridge'))
 
-        self.api = self.b.get_api()
-        self.lights = self.api.get('lights')
+#         # add test for unauthorized user
+#         # [{u'error': {u'address': u'/',
+#         # u'description': u'unauthorized user',
+#         # u'type': 1}}]
 
-        # capture all lights currently configured
-        for light_obj in self.b.get_light_objects():
-            self._light_objects.append(light_obj)
+#         try:
+#             self.b = Bridge(
+#                 ip=self.hue_bridge,
+#                 config_file_path=self.hue_config)
+#         except socket.error:
+#             # Error connecting using Phue
+#             scarlett.log.exception(
+#                 Fore.YELLOW +
+#                 "Sorry, had an issue connecting to phue Bridge, make sure you register the app first")
 
-    def find_active_lights(self):
-        pass
+#         self.api = self.b.get_api()
+#         self.lights = self.api.get('lights')
 
-    @property
-    def name(self):
-        return self._name
+#         # capture all lights currently configured
+#         for light_obj in self.b.get_light_objects():
+#             self._light_objects.append(light_obj)
 
-    def find_light(self, light_name):
-        return self._light_objects[light_name]
+#     def find_active_lights(self):
+#         pass
 
-    def get_light_names(self):
-        self.light_play()
-        lights_list = self.b.get_light_objects('list')
-        for light in lights_list:
-            self.voice.speak(light.name)
-            time.sleep(2)
+#     @property
+#     def name(self):
+#         return self._name
 
-    def brighten_light(self, light_name):
-        self._light_objects[light_name].on = True
-        self._light_objects[light_name].brightness = 240
-        return self._light_objects[light_name].brightness
+#     def find_light(self, light_name):
+#         return self._light_objects[light_name]
 
-    def turn_on_all_lights(self):
-        lights_list = self.b.get_light_objects('list')
-        for light in lights_list:
-            light.on = True
-            light.colortemp = 400
-            light.bri = 127
+#     def get_light_names(self):
+#         self.light_play()
+#         lights_list = self.b.get_light_objects('list')
+#         for light in lights_list:
+#             scarlett_says.say_block(light.name)
+#             time.sleep(2)
 
-    def brighten_lights_all(self, light_name):
-        lights_list = self._light_objects
-        for light in lights_list:
-            light.on = True
-            light.brightness = 240
+#     def brighten_light(self, light_name):
+#         self._light_objects[light_name].on = True
+#         self._light_objects[light_name].brightness = 240
+#         return self._light_objects[light_name].brightness
 
-    def darken_light(self, light_name):
-        self._light_objects[light_name].on = True
-        self._light_objects[light_name].brightness = 100
-        return self._light_objects[light_name].brightness
+#     def turn_on_all_lights(self):
+#         lights_list = self.b.get_light_objects('list')
+#         for light in lights_list:
+#             light.on = True
+#             light.colortemp = 400
+#             light.bri = 127
 
-    def print_light_names(self):
-        for l in self.lights:
-            scarlett.log.debug(Fore.YELLOW + "" + (l.name))
+#     def brighten_lights_all(self, light_name):
+#         lights_list = self._light_objects
+#         for light in lights_list:
+#             light.on = True
+#             light.brightness = 240
 
-    def light_play(self, cmd="hue_lights"):
-        self.voice.play('pi-response')
-        self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
-        self.keyword_identified = int(
-            self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
-                0))
+#     def darken_light(self, light_name):
+#         self._light_objects[light_name].on = True
+#         self._light_objects[light_name].brightness = 100
+#         return self._light_objects[light_name].brightness
+
+#     def print_light_names(self):
+#         for l in self.lights:
+#             scarlett.log.debug(Fore.YELLOW + "" + (l.name))
+
+#     def light_play(self, cmd="hue_lights"):
+#         scarlett.basics.voice.play_block('pi-response')
+#         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
+#         self.keyword_identified = int(
+#             self.brain.set_brain_item_r(
+#                 'm_keyword_match',
+#                 0))

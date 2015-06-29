@@ -7,6 +7,9 @@ test
 
 Tests for `scarlett` module.
 """
+# insert path so we can access things w/o having to re-install everything
+#sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from __future__ import print_function
 
 import logging
@@ -20,6 +23,7 @@ from nose.core import run
 import scarlett
 #from scarlett import scarlett
 #from IPython.core.debugger import Tracer
+
 
 
 def main():
@@ -52,20 +56,24 @@ def main():
             '--cover-erase',
             '--cover-package=scarlett',
             '-d']
-        #--cover-erase --cover-package=flask_encryptedsession --cover-html
 
     # Set default tests used by e.g. tox. For Py2 this means all unit
     # tests, while for Py3 it's just whitelisted ones.
     if 'default' in remaining_args:
         # Run from the base project directory
-        # print "HERE:"
-        #print (os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-        # Tracer()()
         os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
         for i, arg in enumerate(remaining_args):
             if arg == 'default':
                 remaining_args[i] = 'tests/unit'
+
+    if 'gst_improved' in remaining_args:
+        # Run from the base project directory
+        os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        for i, arg in enumerate(remaining_args):
+            if arg == 'gst_improved':
+                remaining_args[i] = 'tests/unit/future'
 
     all_args = [__file__] + attribute_args + remaining_args
     print("nose command:", ' '.join(all_args))
@@ -82,7 +90,6 @@ def main():
         return 1
 
 if __name__ == '__main__':
-    # unittest.main()
     os.environ['MAIN_DIR'] = os.path.abspath(os.path.dirname(__file__))
     os.environ[
         'SCARLETT_CONFIG'] = "%s/tests/fixtures/.scarlett" % (os.environ['MAIN_DIR'])

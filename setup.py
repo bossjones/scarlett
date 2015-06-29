@@ -11,7 +11,6 @@ from scarlett import __version__ as version
 try:
     #from setuptools import setup, find_packages
     from setuptools import setup
-    # might need this later
     extra = dict(test_suite="tests.test.suite", include_package_data=True)
 except ImportError:
     from distutils.core import setup
@@ -75,7 +74,7 @@ setup(
     long_description=readme + "\n\n" + history,
     author="Malcolm Jones",
     author_email="bossjones@theblacktonystark.com",
-    url="https://github.com/bossjones/scarlett/",
+    url="https://github.com/bossjones/scarlett",
     packages=[
         "scarlett",
         "scarlett.basics",
@@ -92,6 +91,8 @@ setup(
     ],
     scripts=[
         'bin/scarlett',
+        'bin/scarlett_improved',
+        'bin/scarlett_test',
         'bin/scarlett_echo_client_test.py',
         'bin/scarlett_worker_cb_test.py',
         'bin/catwav',
@@ -101,17 +102,21 @@ setup(
     license="MIT",
     platforms="Posix; MacOS X",
     zip_safe=False,
-    keywords="scarlett",
+    keywords="scarlett,Speech, Pocketsphinx, GUI",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Environment :: Console",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: POSIX",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
+        "Environment :: X11 Applications :: GTK",
+        "Environment :: Console",
+        "Natural Language :: English",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: Multimedia :: Sound/Audio :: Speech",
         "Natural Language :: English",
     ],
     **extra

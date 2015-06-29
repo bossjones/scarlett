@@ -4,7 +4,6 @@ import re
 import warnings
 import ConfigParser
 import scarlett
-#from scarlett import log
 
 # If running in Google App Engine there is no "user" and
 # os.path.expanduser() will fail. Attempt to detect this case and use a

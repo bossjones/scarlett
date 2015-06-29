@@ -12,7 +12,6 @@ import getopt
 import tempfile
 import json
 import glob
-import tempfile
 import subprocess
 import pygst
 pygst.require("0.10")
@@ -26,7 +25,9 @@ from scarlett.constants import *
 import gobject
 gobject.threads_init()
 
-# Create a gtreamer playerbin
+SCARLETT_ROLE = 'sound_player'
+
+# Create a gstreamer playerbin
 __PLAYER__ = None
 
 # Connect End Of Stream handler on bus
@@ -68,7 +69,7 @@ def play_block(sound):
     """
     Play sound but block until end
     """
-    #scarlett.log.debug(Fore.YELLOW + '%s ' + __name__)
+    scarlett.log.debug(Fore.YELLOW + "Inside: %s" % __name__)
     global main_loop
 
     # Play sound

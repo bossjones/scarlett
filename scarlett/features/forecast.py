@@ -6,7 +6,9 @@ import scarlett
 from scarlett.features import *
 import forecastio
 import scarlett.basics.voice
+import scarlett.basics.say as scarlett_says
 
+SCARLETT_ROLE = 'weather'
 
 class FeatureForecast(Feature):
 
@@ -27,8 +29,7 @@ class FeatureForecast(Feature):
         pass
 
     def forecast_play(self):
-
-        self.voice.play('pi-response')
+        scarlett.basics.voice.play_block('pi-response')
         forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng)
 
         scarlett.log.debug(
@@ -38,7 +39,7 @@ class FeatureForecast(Feature):
         fio_hourly = "%s degrees fahrenheit" % (
             forecast.hourly().data[0].temperature)
         fio_hourly = fio_hourly.replace(";", "\;")
-        self.voice.speak(fio_hourly)
+        scarlett_says.say_block(fio_hourly)
 
         scarlett.log.debug(Fore.YELLOW + "===========Hourly Data=========")
         by_hour = forecast.hourly()
@@ -48,7 +49,8 @@ class FeatureForecast(Feature):
             (by_hour.summary))
         fio_summary = "Hourly Summary: %s" % (by_hour.summary)
         fio_summary = fio_summary.replace(";", "\;")
-        self.voice.speak(fio_summary)
+        scarlett_says.say_block(fio_summary)
+
 
         scarlett.log.debug(Fore.YELLOW + "===========Daily Data=========")
         by_day = forecast.daily()
@@ -57,9 +59,9 @@ class FeatureForecast(Feature):
             "Daily Summary: %s" %
             (by_day.summary))
         fio_day = "Daily Summary: %s" % (by_day.summary)
-        self.voice.speak(fio_day)
+        ScarlettTalk.speak(fio_day)
         self.failed = int(self.brain.set_brain_item_r('scarlett_failed', 0))
         self.keyword_identified = int(
             self.brain.set_brain_item_r(
-                'scarlett_main_keyword_identified',
+                'm_keyword_match',
                 0))

@@ -1,184 +1,243 @@
 language: python
 
 matrix:
-    include:
-        - python: 2.7
-          env: {TOX_ENV: py27, COVERAGE: 1, GSTREAMER: 0.10,TEST_PEP8: 1}
-#        - python: 2.7
-#          env: {TOX_ENV: docs}
-        - python: 2.7
-          env: {TOX_ENV: flake8}
+  include:
+  - python: "2.7_with_system_site_packages"
+    env: TOX_ENV=py27 COVERAGE=1 GSTREAMER='0.10' TEST_PEP8=0
+  - python: "2.7_with_system_site_packages"
+    env: TOX_ENV=flake8
+
+cache:
+ - apt
+ - python
 
 services:
-  - redis-server
-# env:
-#   - GSTREAMER=0.10
-#   - GSTREAMER=1.0
+- redis-server
 
-# Instructions to install gstreamer1.0
-## env:
-##   - GSTREAMER=0.10
-##   - GSTREAMER=1.0
-##
-## before_install:
-##   - sudo add-apt-repository -y ppa:strukturag/libde265
-##   - sh -c "if [ '$GSTREAMER' = '1.0'   ]; then sudo add-apt-repository -y ppa:gstreamer-developers/ppa; fi"
-##   - sudo apt-get update -qq
-##   - sudo apt-get install -y libde265-dev libz-dev libbz2-dev gstreamer$GSTREAMER-tools libgstreamer$GSTREAMER-dev libgstreamer-plugins-base$GSTREAMER-dev libgstreamer-plugins-bad$GSTREAMER-dev
-##   - sh -c "if [ '$GSTREAMER' = '1.0'   ]; then sudo apt-get install -y libgstreamer-plugins-good$GSTREAMER-dev; fi"
-
-# Instructions to install gstreamer1.0
-## install:
-##  - sudo add-apt-repository -y ppa:gstreamer-developers/ppa
-##  - sudo apt-get update
-##  - sudo apt-get install
-##         expect
-##         gir1.2-gstreamer-1.0
-##         gir1.2-gudev-1.0
-##         gstreamer1.0-libav
-##         gstreamer1.0-plugins-bad
-##         gstreamer1.0-plugins-base
-##         gstreamer1.0-plugins-good
-##         gstreamer1.0-tools
-##         gstreamer1.0-x
-##         libgstreamer1.0-dev
-##         libgstreamer-plugins-base1.0-dev
-##
-
-## instructions to install xvfb to run GUI on headless server
-
-## sudo apt-get update && sudo apt-get install -y xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic xvfb x11-apps imagemagick gtk2-engines-pixbuf
-## install/copy xvfb init.d script
-## sudo chmod +x /etc/init.d/xvfb
-# sudo update-rc.d xvfb defaults.
-# export DISPLAY=:99
-# sudo /etc/init.d/xvfb start
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev python-numpy python-scipy
 
 install:
-    - "export DISPLAY=:99.0"
-    - "sh -e /etc/init.d/xvfb start"
-    - sh -c "echo -e \"\e[31mGSTREAMER VERSION $GSTREAMER\e[39;\""
-    - travis_retry sudo apt-get update
-    - travis_retry sudo apt-get install -qq bash-completion swig
-    - travis_retry pip install tox sphinx nose
-    - travis_retry sudo apt-get install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
-  # Environment setup
-    - export MAIN_DIR=$(pwd)
-    - export VIRT_ROOT=/home/travis/virtualenv/python$TRAVIS_PYTHON_VERSION
-    - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
-    - export SCARLETT_CONFIG=$MAIN_DIR/tests/fixtures/.scarlett
-    - export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
-    - export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
-    - export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
-  # PyCairo
-    - wget http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2
-    - tar xf py2cairo-1.10.0.tar.bz2
-    - cd py2cairo-1.10.0
-    - ./waf configure --prefix=$VIRT_ROOT > /dev/null
-    - ./waf build > /dev/null
-    - ./waf install > /dev/null
-    - cd ..
-  # PyGobject
-    - wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2
-    - tar xf pygobject-2.28.6.tar.bz2
-    - cd pygobject-2.28.6
-    - ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
-    - make > /dev/null
-    - make install > /dev/null
-    - cd ..
-  # PyGtk
-    - wget http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2
-    - tar xf pygtk-2.24.0.tar.bz2
-    - cd pygtk-2.24.0
-    - ./configure --prefix=$VIRT_ROOT > /dev/null
-    - make > /dev/null
-    - make install > /dev/null
-    - cd ..
-    # gstreamer
-    # notes https://gist.github.com/jegger/10003813
-    # try these? -  sudo apt-get install python python-pip python-setuptools python-gobject gobject-introspection \
-    #                   python-gst0.10 gstreamer0.10-plugins-base gir1.2-gstreamer-0.10 \
-    #                   gstreamer0.10-plugins-good gstreamer0.10-plugins-bad \
-    #                   gstreamer0.10-plugins-ugly
-    # Basic build tools - virtualenv prereqs:
-    # source: http://wiki.pitivi.org/wiki/Dependencies
-    - travis_retry sudo apt-get -qq install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
-    # Stuff related to introspection, GTK, canvases, and various other dependencies:
-    # source: http://wiki.pitivi.org/wiki/Dependencies
-    - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
-    - travis_retry sudo apt-get -qq install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0 libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0 libgstrtspserver-0.10-dev libnice-dev
-    - travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
-    - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio
-    - travis_retry sudo apt-get -qq install gstreamer0.10-alsa
-    - travis_retry sudo apt-get -qq install pavucontrol gstreamer0.10-pulseaudio pulseaudio
-    - travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio libao4 libasound2-plugins libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg pulseaudio-utils
-    - travis_retry sudo apt-get -qq install bison
-    - travis_retry sudo apt-get -qq install autoconf automake bison build-essential libasound2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib python-simplejson
-    - travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
-    - travis_retry sudo apt-get -qq install python2.7-dev
-    - travis_retry sudo apt-get -qq install bison
-    - export LD_LIBRARY_PATH=$VIRT_ROOT/lib
-    - export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
-    - export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 
-  # PyGST
-    # source: http://wiki.pitivi.org/wiki/Dependencies
-    - wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.bz2
-    - tar xf gst-python-0.10.22.tar.bz2
-    - cd gst-python-0.10.22
-    - ./configure --prefix=$VIRT_ROOT
-    - make > /dev/null
-    - make install > /dev/null
-    - cd ..
-    - python -c 'import pygst'
-    - python -c 'import gst'
-  # Pocketsphinx
-    - wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
-    - tar -zxf sphinxbase-0.8.tar.gz
-    - cd sphinxbase-0.8
-    - ./configure
-    - make
-    - sudo make install
-    - cd ..
-    - travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
-    - cd bossjones-pocketsphinx
-    - ./configure
-    - make
-    - sudo make install
-    - cd ..
-    - sudo ldconfig
-    - pip install -r requirements.txt --use-mirrors
-    - pip install -r requirements_plugins.txt --use-mirrors
-    - pip install -r requirements_dev.txt --use-mirrors
-    # - pip install -r requirements.txt --use-mirrors
-    # - pip install -r requirements_plugins.txt
-    - python setup.py install
-    # - python tests/test.py
-    # run tests
-    - "[ ! -z $COVERAGE ] && pip install coveralls || true"
-    # - pip install --allow-all-external -r requirements.txt
+# These have to happen after the venv is activated
+- export MAIN_DIR=$(pwd)
+- export VIRT_ROOT=/home/travis/virtualenv/python$TRAVIS_PYTHON_VERSION
+- export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+- export SCARLETT_CONFIG=$MAIN_DIR/tests/fixtures/.scarlett
+- export SCARLETT_HMM=$MAIN_DIR/tests/fixtures/model/hmm/en_US/hub4wsj_sc_8k
+- export SCARLETT_LM=$MAIN_DIR/tests/fixtures/lm/1602.lm
+- export SCARLETT_DICT=$MAIN_DIR/tests/fixtures/dict/1602.dic
 
-#install: pip install --allow-all-external -r requirements.txt
+- travis_retry sudo add-apt-repository -y ppa:gstreamer-developers/ppa
+- travis_retry sudo apt-get -qq update
+- travis_retry sudo apt-get -qq install bash-completion swig
+- travis_retry sudo apt-get -qq install build-essential autotools-dev automake autoconf libtool autopoint libxml2-dev zlib1g-dev libglib2.0-dev pkg-config bison flex python git gtk-doc-tools libasound2-dev libgudev-1.0-dev libxt-dev libvorbis-dev libcdparanoia-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev iso-codes libgtk-3-dev libraw1394-dev libiec61883-dev libavc1394-dev libv4l-dev libcairo2-dev libcaca-dev libspeex-dev libpng-dev libshout3-dev libjpeg-dev libaa1-dev libflac-dev libdv4-dev libtag1-dev libwavpack-dev libpulse-dev libsoup2.4-dev libbz2-dev libcdaudio-dev libdc1394-22-dev ladspa-sdk libass-dev libcurl4-gnutls-dev libdca-dev libdirac-dev libdvdnav-dev libexempi-dev libexif-dev libfaad-dev libgme-dev libgsm1-dev libiptcdata0-dev libkate-dev libmimic-dev libmms-dev libmodplug-dev libmpcdec-dev libofa0-dev libopus-dev librsvg2-dev librtmp-dev libschroedinger-dev libslv2-dev libsndfile1-dev libsoundtouch-dev libspandsp-dev libx11-dev libxvidcore-dev libzbar-dev libzvbi-dev liba52-0.7.4-dev libcdio-dev libdvdread-dev libmad0-dev libmp3lame-dev libmpeg2-4-dev libopencore-amrnb-dev libopencore-amrwb-dev libsidplay1-dev libtwolame-dev libx264-dev
+- travis_retry sudo apt-get -qq install libgirepository1.0-dev gstreamer1.0-plugins-good gir1.2-clutter-1.0 gir1.2-clutter-gst-1.0 gir1.2-gtkclutter-1.0 gir1.2-gtksource-3.0 gir1.2-vte-2.90 gir1.2-webkit-1.0 gir1.2-webkit-3.0
+- travis_retry sudo apt-get -qq install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+- travis_retry sudo apt-get -qq install libglib2.0-*
+- travis_retry sudo apt-get -qq install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+- travis_retry sudo apt-get -qq install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+- travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
+- travis_retry sudo apt-get -qq install gstreamer0.10-ffmpeg gstreamer-tools gstreamer0.10-alsa gstreamer0.10-nice gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-tools libgstreamer-plugins-bad0.10-0 libgstreamer-plugins-bad0.10-dev libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base0.10-dev libgstreamer0.10-0 libgstreamer0.10-0-dbg libgstreamer0.10-cil-dev libgstreamer0.10-dev libgstrtspserver-0.10-0 libgstrtspserver-0.10-dev libnice-dev
+- travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly
+- travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio
+- travis_retry sudo apt-get -qq install gstreamer0.10-alsa
+- travis_retry sudo apt-get -qq install pavucontrol gstreamer0.10-pulseaudio pulseaudio
+- travis_retry sudo apt-get -qq install gstreamer0.10-pulseaudio libao4 libasound2-plugins libgconfmm-2.6-1c2 libglademm-2.4-1c2a libpulse-dev libpulse-mainloop-glib0 libpulse-mainloop-glib0-dbg libpulse0 libpulse0-dbg libsox-fmt-pulse paman paprefs pavucontrol pavumeter pulseaudio pulseaudio-dbg pulseaudio-esound-compat pulseaudio-esound-compat-dbg pulseaudio-module-bluetooth pulseaudio-module-gconf pulseaudio-module-jack pulseaudio-module-lirc pulseaudio-module-lirc-dbg pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-zeroconf-dbg pulseaudio-utils
+- travis_retry sudo apt-get -qq install bison
+- travis_retry sudo apt-get -qq install autoconf automake bison build-essential libasound2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libtool python-gst0.10 python-pyside python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-iplib python-simplejson
+- travis_retry sudo apt-get -qq install python-gst0.10 python-gst0.10-dbg python-gst0.10-dev python-gst0.10-rtsp python-pip python-setuptools python-gtk2 python-yaml python-yaml-dbg
+- travis_retry sudo apt-get -qq install python2.7-dev
+- travis_retry sudo apt-get -qq install bison
+- travis_retry sudo apt-get -qq install gstreamer1.0* libgstreamer1.0*
+- travis_retry sudo apt-get -qq install python-gst* python-pip python-setuptools
+- travis_retry sudo apt-get -qq install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+- travis_retry sudo apt-get -qq install libusb-1.0
+- travis_retry sudo apt-get -qq install yelp-tools
+- travis_retry sudo apt-get -qq install python3 python3-dev
+- travis_retry sudo apt-get -qq install python-libxml2
+- travis_retry sudo apt-get -qq install gnome-core-devel gnome-devel
+- travis_retry sudo apt-get -qq install anjuta glade devhelp
+- travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-bad-multiverse
+- travis_retry sudo apt-get -qq install libgtk-3-dev libgstreamer0.10-dev libclutter-1.0-dev libwebkitgtk-3.0-dev libgda-5.0-dev
+- travis_retry sudo apt-get -qq install libgtk-3-doc gstreamer0.10-doc libclutter-1.0-doc libgda-5.0-doc
+- travis_retry sudo apt-get -qq install g++
+- travis_retry sudo apt-get -qq install libgtkmm-3.0-dev libgstreamermm-0.10-dev libgdamm5.0-dev
+- travis_retry sudo apt-get -qq install libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc
+- travis_retry sudo apt-get -qq install python python-gobject
+- travis_retry sudo apt-get -qq install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+- travis_retry sudo apt-get -qq install libgirepository1.0-dev python3.2-dev python-gi-dev python3-cairo-dev libcairo2-dev python-gi-cairo libgdk-pixbuf2.0-dev libpulse-dev libgtk-3-dev libclutter-1.0-dev libclutter-gtk-1.0-dev libclutter-gst-1.0-0 libclutter-gst-1.0-dbg libclutter-gst-dev gir1.2-clutter-gst-1.0 libxml2-dev python-numpy gir1.2-clutter-1.0
+- travis_retry sudo apt-get -qq install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
+- travis_retry sudo apt-get -qq install python-gi gstreamer1.0-tools gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-libav
+- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-base
+- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-good
+- travis_retry sudo apt-get -qq build-dep gstreamer1.0-plugins-ugly
+- travis_retry sudo apt-get -qq install gstreamer1.0-alsa gstreamer1.0-doc gstreamer1.0-libav gstreamer1.0-libav-dbg gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-dbg gstreamer1.0-plugins-bad-doc gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-base-dbg gstreamer1.0-plugins-base-doc gstreamer1.0-plugins-good gstreamer1.0-plugins-good-dbg gstreamer1.0-plugins-good-doc gstreamer1.0-plugins-ugly gstreamer1.0-plugins-ugly-dbg gstreamer1.0-plugins-ugly-doc gstreamer1.0-pulseaudio gstreamer1.0-tools gstreamer1.0-x libgstreamer1.0-0 libgstreamer1.0-0-dbg libgstreamer1.0-dev
+- travis_retry sudo apt-get -qq install libglu1-mesa-dev python3-gi
+- travis_retry sudo apt-get -qq install git libcairo2-dev libgtk2.0-dev libglib2.0-dev libtool libpango1.0-dev libatk1.0-dev libffi-dev libpq-dev libmysqlclient-dev
+- travis_retry sudo apt-get -qq install libglib2.0-*
+- travis_retry sudo apt-get -qq install apt-file
+- travis_retry sudo apt-get -qq install python-libxml2
+- travis_retry sudo apt-get -qq install gnome-core-devel gnome-devel
+- travis_retry sudo apt-get -qq install anjuta glade devhelp
+- travis_retry sudo apt-get -qq install gstreamer0.10-plugins-bad gstreamer0.10-plugins-bad-multiverse
+- travis_retry sudo apt-get -qq install libgtk-3-dev libgstreamer0.10-dev libclutter-1.0-dev libwebkitgtk-3.0-dev libgda-5.0-dev
+- travis_retry sudo apt-get -qq install libgtk-3-doc gstreamer0.10-doc libclutter-1.0-doc libgda-5.0-doc
+- travis_retry sudo apt-get -qq install g++
+- travis_retry sudo apt-get -qq install libgtkmm-3.0-dev libgstreamermm-0.10-dev libgdamm5.0-dev
+- travis_retry sudo apt-get -qq install libgtkmm-3.0-doc libgstreamermm-0.10-doc libgdamm5.0-doc
+- travis_retry sudo apt-get -qq install python python-gobject
+- travis_retry sudo apt-get -qq install git build-essential automake libtool itstool gtk-doc-tools gnome-common gnome-doc-utils yasm flex bison
+- travis_retry sudo apt-get -qq install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-pulseaudio libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libgstreamer1.0-0
+- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-base
+- travis_retry sudo apt-get build-dep gstreamer1.0-plugins-ugly
+- travis_retry sudo apt-get -qq install libglu1-mesa-dev
+- travis_retry sudo apt-get -qq install build-essential autotools-dev automake autoconf libtool autopoint libxml2-dev zlib1g-dev libglib2.0-dev pkg-config bison flex python git gtk-doc-tools libasound2-dev libgudev-1.0-dev libxt-dev libvorbis-dev libcdparanoia-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev iso-codes libgtk-3-dev libraw1394-dev libiec61883-dev libavc1394-dev libv4l-dev libcairo2-dev libcaca-dev libspeex-dev libpng-dev libshout3-dev libjpeg-dev libaa1-dev libflac-dev libdv4-dev libtag1-dev libwavpack-dev libpulse-dev libsoup2.4-dev libbz2-dev libcdaudio-dev libdc1394-22-dev ladspa-sdk libass-dev libcurl4-gnutls-dev libdca-dev libdirac-dev libdvdnav-dev libexempi-dev libexif-dev libfaad-dev libgme-dev libgsm1-dev libiptcdata0-dev libkate-dev libmimic-dev libmms-dev libmodplug-dev libmpcdec-dev libofa0-dev libopus-dev librsvg2-dev librtmp-dev libschroedinger-dev libslv2-dev libsndfile1-dev libsoundtouch-dev libspandsp-dev libx11-dev libxvidcore-dev libzbar-dev libzvbi-dev liba52-0.7.4-dev libcdio-dev libdvdread-dev libmad0-dev libmp3lame-dev libmpeg2-4-dev libopencore-amrnb-dev libopencore-amrwb-dev libsidplay1-dev libtwolame-dev libx264-dev
+- travis_retry sudo apt-get -qq install libgirepository1.0-dev gstreamer1.0-plugins-good gir1.2-clutter-1.0 gir1.2-clutter-gst-1.0 gir1.2-gtkclutter-1.0 gir1.2-gtksource-3.0 gir1.2-vte-2.90 gir1.2-webkit-1.0 gir1.2-webkit-3.0
+- travis_retry sudo apt-get -qq install gstreamer1.0 gstreamer1.0-plugins-base
+- travis_retry sudo apt-get -qq install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+- travis_retry sudo apt-get -qq install libpoppler-glib-dev python-gtk2 python-cairo-dev python-gobject-dev python-gobject -y
+- travis_retry sudo apt-get -qq install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
+- travis_retry sudo apt-get -qq install libtheora-dev libogg-dev libvorbis-dev libasound2-dev libjack-dev
+- travis_retry sudo apt-get -qq install libtheora-dev libogg-dev libvorbis-dev  libasound2-dev libjack-dev
+- travis_retry sudo apt-get -qq install bogofilter-bdb bogofilter-common dbus-x11 dh-autoreconf faad gir1.2-gda-5.0 gnome-pkg-tools graphviz highlight highlight-common libacl1-dev libattr1-dev libavl-dev libavl1 libcap-dev libclutter-gst-1.0-dbg libclutter-gst-dev libcupsdriver1 libdigest-hmac-perl libgda-5.0-dev libgda-5.0-doc libgdamm-5.0-13 libgdamm5.0-dev libgdamm5.0-doc libgpgme11-dev libgsl0ldbl libgstreamermm-0.10-2 libgstreamermm-0.10-dev libgstreamermm-0.10-doc libiw-dev libjasper1 libmagic1 libmail-spf-perl libmpfr-dev libnet-dns-perl libnet-ip-perl libnetaddr-ip-perl libosmgpsmap-dev libosmgpsmap2 libpam0g-dev libpth-dev libpython3.2 libsasl2-dev libusb-1.0-0-dev libvala-0.12-0 libvala-0.14-0 libvaladoc0 libvpx-dev libwebp-dev libwebp2 libxml++2.6-2 libxml++2.6-dev libxv1 libyaml-dev ppp-dev python-osmgpsmap python3 python3-cairo python3-cairo-dev python3-dev python3-minimal python3.2 python3.2-dev python3.2-minimal ragel re2c spamassassin spamc texinfo texlive texlive-bibtex-extra texlive-math-extra valac valac-0.14 valadoc x11proto-xext-dev xmlto yelp-tools
+- travis_retry sudo apt-get -qq install python-gi python3-gi gstreamer1.0-tools gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-libav
+- travis_retry sudo apt-get -qq install python-gi gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-libav
+- travis_retry sudo apt-get -qq install libxv1 libxv-dev libxvidcore4 libxvidcore-dev faac libfaac-dev libfaad-dev bison libavl-dev yasm flex zlib1g-dev libffi-dev gettext
+- travis_retry sudo apt-get -qq install libxv1 libxv-dev libxvidcore4 libxvidcore-dev faac faad libfaac-dev libfaad-dev bison libavl-dev yasm flex zlib1g-dev libffi-dev gettext
+- travis_retry sudo apt-get -qq install libgstreamer0.10-dev libgstreamer0.10-0-dbg libgstreamer0.10-0 gstreamer0.10-tools gstreamer-tools gstreamer0.10-doc gstreamer0.10-ffmpeg gstreamer0.10-x
+- travis_retry sudo apt-get -qq install libmpg123-dev gstreamer1.0-plugins-ugly
+- travis_retry sudo apt-get -qq install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev python-lxml python-argparse libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk-3-dev
+- travis_retry sudo apt-get -qq install gir1.2-gtk-3.0
+- travis_retry sudo apt-get -qq install python-dbus python-dbus-dev
 
-script: "if [[ $TEST_PEP8 == '1' ]]; then pep8 --repeat --show-source --exclude=.venv,.tox,dist,docs,build,*.egg scarlett;fi; tox -e ${TOX_ENV}"
+- travis_retry pip install -q tox sphinx numpy
 
-# Only report coverage for one version.
+# install py2cairo
+- curl -L "http://www.cairographics.org/releases/py2cairo-1.10.0.tar.bz2" > py2cairo-1.10.0.tar.bz2
+- tar xf py2cairo-1.10.0.tar.bz2
+- cd py2cairo-1.10.0
+- ./waf configure --prefix=$VIRT_ROOT > /dev/null
+- ./waf build > /dev/null
+- ./waf install > /dev/null
+- cd $MAIN_DIR
+
+# install pygobject
+- curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.bz2" > pygobject-2.28.6.tar.bz2
+- tar xf pygobject-2.28.6.tar.bz2
+- cd pygobject-2.28.6
+- ./configure --prefix=$VIRT_ROOT --disable-introspection > /dev/null
+- make > /dev/null
+- make install > /dev/null
+- cd $MAIN_DIR
+
+# install pyxser
+- pip install -q https://github.com/eugeneai/pyxser/archive/master.zip
+
+# Install the latest version of glib (2.32.4 is required)
+# Install glib
+- curl -L "http://ftp.acc.umu.se/pub/gnome/sources/glib/2.32/glib-2.32.4.tar.xz" > glib-2.32.4.tar.xz
+- tar xf glib-2.32.4.tar.xz
+- cd glib-2.32.4
+- ./configure --prefix=$VIRT_ROOT > /dev/null
+- make > /dev/null
+- make install > /dev/null
+- cd $MAIN_DIR
+- sudo apt-get install -qq libtheora-dev libogg-dev libvorbis-dev libasound2-dev libjack-dev
+
+### # install pygtk
+### - curl -L "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.bz2" > pygtk-2.24.0.tar.bz2
+### - tar xf pygtk-2.24.0.tar.bz2
+### - cd pygtk-2.24.0
+### - travis_retry ./configure --prefix=$VIRT_ROOT > /dev/null
+### - travis_retry make
+### - travis_retry make install
+### - cd $MAIN_DIR
+
+# install gst-python
+- curl -L "http://gstreamer.freedesktop.org/src/gst-python/gst-python-1.2.1.tar.gz" > gst-python-1.2.1.tar.gz
+- tar xf gst-python-1.2.1.tar.gz
+- cd gst-python-1.2.1
+- ./configure --prefix=$VIRT_ROOT PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$VIRT_ROOT/lib/pkgconfig
+#- ./configure --prefix=$VIRT_ROOT
+- sudo make > /dev/null
+- sudo make install > /dev/null
+- cd $MAIN_DIR
+
+# set env variables
+- export LD_LIBRARY_PATH=$VIRT_ROOT/lib
+- export PKG_CONFIG_PATH=$VIRT_ROOT/lib/pkgconfig
+- export GST_PLUGIN_PATH=$VIRT_ROOT/lib/gstreamer-$GSTREAMER
+
+# sphinxbase
+- wget http://downloads.sourceforge.net/project/cmusphinx/sphinxbase/0.8/sphinxbase-0.8.tar.gz
+- tar -zxf sphinxbase-0.8.tar.gz
+- cd sphinxbase-0.8
+- ./configure --prefix=$VIRT_ROOT
+- make > /dev/null
+- make install > /dev/null
+- cd $MAIN_DIR
+
+# pocketsphinx
+- travis_retry git clone https://github.com/bossjones/bossjones-pocketsphinx.git
+- cd bossjones-pocketsphinx
+- ./configure --prefix=$VIRT_ROOT
+- make > /dev/null
+- make install > /dev/null
+- cd $MAIN_DIR
+- sudo ldconfig
+- pip install -q -r requirements.txt --use-mirrors
+- pip install -q -r requirements_plugins.txt --use-mirrors
+- pip install -q -r requirements_dev.txt --use-mirrors
+
+# This package is intended to be included in e.g. a tox.ini file for testing of packages that rely on gtk2.0. under Linux.
+- pip install ruamel.venvgtk
+
+# install scarlett and everything else first
+- python setup.py install
+
+- ls -lta /usr/include/gstreamer-0.10/
+- ls -lta /usr/share/pyshared | grep pygst
+- ls -lta $VIRT_ROOT/lib/python2.7/
+- cd $VIRT_ROOT/lib/python2.7/site-packages/
+- ln -s /usr/lib/python2.7/dist-packages/gst-0.10
+- ln -s /usr/lib/python2.7/dist-packages/gstoption.so
+- ln -s /usr/lib/python2.7/dist-packages/pygst.pth
+- ln -s /usr/lib/python2.7/dist-packages/pygst.py
+- ln -s /usr/lib/python2.7/dist-packages/pygst.pyc
+
+# go back to home dir
+- cd $MAIN_DIR
+- sudo apt-get -qq install python-gst0.10 python-gst0.10-dev gstreamer0.10-plugins-good
+- python -c 'import pygst'
+- python -c 'import gst'
+- python -c 'from gi.repository import Gtk; print Gtk'
+- python -c 'import gst'
+
+- "[ ! -z $COVERAGE ] && pip install coveralls || true"
+script: if [[ $TEST_PEP8 == '1' ]]; then pep8 --repeat --show-source --exclude=.venv,.tox,dist,docs,build,*.egg
+  scarlett;fi;find ./tests/unit/ -name '*.py' -exec chmod -x {} \; && python tests/test.py
+
 after_success:
-    - "[ ! -z $COVERAGE ] && coveralls || true"
+- "[ ! -z $COVERAGE ] && coveralls || true"
+notifications:
+  slack:
+    secure: WwqeVdCpCF8UNnZURer9niMubvLYrANcUoZfl3oEzWtkVKSxZgL4dzkuzi8o85U9kM8rwlBZ/OK7Rit7JA6GcvmIJWCQdxqZPnk3yo0T1HqOtBAgyIlqOJXqyKtYp8t7+wfQ402pF1BAUDyi/HlqyKIx2jeGzOYwH7oHQW9mK6Y=
 
-# SEND PACKAGE TO PYPI
-# after_success:
-#   # Test building deployable packages
-#   - pwd && cd src
-#   - python setup.py bdist_egg
-#   - python setup.py sdist
-#   - cd ..
-#   # Test installing the built packages
-#   - pwd && cd src/dist
-#   - pip install scarlett-*.tar.gz
-#   - echo "y" | pip uninstall scarlett
-#   - easy_install scarlett-*.egg
-#   - echo "y" | pip uninstall scarlett
-#   - cd ../..
 
-#script: python tests/test_scarlett.py unit
+### NOTE: ADD THIS LATER # after_success:
+### NOTE: ADD THIS LATER #   # Test building deployable packages
+### NOTE: ADD THIS LATER #   - pwd && cd src
+### NOTE: ADD THIS LATER #   - python setup.py bdist_egg
+### NOTE: ADD THIS LATER #   - python setup.py sdist
+### NOTE: ADD THIS LATER #   - cd ..
+### NOTE: ADD THIS LATER #   # Test installing the built packages
+### NOTE: ADD THIS LATER #   - pwd && cd src/dist
+### NOTE: ADD THIS LATER #   - pip install freeseer-*.tar.gz
+### NOTE: ADD THIS LATER #   - echo "y" | pip uninstall freeseer
+### NOTE: ADD THIS LATER #   - easy_install freeseer-*.egg
+### NOTE: ADD THIS LATER #   - echo "y" | pip uninstall freeseer
+### NOTE: ADD THIS LATER #   - cd ../..
