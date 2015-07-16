@@ -20,6 +20,7 @@ _INSTANCE = None
 logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-9s) %(message)s',)
 
+
 def setup_core(ss):
 
     logging.info("redis_host: {}".format(scarlett.config.get('redis', 'host')))
@@ -30,78 +31,83 @@ def setup_core(ss):
 
     if _INSTANCE == None:
         _INSTANCE = ScarlettBrainFSM(host=scarlett.config.get('redis', 'host'),
-          port=scarlett.config.get('redis', 'port'),
-          db=scarlett.config.getint('redis', 'db')
-        )
+                                     port=scarlett.config.get('redis', 'port'),
+                                     db=scarlett.config.getint('redis', 'db')
+                                     )
 
     return _INSTANCE
 
+
 class ScarlettBrainFSM(redis.Redis):
-  """
-  Wrapper for Redis buffered commands that uses a pipeline internally
-  for buffering messages. A thread is run that
-  periodically flushes the buffer pipeline.
-  """
-  states = ['initalize', 'ready','running', 'is_checking_states', 'time_change', 'done_checking_states']
 
-  def __init__(self, *args, **kwargs):
-    """ Constructor
-
-    :type host: string
-    :param host: ip address or dns name of redis server
-
-    :type port: int
-    :param port: port that redis is running on
-
-    :type db: int
-    :param db: default redis db
     """
-    super(ScarlettBrainFSM, self).__init__(*args, **kwargs)
+    Wrapper for Redis buffered commands that uses a pipeline internally
+    for buffering messages. A thread is run that
+    periodically flushes the buffer pipeline.
+    """
+    states = ['initalize', 'ready', 'running',
+              'is_checking_states', 'time_change', 'done_checking_states']
 
-    self.name = scarlett.brain.scarlettbrainfsm.SCARLETT_ROLE
+    def __init__(self, *args, **kwargs):
+        """ Constructor
 
-    # Initalize the state machine
-    self.machine = Machine(model=self, states=scarlett.brain.scarlettbrainfsm.ScarlettBrainFSM.states, initial='initalize')
+        :type host: string
+        :param host: ip address or dns name of redis server
 
-    # startup transition
-    self.machine.add_transition(trigger='startup', source='initalize', dest='ready')
+        :type port: int
+        :param port: port that redis is running on
 
-    # checking_states transition
-    self.machine.add_transition(trigger='checking_states', source='ready', dest='is_checking_states', conditions=['is_ready'])
+        :type db: int
+        :param db: default redis db
+        """
+        super(ScarlettBrainFSM, self).__init__(*args, **kwargs)
 
-    # array / dict of state machines connected to scarlett
-    self._machines = {}
+        self.name = scarlett.brain.scarlettbrainfsm.SCARLETT_ROLE
 
-    # Check interval, in seconds
-    self.interval = 1
+        # Initalize the state machine
+        self.machine = Machine(
+            model=self, states=scarlett.brain.scarlettbrainfsm.ScarlettBrainFSM.states, initial='initalize')
 
-    logging.debug('running with %s and %s', args, kwargs)
+        # startup transition
+        self.machine.add_transition(
+            trigger='startup', source='initalize', dest='ready')
 
-  def run(self):
-      """ Method that runs forever """
-      logging.debug('running with %s and %s', self.args, self.kwargs)
-      while True:
-          logging.debug('Starting')
-          # Do something
-          print('Doing something imporant in the background')
-          time.sleep(self.interval)
-          logging.debug('Exiting')
+        # checking_states transition
+        self.machine.add_transition(
+            trigger='checking_states', source='ready', dest='is_checking_states', conditions=['is_ready'])
 
-  def thread_runner(self):
-    """ Call this function when we're ready to start this thread  """
-    # function to run in background, self.run
-    thread = threading.Thread(name=self.name,target=self.run, args=())
-    thread.daemon = True                            # Daemonize thread
-    #thread.setDaemon(True)
-    thread.start()                                  # Start the execution
+        # array / dict of state machines connected to scarlett
+        self._machines = {}
 
-  def hello(self):
-    print 'hello hello hello!'
+        # Check interval, in seconds
+        self.interval = 1
 
-  def is_ready(self):
-    """ Ensures that  """
-    if self.state == 'ready':
-      return True
-    else:
-      return False
+        logging.debug('running with %s and %s', args, kwargs)
 
+    def run(self):
+        """ Method that runs forever """
+        logging.debug('running with %s and %s', self.args, self.kwargs)
+        while True:
+            logging.debug('Starting')
+            # Do something
+            print('Doing something imporant in the background')
+            time.sleep(self.interval)
+            logging.debug('Exiting')
+
+    def thread_runner(self):
+        """ Call this function when we're ready to start this thread  """
+        # function to run in background, self.run
+        thread = threading.Thread(name=self.name, target=self.run, args=())
+        thread.daemon = True                            # Daemonize thread
+        # thread.setDaemon(True)
+        thread.start()                                  # Start the execution
+
+    def hello(self):
+        print 'hello hello hello!'
+
+    def is_ready(self):
+        """ Ensures that  """
+        if self.state == 'ready':
+            return True
+        else:
+            return False
