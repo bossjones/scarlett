@@ -29,7 +29,7 @@ def setup_core(ss):
 
     global _INSTANCE
 
-    if _INSTANCE == None:
+    if _INSTANCE is None:
         _INSTANCE = ScarlettBrainFSM(host=scarlett.config.get('redis', 'host'),
                                      port=scarlett.config.get('redis', 'port'),
                                      db=scarlett.config.getint('redis', 'db')
@@ -66,15 +66,25 @@ class ScarlettBrainFSM(redis.Redis):
 
         # Initalize the state machine
         self.machine = Machine(
-            model=self, states=scarlett.brain.scarlettbrainfsm.ScarlettBrainFSM.states, initial='initalize')
+            model=self,
+            states=scarlett.brain.scarlettbrainfsm.ScarlettBrainFSM.states,
+            initial='initalize'
+        )
 
         # startup transition
         self.machine.add_transition(
-            trigger='startup', source='initalize', dest='ready')
+            trigger='startup',
+            source='initalize',
+            dest='ready'
+        )
 
         # checking_states transition
         self.machine.add_transition(
-            trigger='checking_states', source='ready', dest='is_checking_states', conditions=['is_ready'])
+            trigger='checking_states',
+            source='ready',
+            dest='is_checking_states',
+            conditions=['is_ready']
+        )
 
         # array / dict of state machines connected to scarlett
         self._machines = {}
@@ -99,7 +109,6 @@ class ScarlettBrainFSM(redis.Redis):
         # function to run in background, self.run
         thread = threading.Thread(name=self.name, target=self.run, args=())
         thread.daemon = True                            # Daemonize thread
-        # thread.setDaemon(True)
         thread.start()                                  # Start the execution
 
     def hello(self):

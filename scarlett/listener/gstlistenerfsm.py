@@ -19,7 +19,6 @@ import time
 import logging
 from transitions import Machine
 
-
 from scarlett.events import scarlett_event
 
 from colorama import init, Fore, Back, Style
@@ -43,55 +42,16 @@ CORE_OBJECT = 'GstlistenerFSM'
 
 _INSTANCE = None
 
-
-# 5 The Main Event Loop
-
-# manages all available sources of events.
-
-# 5.1 Overview
-
-# The main event loop manages all the available sources of events for GLib
-# and GTK+ applications. These events can come from any number of
-# different types of sources such as file descriptors (plain files, pipes
-# or sockets) and timeouts. New types of event sources can also be added
-# using g-source-attach.
-
-# To allow multiple independent sets of sources to be handled in different
-# threads, each source is associated with a <g-main-context>. A
-# <g-main-context> can only be running in a single thread, but sources can
-# be added to it and removed from it from other threads.
-
-# Each event source is assigned a priority. The default priority,
-# <g-priority-default>, is 0. Values less than 0 denote higher priorities.
-# Values greater than 0 denote lower priorities. Events from high priority
-# sources are always processed before events from lower priority sources.
-
-# Idle functions can also be added, and assigned a priority. These will be
-# run whenever no events with a higher priority are ready to be processed.
-
-# The <g-main-loop> data type represents a main event loop. A
-# <g-main-loop> is created with g-main-loop-new. After adding the initial
-# event sources, g-main-loop-run is called. This continuously checks for
-# new events from each of the event sources and dispatches them. Finally,
-# the processing of an event from one of the sources leads to a call to
-# g-main-loop-quit to exit the main loop, and g-main-loop-run returns.
-
-# It is possible to create new instances of <g-main-loop> recursively.
-# This is often used in GTK+ applications when showing modal dialog boxes.
-# Note that event sources are associated with a particular
-# <g-main-context>, and will be checked and dispatched for all main loops
-# associated with that <g-main-context>.
-
-# GTK+ contains wrappers of some of these functions, e.g. gtk-main,
-# gtk-main-quit and gtk-events-pending.
-
 logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-9s) %(message)s',)
 
 
 def setup_core(ss):
+
     logging.info("attempting to setup GstlistenerFSM")
+
     global _INSTANCE
+
     if _INSTANCE is None:
         _INSTANCE = GstlistenerFSM()
     return _INSTANCE
@@ -160,7 +120,7 @@ class GstlistenerFSM(gobject.GObject):
         self.kw_found = 0
         self.config = scarlett.config
 
-        self.name = scarlett.brain.GstlistenerFSM.SCARLETT_ROLE
+        self.name = scarlett.listener.GstlistenerFSM.SCARLETT_ROLE
 
         # Initalize the state machine
         self.machine = Machine(
@@ -228,9 +188,10 @@ class GstlistenerFSM(gobject.GObject):
 
         logging.debug('running with %s and %s', args, kwargs)
 
+        # TODO: Uncomment this when we're ready to try this
         ss_listener = threading.Thread(target=self.start_listener)
         ss_listener.daemon = True
-        ss_listener.start()
+        ss_listener.start_listener()
 
     # GObject translates all the underscore characters to hyphen
     # characters so if you have a property called background_color,
@@ -327,7 +288,7 @@ class GstlistenerFSM(gobject.GObject):
             self.do_set_property('kw-found', 1)
 
             # TODO: Change this to emit to main thread
-            scarlett.basics.voice.play_block('pi-listening')
+            # scarlett.basics.voice.play_block('pi-listening')
 
         else:
             failed_temp = self.do_get_property('failed') + 1
@@ -340,9 +301,9 @@ class GstlistenerFSM(gobject.GObject):
                 # reset pipline
                 self.scarlett_reset_listen()
                 # TODO: Change this to emit text data to main thread
-                ScarlettTalk.speak(
-                    " %s , if you need me, just say my name." %
-                    (self.config.get('scarlett', 'owner')))
+                # ScarlettTalk.speak(
+                #     " %s , if you need me, just say my name." %
+                #     (self.config.get('scarlett', 'owner')))
 
     def run_cmd(self, hyp, uttid):
         scarlett.log.debug(Fore.YELLOW + "Inside run_cmd function")
@@ -362,10 +323,13 @@ class GstlistenerFSM(gobject.GObject):
                 "AFTER run_cmd, self.keyword_identified = %i" %
                 (self.do_get_property('kw-found')))
 
+    def hello(self):
+        print 'hello hello hello!'
+
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function")
         # TODO: have this emit pi-listening to mainthread
-        scarlett.basics.voice.play_block('pi-listening')
+        # scarlett.basics.voice.play_block('pi-listening')
         valve.set_property('drop', False)
         valve.set_property('drop', True)
 
@@ -480,6 +444,7 @@ class GstlistenerFSM(gobject.GObject):
     def __result__(self, listener, text, uttid):
         """We're inside __result__"""
         scarlett.log.debug(Fore.YELLOW + "Inside __result__")
+        import gst
         struct = gst.Structure('result')
         struct.set_value('hyp', text)
         struct.set_value('uttid', uttid)
@@ -495,6 +460,7 @@ class GstlistenerFSM(gobject.GObject):
 
     def __run_cmd__(self, listener, text, uttid):
         """We're inside __run_cmd__"""
+        import gst
         scarlett.log.debug(Fore.YELLOW + "Inside __run_cmd__")
         struct = gst.Structure('result')
         struct.set_value('hyp', text)

@@ -62,7 +62,7 @@ CORE_MODULES = {
     },
     'listener': {
         'module_path': 'scarlett.listener.',
-        'module_name': 'gstlisteneri'
+        'module_name': 'gstlistenerfsm'
     }
 }
 
@@ -76,7 +76,7 @@ def ready(ss, feature_name=None):
 
     del REGISTERED_FEATURES[:]
 
-    if feature_name == None:
+    if feature_name is None:
 
         REGISTERED_FEATURES.extend(
             item[1] for item in
@@ -102,11 +102,17 @@ def module_path_to_str(core_feature_name):
 
 
 def potential_path_to_str(core_feature_name):
-    return 'scarlett.{}.{}'.format(folder_name_to_str(core_feature_name), module_name_to_str(core_feature_name))
+    return 'scarlett.{}.{}'.format(
+        folder_name_to_str(core_feature_name),
+        module_name_to_str(core_feature_name)
+    )
 
 
 def setup_core_feature(ss, mod_name):
-    """ Setup core feature for Scarlett. Eg. Brain, Speaker, Player, Listener"""
+    """
+    Setup core feature for Scarlett.
+    Eg. Brain, Speaker, Player, Listener
+    """
     global CORE_MODULES
 
     core_feature_name = mod_name
@@ -129,7 +135,22 @@ def setup_core_feature(ss, mod_name):
             Fore.RED + "Error loading {}.".format(core_feature_name))
         return False
 
+    scarlett.log.debug(
+       Fore.RED + "core modules: {}".format(
+           modules)
+    )
+
     for module_loader, mod_name, ispkg in modules:
+
+        scarlett.log.debug(
+           Fore.RED + "mod_name: {}".format(
+               mod_name)
+        )
+
+        scarlett.log.debug(
+           Fore.RED + "ispkg: {}".format(
+               ispkg)
+        )
 
         if mod_name not in sys.modules and mod_name == potential_paths:
             try:
@@ -155,7 +176,9 @@ def setup_core_feature(ss, mod_name):
 
             except ImportError:
                 scarlett.log.debug(
-                    Fore.RED + "Module load FAILED: {}".format(potential_paths))
+                    Fore.RED + "Module load FAILED: {}".format(
+                        potential_paths)
+                )
             return False
 
 
@@ -264,6 +287,8 @@ def system_boot(ss=None):
 
     _ensure_scarlett_ready(ss)
 
+    # Begin: Enable scarlett features
+
     _feat_enable_config = scarlett.config.get('features', 'enable')
 
     _features_to_register = tuple(_feat_enable_config.split(','))
@@ -274,6 +299,20 @@ def system_boot(ss=None):
 
     for scarlett_feature in _features_to_register:
         setup_feature(ss, scarlett_feature)
+
+    # End: Enable scarlett features
+
+    # TODO: set this to ('brain','listener')
+    _core_features_to_register = ('listener',)
+    print _core_features_to_register
+
+    _core_features_to_register = [
+        x for x in _core_features_to_register if isinstance(x, basestring)]
+
+    print _core_features_to_register
+
+    for scarlett_core in _core_features_to_register:
+        setup_core_feature(ss, scarlett_core)
 
     return ss
 

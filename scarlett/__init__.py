@@ -215,7 +215,9 @@ class ScarlettSystem(dbus.service.Object):
 
         if event['event_type'] == 'service_state':
             scarlett.log.debug(Fore.GREEN +
-                               "RECIEVED: {} from time-started: {}".format(event['event_type'], event['data']))
+                               "RECIEVED: {} from time-started: {}".format(
+                                event['event_type'], event['data'])
+                               )
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
 

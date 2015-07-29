@@ -19,9 +19,11 @@ import argparse
 
 import sys
 # will use this to trace when functions begin and end
-# see details from: http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
+# see details from:
+# http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
 import textwrap
 from functools import wraps
+
 
 def trace(func):
     """Tracing wrapper to log when function enter/exit happens.
@@ -36,11 +38,13 @@ def trace(func):
         return result
     return wrapper
 
+
 class ScarlettBot(object):
+
     """ Actual scarlett bot object that has a brain, voice, etc """
 
     _scarlett_services = []
-    _last_send_time    = time.time()
+    _last_send_time = time.time()
 
     def __init__(self):
         scarlett.set_stream_logger('scarlett')
@@ -56,13 +60,14 @@ class ScarlettBot(object):
                                                       pymicro=sys.version_info.micro,
                                                       pygst_version=pygst._pygst_version))
 
-        scarlett.log.debug(Fore.GREEN + "VERSION INFO: \n\n" + self.scarlett_version_info)
+        scarlett.log.debug(
+            Fore.GREEN + "VERSION INFO: \n\n" + self.scarlett_version_info)
         scarlett.log.debug(Fore.YELLOW + "Creating Voice Object")
-        #Tracer()()
+        # Tracer()()
         self._brain = scarlett.connect_brain()
         self._voice = scarlett.connect_voice(self._brain)
         scarlett.basics.voice.play_block('pi-listening')
-        self.listener = GstListener("gst",self._brain,self._voice,False)
+        self.listener = GstListener("gst", self._brain, self._voice, False)
 
     @trace
     def main(self):
@@ -75,6 +80,7 @@ class ScarlettBot(object):
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         gtk.main_quit()
+
 
 def main():
     """Launch application."""

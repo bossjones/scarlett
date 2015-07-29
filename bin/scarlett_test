@@ -24,13 +24,14 @@ try:
     import gobject
     # Initialize gtk threading
     gobject.threads_init()
-    # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
+    # If the keyword argument set_as_default is given and is true, set the new
+    # main loop as the default for all new Connection or Bus instances.
     threads_init()
     DBusGMainLoop(set_as_default=True)
     import pygst
     pygst.require('0.10')
-    #gobject.threads_init()
-    #threads_init()
+    # gobject.threads_init()
+    # threads_init()
     import scarlett
     from scarlett.constants import *
     from scarlett import __version__
@@ -47,7 +48,8 @@ except:
 import logging
 import argparse
 # will use this to trace when functions begin and end
-# see details from: http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
+# see details from:
+# http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
 import textwrap
 from functools import wraps
 import time
@@ -62,26 +64,30 @@ import scarlett.util as util
 # drops you down into pdb if exception is thrown
 from IPython.core import ultratb
 sys.excepthook = ultratb.FormattedTB(mode='Verbose',
-     color_scheme='Linux', call_pdb=True, ostream=sys.__stdout__)
+                                     color_scheme='Linux', call_pdb=True, ostream=sys.__stdout__)
 
 # TODO: Add a callback to make changes to brain object
 # TODO: Add a callback to run scarlett_says.say_block("BLAH")
-# source: http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
+# source:
+# http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
 
 # TODO: Evaluate all dbus CLI setting options
-# source: http://stackoverflow.com/questions/5819667/help-me-setup-a-cron-job-on-ubuntu
+# source:
+# http://stackoverflow.com/questions/5819667/help-me-setup-a-cron-job-on-ubuntu
+
 
 def set_dbus_launch_shell():
-    # source: http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
+    # source:
+    # http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
     p = subprocess.Popen('dbus-launch',
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
 
     for var in p.stdout:
-      sp = var.split('=', 1)
-      print sp
-      os.environ[sp[0]] = sp[1][:-1]
+        sp = var.split('=', 1)
+        print sp
+        os.environ[sp[0]] = sp[1][:-1]
 
 # If the program is run directly or passed as an argument to the python
 # interpreter then create a scarlettBot instance and show it
@@ -90,13 +96,14 @@ if __name__ == "__main__":
     # Set up and parse command-line args.
     global scarlett_cli_args
     parser = argparse.ArgumentParser()
-    parser.add_argument("--detect-session-bus", action="store_true", default=False)
+    parser.add_argument(
+        "--detect-session-bus", action="store_true", default=False)
     parser.add_argument("--enable-feature", default="time")
 
     scarlett_cli_args = parser.parse_args()
 
     if scarlett_cli_args.detect_session_bus:
-       set_dbus_launch_shell()
+        set_dbus_launch_shell()
 
     def sigint_handler(*args):
         """Exit on Ctrl+C"""
@@ -115,8 +122,8 @@ if __name__ == "__main__":
 
     try:
 
-       scarlett_daemon.main()
+        scarlett_daemon.main()
 
     finally:
 
-       scarlett.basics.voice.play_free()
+        scarlett.basics.voice.play_free()
