@@ -115,6 +115,7 @@ class GstlistenerFSM(gobject.GObject):
 
         self.wit_thread = None
         self.loop = None
+        self.override_parse = ''
 
         self.failed = 0
         self.kw_found = 0
@@ -166,6 +167,7 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(
             Fore.YELLOW +
             'Initializing gst-parse-launch -------->')
+
         self.pipeline = gst.parse_launch(
             ' ! '.join(self.parse_launch_array))
 
@@ -381,7 +383,7 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(Fore.YELLOW + "Inside _get_pocketsphinx_definition")
         """Return ``pocketsphinx`` definition for :func:`gst.parse_launch`."""
         # default, use what we have set
-        if not override_parse:
+        if override_parse == '':
             return [
                 'alsasrc device=' +
                 self.ps_device,
