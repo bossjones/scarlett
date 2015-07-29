@@ -41,6 +41,48 @@ CORE_OBJECT = 'GstlistenerFSM'
 
 _INSTANCE = None
 
+
+# 5 The Main Event Loop
+
+# manages all available sources of events.
+
+# 5.1 Overview
+
+# The main event loop manages all the available sources of events for GLib
+# and GTK+ applications. These events can come from any number of
+# different types of sources such as file descriptors (plain files, pipes
+# or sockets) and timeouts. New types of event sources can also be added
+# using g-source-attach.
+
+# To allow multiple independent sets of sources to be handled in different
+# threads, each source is associated with a <g-main-context>. A
+# <g-main-context> can only be running in a single thread, but sources can
+# be added to it and removed from it from other threads.
+
+# Each event source is assigned a priority. The default priority,
+# <g-priority-default>, is 0. Values less than 0 denote higher priorities.
+# Values greater than 0 denote lower priorities. Events from high priority
+# sources are always processed before events from lower priority sources.
+
+# Idle functions can also be added, and assigned a priority. These will be
+# run whenever no events with a higher priority are ready to be processed.
+
+# The <g-main-loop> data type represents a main event loop. A
+# <g-main-loop> is created with g-main-loop-new. After adding the initial
+# event sources, g-main-loop-run is called. This continuously checks for
+# new events from each of the event sources and dispatches them. Finally,
+# the processing of an event from one of the sources leads to a call to
+# g-main-loop-quit to exit the main loop, and g-main-loop-run returns.
+
+# It is possible to create new instances of <g-main-loop> recursively.
+# This is often used in GTK+ applications when showing modal dialog boxes.
+# Note that event sources are associated with a particular
+# <g-main-context>, and will be checked and dispatched for all main loops
+# associated with that <g-main-context>.
+
+# GTK+ contains wrappers of some of these functions, e.g. gtk-main,
+# gtk-main-quit and gtk-events-pending.
+
 logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-9s) %(message)s',)
 
@@ -71,17 +113,10 @@ class GstlistenerFSM(gobject.GObject):
             gobject.PARAM_READWRITE
         ),
         'kw_found': (
-            gobject.TYPE_BOOLEAN,  # type
-            'Service Keyword Match',  # nick name
-            'Boolean value for keyword',  # description
-            False,  # default value
-            gobject.PARAM_READWRITE
-        ),
-        'now_time': (
-            gobject.TYPE_STRING,  # type
-            'Current Time',  # nick name
-            'Value of current time',  # description
-            None,  # default value
+            gobject.TYPE_INT,  # type
+            'Keyword Match',  # nick name
+            'int value for keyword',  # description
+            0,  # default value
             gobject.PARAM_READWRITE
         )
     }
@@ -101,13 +136,14 @@ class GstlistenerFSM(gobject.GObject):
     DBUS_PATH = '/org/scarlettapp/scarlettdaemon'
 
   def __init__(self, *args, **kwargs):
+
     gobject.GObject.__init__(self)
 
     self.wit_thread = None
     self.loop = None
 
     self.failed = 0
-    self.keyword_identified = 0
+    self.kw_found = 0
     self.config = scarlett.config
     self.override_parse = override_parse
 
@@ -128,8 +164,8 @@ class GstlistenerFSM(gobject.GObject):
     # Check interval, in seconds
     self.interval = 1
 
-    bus = dbus.SessionBus()
-    self.remote = bus.get_object(GstlistenerFSM.DBUS_NAME, GstlistenerFSM.DBUS_PATH)
+    # bus = dbus.SessionBus()
+    # self.remote = bus.get_object(GstlistenerFSM.DBUS_NAME, GstlistenerFSM.DBUS_PATH)
 
     # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
     self.ps_hmm = self.get_hmm_full_path()
@@ -169,48 +205,29 @@ class GstlistenerFSM(gobject.GObject):
     logging.debug('running with %s and %s', args, kwargs)
 
     ss_listener = threading.Thread(target=self.start_listener)
+    ss_listener.daemon = True
     ss_listener.start()
 
   # GObject translates all the underscore characters to hyphen
   # characters so if you have a property called background_color,
   # its internal and valid name will be background-color.
   def do_get_property(self, property):
-      if property.name == 'kw-match':
-          return self.kw_match
-      elif property.name == 'svc-kw-match':
-          return self.svc_kw_match
-      elif property.name == 'time-state':
-          return self.time_state
-      elif property.name == 'now-time':
-          return self.now_time
-      elif property.name == 'now-date':
-          return self.now_date
-      elif property.name == 'name':
-          return self.name
-      elif property.name == 'state':
-          return self.state
-      elif property.name == 'state-attribute':
-          return self.state_attributes
+      if property.name == 'kw-found':
+          return self.kw_found
+      elif property.name == 'failed':
+          return self.failed
+      elif property.name == 'override-parse':
+          return self.override_parse
       else:
           raise AttributeError, 'unknown property %s' % property.name
 
   def do_set_property(self, property, value):
-       if property == 'kw-match':
-           self.kw_match = value
-       elif property == 'svc-kw-match':
-           self.svc_kw_match = value
-       elif property == 'time-state':
-           self.time_state = value
-       elif property == 'now-time':
-           self.now_time = value
-       elif property == 'now-date':
-           self.now_date = value
-       elif property == 'name':
-           self.name = value
-       elif property == 'state':
-           self.state = value
-       elif property == 'state-attributes':
-           self.state_attributes = value
+       if property == 'kw-found':
+           self.kw_found = value
+       elif property == 'failed':
+           self.failed = value
+       elif property == 'override-parse':
+           self.override_parse = value
        else:
            raise AttributeError, 'unknown property %s' % property
 
@@ -221,7 +238,10 @@ class GstlistenerFSM(gobject.GObject):
       listener_connect = scarlett_event('service_state',
         data=CORE_OBJECT
        )
-      self.emit('listener-started', listener_connect)
+
+      # idle_emit since this is something with low priority
+      gobject.idle_add(gobject.GObject.emit,self,'listener-started', listener_connect)
+      # OLD # self.emit('listener-started', listener_connect)
 
       logging.debug('Starting')
 
@@ -252,14 +272,8 @@ class GstlistenerFSM(gobject.GObject):
         self.pipeline.set_state(gst.STATE_PAUSED)
 
     def scarlett_reset_listen(self):
-        self.failed = int(
-            self.brain.set_brain_item_r(
-                'scarlett_failed',
-                0))
-        self.keyword_identified = int(
-            self.brain.set_brain_item_r(
-                'm_keyword_match',
-                0))
+        self.do_set_property('failed', 0)
+        self.do_set_property('kw-found', 0)
 
     def partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
@@ -279,30 +293,23 @@ class GstlistenerFSM(gobject.GObject):
                 "UTTID-IS-SOMETHING:" +
                 uttid +
                 "\n")
-            self.failed = int(
-                self.brain.set_brain_item_r(
-                    'scarlett_failed',
-                    0))
-            # redis implementation # self.keyword_identified = 1
-            self.keyword_identified = int(
-                self.brain.set_brain_item_r(
-                    'm_keyword_match',
-                    1))
+            self.do_set_property('failed', 0)
+            self.do_set_property('kw-found', 1)
+
+            # TODO: Change this to emit to main thread
             scarlett.basics.voice.play_block('pi-listening')
+
         else:
-            self.failed_temp = int(
-                self.brain.get_brain_item('scarlett_failed')) + 1
-            self.failed = int(
-                self.brain.set_brain_item_r(
-                    'scarlett_failed',
-                    self.failed_temp))
+            failed_temp = self.do_get_property('failed') + 1
+            self.do_set_property('failed', failed_temp)
             scarlett.log.debug(
                 Fore.YELLOW +
                 "self.failed = %i" %
-                (self.failed))
-            if self.failed > 4:
+                (self.do_get_property('failed')))
+            if self.do_get_property('failed') > 4:
                 # reset pipline
                 self.scarlett_reset_listen()
+                # TODO: Change this to emit text data to main thread
                 ScarlettTalk.speak(
                     " %s , if you need me, just say my name." %
                     (self.config.get('scarlett', 'owner')))
@@ -313,20 +320,21 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(
             Fore.RED +
             "self.keyword_identified = %i" %
-            (self.keyword_identified))
+            (self.do_get_property('kw-found')))
         if hyp == 'CANCEL':
             self.cancel_listening()
         else:
             self.commander.check_cmd(hyp)
-            self.keyword_identified = int(
-                self.brain.get_brain_item('m_keyword_match'))
+            current_kw_identified = self.do_get_property('kw-found')
+            self.do_set_property('kw-found', current_kw_identified)
             scarlett.log.debug(
                 Fore.RED +
                 "AFTER run_cmd, self.keyword_identified = %i" %
-                (self.keyword_identified))
+                (self.do_get_property('kw-found')))
 
     def listen(self, valve, vader):
         scarlett.log.debug(Fore.YELLOW + "Inside listen function")
+        # TODO: have this emit pi-listening to mainthread
         scarlett.basics.voice.play_block('pi-listening')
         valve.set_property('drop', False)
         valve.set_property('drop', True)
@@ -338,7 +346,7 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(
             Fore.RED +
             "self.keyword_identified = %i" %
-            (self.keyword_identified))
+            (self.do_get_property('kw-found')))
 
     def get_hmm_full_path(self):
         if os.environ.get('SCARLETT_HMM'):
@@ -469,7 +477,7 @@ class GstlistenerFSM(gobject.GObject):
         if msgtype == 'partial_result':
             self.partial_result(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == 'result':
-            if self.keyword_identified == 1:
+            if self.do_get_property('kw-found') == 1:
                 self.run_cmd(msg.structure['hyp'], msg.structure['uttid'])
             else:
                 self.result(msg.structure['hyp'], msg.structure['uttid'])
