@@ -26,7 +26,8 @@ try:
     import gobject
     # Initialize gtk threading
     gobject.threads_init()
-    # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
+    # If the keyword argument set_as_default is given and is true, set the new
+    # main loop as the default for all new Connection or Bus instances.
     threads_init()
     DBusGMainLoop(set_as_default=True)
     import pygst
@@ -47,25 +48,26 @@ READY = False
 
 # Scarlett core modules, required to get her up and running
 CORE_MODULES = {
-  'brain':{
-    'module_path':'scarlett.brain.',
-    'module_name':'scarlettbrainfsm'
-   },
-  'player':{
-    'module_path':'scarlett.basics.',
-    'module_name':'say'
-  },
-  'speaker':{
-    'module_path':'scarlett.basics.',
-    'module_name':'voice'
-  },
-  'listener':{
-    'module_path':'scarlett.listener.',
-    'module_name':'gstlisteneri'
-  }
+    'brain': {
+        'module_path': 'scarlett.brain.',
+        'module_name': 'scarlettbrainfsm'
+    },
+    'player': {
+        'module_path': 'scarlett.basics.',
+        'module_name': 'say'
+    },
+    'speaker': {
+        'module_path': 'scarlett.basics.',
+        'module_name': 'voice'
+    },
+    'listener': {
+        'module_path': 'scarlett.listener.',
+        'module_name': 'gstlisteneri'
+    }
 }
 
-def ready(ss,feature_name=None):
+
+def ready(ss, feature_name=None):
     """ Prepares the loading of features. """
     global READY
 
@@ -76,29 +78,34 @@ def ready(ss,feature_name=None):
 
     if feature_name == None:
 
-       REGISTERED_FEATURES.extend(
-           item[1] for item in
-           pkgutil.iter_modules(features.__path__, 'scarlett.features.'))
+        REGISTERED_FEATURES.extend(
+            item[1] for item in
+            pkgutil.iter_modules(features.__path__, 'scarlett.features.'))
 
     else:
 
-       REGISTERED_FEATURES.append(feature_name)
+        REGISTERED_FEATURES.append(feature_name)
 
     READY = True
+
 
 def folder_name_to_str(core_feature_name):
     return CORE_MODULES[core_feature_name]['module_path'].split('.')[1]
 
+
 def module_name_to_str(core_feature_name):
     return CORE_MODULES[core_feature_name]['module_name']
+
 
 def module_path_to_str(core_feature_name):
     return '{}'.format(CORE_MODULES[core_feature_name]['module_path'])
 
-def potential_path_to_str(core_feature_name):
-    return 'scarlett.{}.{}'.format(folder_name_to_str(core_feature_name),module_name_to_str(core_feature_name))
 
-def setup_core_feature(ss,mod_name):
+def potential_path_to_str(core_feature_name):
+    return 'scarlett.{}.{}'.format(folder_name_to_str(core_feature_name), module_name_to_str(core_feature_name))
+
+
+def setup_core_feature(ss, mod_name):
     """ Setup core feature for Scarlett. Eg. Brain, Speaker, Player, Listener"""
     global CORE_MODULES
 
@@ -115,38 +122,42 @@ def setup_core_feature(ss,mod_name):
     elif core_feature_name == 'player':
         modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
     elif core_feature_name == 'listener':
-        modules = pkgutil.iter_modules(scarlett.listener.__path__, module_paths)
+        modules = pkgutil.iter_modules(
+            scarlett.listener.__path__, module_paths)
     else:
-        scarlett.log.debug(Fore.RED + "Error loading {}.".format(core_feature_name))
+        scarlett.log.debug(
+            Fore.RED + "Error loading {}.".format(core_feature_name))
         return False
 
     for module_loader, mod_name, ispkg in modules:
 
         if mod_name not in sys.modules and mod_name == potential_paths:
-                try:
-                  # Import module
-                  # eg: scarlett.brain.scarlettbrainfsm
-                  loaded_mod = importlib.import_module(potential_paths)
+            try:
+                # Import module
+                # eg: scarlett.brain.scarlettbrainfsm
+                loaded_mod = importlib.import_module(potential_paths)
 
-                  # Load class from imported module
-                  # eg: ScarlettBrainFSM
-                  class_name = loaded_mod
-                  print class_name
+                # Load class from imported module
+                # eg: ScarlettBrainFSM
+                class_name = loaded_mod
+                print class_name
 
-                  loaded_class = getattr(loaded_mod, 'setup_core')(ss)
+                loaded_class = getattr(loaded_mod, 'setup_core')(ss)
 
-                  # Create an instance of the class
-                  instance = loaded_class
-                  instance.hello()
+                # Create an instance of the class
+                instance = loaded_class
+                instance.hello()
 
-                  # TODO: Add a connect function to the scarlett system
-                  # HERE
+                # TODO: Add a connect function to the scarlett system
+                # HERE
 
-                  return instance
+                return instance
 
-                except ImportError:
-                  scarlett.log.debug(Fore.RED + "Module load FAILED: {}".format(potential_paths))
-                return False
+            except ImportError:
+                scarlett.log.debug(
+                    Fore.RED + "Module load FAILED: {}".format(potential_paths))
+            return False
+
 
 def set_feature(feature_name, feature):
     """ Sets a feature in the cache. """
@@ -154,11 +165,13 @@ def set_feature(feature_name, feature):
 
     _FEATURE_CACHE[feature_name] = feature
 
+
 def setup_feature(ss, scarlett_feature):
     """ Setup a feature for Scarlett. """
     # Check if already loaded
     if scarlett_feature in ss.features:
-        scarlett.log.info(Fore.YELLOW + "feature %s failed to initialize", scarlett_feature)
+        scarlett.log.info(
+            Fore.YELLOW + "feature %s failed to initialize", scarlett_feature)
         return
 
     _ensure_scarlett_ready(ss)
@@ -170,7 +183,8 @@ def setup_feature(ss, scarlett_feature):
         if feature.setup_feature(ss):
             ss.features.append(feature.SCARLETT_FEATURE)
 
-            scarlett.log.info(Fore.YELLOW + "feature %s initialized", scarlett_feature)
+            scarlett.log.info(
+                Fore.YELLOW + "feature %s initialized", scarlett_feature)
 
             pp = pprint.PrettyPrinter(indent=4)
             pp.pprint(ss.features)
@@ -178,21 +192,25 @@ def setup_feature(ss, scarlett_feature):
             # if group.SCARLETT_FEATURE not in feature.DEPENDENCIES:
             #     ss.pool.add_worker()
 
-            connect_to_scarlett(ss,feature)
+            connect_to_scarlett(ss, feature)
 
             return True
 
         else:
-            scarlett.log.error(Fore.RED + "feature %s failed to initialize", scarlett_feature)
+            scarlett.log.error(
+                Fore.RED + "feature %s failed to initialize", scarlett_feature)
 
     except Exception:
-        scarlett.log.exception(Fore.RED + "Error during setup of feature %s", scarlett_feature)
+        scarlett.log.exception(
+            Fore.RED + "Error during setup of feature %s", scarlett_feature)
 
     return False
+
 
 def connect_to_scarlett(ss, sf):
     sf._INSTANCE.connect(sf.CONNECT_NAME, ss.scarlett_event_cb)
     sf._INSTANCE.start()
+
 
 def get_feature(feature_name):
     """ Tries to load specified feature.
@@ -220,7 +238,8 @@ def get_feature(feature_name):
         try:
             module = importlib.import_module(path)
 
-            scarlett.log.info(Fore.GREEN + "Loaded %s from %s" % (feature_name, path))
+            scarlett.log.info(
+                Fore.GREEN + "Loaded %s from %s" % (feature_name, path))
 
             _FEATURE_CACHE[feature_name] = module
 
@@ -229,40 +248,44 @@ def get_feature(feature_name):
         except ImportError:
             scarlett.log.debug(
                 Fore.RED + "Error loading %s. Make sure all "
-                 "dependencies are installed" % path)
+                "dependencies are installed" % path)
 
     scarlett.log.debug(Fore.RED + "Unable to find feature %s" % feature_name)
 
     return None
+
 
 def system_boot(ss=None):
     """ initalize a new instance of ScarlettSystem if it doesnt already
     exist.
     """
     if ss is None:
-       ss = scarlett.ScarlettSystem()
+        ss = scarlett.ScarlettSystem()
 
     _ensure_scarlett_ready(ss)
 
-    _feat_enable_config = scarlett.config.get('features','enable')
+    _feat_enable_config = scarlett.config.get('features', 'enable')
 
     _features_to_register = tuple(_feat_enable_config.split(','))
 
     # eliminate anything that isn't a string
-    _features_to_register = [x for x in _features_to_register if isinstance(x, basestring)]
+    _features_to_register = [
+        x for x in _features_to_register if isinstance(x, basestring)]
 
     for scarlett_feature in _features_to_register:
         setup_feature(ss, scarlett_feature)
 
     return ss
 
+
 def _check_ready():
     """ Issues a warning if bootstrap.prepare() has never been called. """
     if not READY:
         scarlett.log.debug(
-                Fore.RED + "You did not call bootstrap.ready() yet. " +
-                "Certain functionality might not be working."
-                )
+            Fore.RED + "You did not call bootstrap.ready() yet. " +
+            "Certain functionality might not be working."
+        )
+
 
 def _ensure_scarlett_ready(ss):
     """ Ensure Scarlett is ready dependencies are ready. """
