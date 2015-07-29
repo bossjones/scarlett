@@ -317,7 +317,12 @@ class GstlistenerFSM(gobject.GObject):
         if hyp == 'CANCEL':
             self.cancel_listening()
         else:
-            self.commander.check_cmd(hyp)
+            # TODO: Change this into emit hypothesis instead
+            hyp_event = scarlett_event(
+                          "listener_hyp",
+                          data=hyp
+            )
+            self.emit('kw-found-ps', hyp_event)
             current_kw_identified = self.do_get_property('kw-found')
             self.do_set_property('kw-found', current_kw_identified)
             scarlett.log.debug(

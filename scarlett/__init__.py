@@ -218,6 +218,12 @@ class ScarlettSystem(dbus.service.Object):
                                "RECIEVED: {} from time-started: {}".format(
                                 event['event_type'], event['data'])
                                )
+        elif event['event_type'] == 'listener_hyp':
+            # TODO: Turn this into self.commander.check_cmd(hyp)
+            scarlett.log.debug(Fore.GREEN +
+                               "RECIEVED: {} from listener-hyp: {}".format(
+                                event['event_type'], event['data'])
+                               )
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
 
