@@ -112,20 +112,22 @@ class GstlistenerFSM(gobject.GObject):
     def __init__(self, *args, **kwargs):
 
         gobject.GObject.__init__(self)
+        self.override_parse = ''
+        self.failed = 0
+        self.kw_found = 0
 
         self.wit_thread = None
         self.loop = None
-        self.override_parse = ''
 
-        self.failed = 0
-        self.kw_found = 0
         self.config = scarlett.config
 
-        self.name = scarlett.listener.GstlistenerFSM.SCARLETT_ROLE
+        # TODO: Fix this, its def not working
+        self.name = scarlett.listener.gstlistenerfsm.SCARLETT_ROLE
 
         # Initalize the state machine
         self.machine = Machine(
             model=self,
+            # TODO: Fix this, its def not working
             states=scarlett.brain.GstlistenerFSM.GstlistenerFSM.states,
             initial='initalize')
 
@@ -229,7 +231,7 @@ class GstlistenerFSM(gobject.GObject):
 
         # idle_emit since this is something with low priority
         gobject.idle_add(
-            gobject.GObject.emit,
+            self.emit,
             'listener-started', listener_connect
         )
         # OLD # self.emit('listener-started', listener_connect)
@@ -312,7 +314,7 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(Fore.YELLOW + "KEYWORD IDENTIFIED BABY")
         scarlett.log.debug(
             Fore.RED +
-            "self.keyword_identified = %i" %
+            "self.kw_found = %i" %
             (self.do_get_property('kw-found')))
         if hyp == 'CANCEL':
             self.cancel_listening()
