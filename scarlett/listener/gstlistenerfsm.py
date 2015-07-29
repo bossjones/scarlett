@@ -6,6 +6,8 @@ import pygst
 pygst.require('0.10')
 import gobject
 gobject.threads_init()
+import dbus
+import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 dbus_loop = DBusGMainLoop(set_as_default=True)
 # dsession = SessionBus(mainloop=dbus_loop)
@@ -16,25 +18,25 @@ import threading
 import time
 import logging
 from transitions import Machine
-import dbus
-import dbus.service
+
 
 from scarlett.events import scarlett_event
 
 from colorama import init, Fore, Back, Style
 
-from scarlett.constants import (EVENT_SCARLETT_START,
-                                EVENT_SCARLETT_STOP,
-                                EVENT_STATE_CHANGED,
-                                EVENT_TIME_CHANGED,
-                                EVENT_CALL_SERVICE,
-                                EVENT_SERVICE_EXECUTED,
-                                EVENT_SERVICE_REGISTER,
-                                EVENT_PLATFORM_DISCOVERED,
-                                EVENT_SCARLETT_SAY,
-                                EVENT_BRAIN_UPDATE,
-                                EVENT_BRAIN_CHECK
-                                )
+from scarlett.constants import (
+    EVENT_SCARLETT_START,
+    EVENT_SCARLETT_STOP,
+    EVENT_STATE_CHANGED,
+    EVENT_TIME_CHANGED,
+    EVENT_CALL_SERVICE,
+    EVENT_SERVICE_EXECUTED,
+    EVENT_SERVICE_REGISTER,
+    EVENT_PLATFORM_DISCOVERED,
+    EVENT_SCARLETT_SAY,
+    EVENT_BRAIN_UPDATE,
+    EVENT_BRAIN_CHECK
+)
 
 SCARLETT_ROLE = 'listener'
 CORE_OBJECT = 'GstlistenerFSM'
@@ -90,7 +92,7 @@ logging.basicConfig(level=logging.DEBUG,
 def setup_core(ss):
     logging.info("attempting to setup GstlistenerFSM")
     global _INSTANCE
-    if _INSTANCE == None:
+    if _INSTANCE is None:
         _INSTANCE = GstlistenerFSM()
     return _INSTANCE
 
@@ -122,9 +124,21 @@ class GstlistenerFSM(gobject.GObject):
     }
 
     __gsignals__ = {
-        'gst-started': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)),
-        'kw-found-ps': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)),
-        'failed-ps': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,))
+        'gst-started': (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_STRING,)
+            ),
+        'kw-found-ps': (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_STRING,)
+            ),
+        'failed-ps': (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_STRING,)
+            )
     }
 
     capability = []
@@ -135,126 +149,142 @@ class GstlistenerFSM(gobject.GObject):
     DBUS_NAME = 'org.scarlettapp.scarlettdaemon'
     DBUS_PATH = '/org/scarlettapp/scarlettdaemon'
 
-  def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
-    gobject.GObject.__init__(self)
+        gobject.GObject.__init__(self)
 
-    self.wit_thread = None
-    self.loop = None
+        self.wit_thread = None
+        self.loop = None
 
-    self.failed = 0
-    self.kw_found = 0
-    self.config = scarlett.config
-    self.override_parse = override_parse
+        self.failed = 0
+        self.kw_found = 0
+        self.config = scarlett.config
 
-    self.name = scarlett.brain.GstlistenerFSM.SCARLETT_ROLE
+        self.name = scarlett.brain.GstlistenerFSM.SCARLETT_ROLE
 
-    # Initalize the state machine
-    self.machine = Machine(model=self, states=scarlett.brain.GstlistenerFSM.GstlistenerFSM.states, initial='initalize')
+        # Initalize the state machine
+        self.machine = Machine(
+            model=self,
+            states=scarlett.brain.GstlistenerFSM.GstlistenerFSM.states,
+            initial='initalize')
 
-    # startup transition
-    self.machine.add_transition(trigger='startup', source='initalize', dest='ready')
+        # startup transition
+        self.machine.add_transition(
+            trigger='startup',
+            source='initalize',
+            dest='ready')
 
-    # checking_states transition
-    self.machine.add_transition(trigger='checking_states', source='ready', dest='is_checking_states', conditions=['is_ready'])
+        # checking_states transition
+        self.machine.add_transition(
+            trigger='checking_states',
+            source='ready',
+            dest='is_checking_states',
+            conditions=['is_ready'])
 
-    # array / dict of state machines connected to scarlett
-    self._machines = {}
+        # array / dict of state machines connected to scarlett
+        self._machines = {}
 
-    # Check interval, in seconds
-    self.interval = 1
+        # Check interval, in seconds
+        self.interval = 1
 
-    # bus = dbus.SessionBus()
-    # self.remote = bus.get_object(GstlistenerFSM.DBUS_NAME, GstlistenerFSM.DBUS_PATH)
+        # bus = dbus.SessionBus()
+        # self.remote = bus.get_object(GstlistenerFSM.DBUS_NAME,
+        # GstlistenerFSM.DBUS_PATH)
 
-    # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
-    self.ps_hmm = self.get_hmm_full_path()
-    self.ps_dict = self.get_dict_full_path()
-    self.ps_lm = self.get_lm_full_path()
-    self.ps_device = self.config.get('audio', 'usb_input_device')
+        # "/usr/local/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
+        self.ps_hmm = self.get_hmm_full_path()
+        self.ps_dict = self.get_dict_full_path()
+        self.ps_lm = self.get_lm_full_path()
+        self.ps_device = self.config.get('audio', 'usb_input_device')
 
-    self.speech_system = self.config.get('speech', 'system')
+        self.speech_system = self.config.get('speech', 'system')
 
-    # default, use what we have set
-    self.parse_launch_array = self._get_pocketsphinx_definition(
-        override_parse)
+        # default, use what we have set
+        self.parse_launch_array = self._get_pocketsphinx_definition(
+            self.do_get_property('override-parse'))
 
-    scarlett.log.debug(
-        Fore.YELLOW +
-        'Initializing gst-parse-launch -------->')
-    self.pipeline = gst.parse_launch(
-        ' ! '.join(self.parse_launch_array))
+        scarlett.log.debug(
+            Fore.YELLOW +
+            'Initializing gst-parse-launch -------->')
+        self.pipeline = gst.parse_launch(
+            ' ! '.join(self.parse_launch_array))
 
-    listener = self.pipeline.get_by_name('listener')
-    listener.connect('result', self.__result__)
-    listener.set_property('configured', True)
-    scarlett.log.debug(
-        Fore.YELLOW +
-        "Initializing connection to vader element -------->")
-    # TODO: Play with vader object some more
-    # vader = self.pipeline.get_by_name("vader")
-    # vader.connect("vader-start", self._on_vader_start)
-    # vader.connect("vader-stop", self._on_vader_stop)
+        listener = self.pipeline.get_by_name('listener')
+        listener.connect('result', self.__result__)
+        listener.set_property('configured', True)
+        scarlett.log.debug(
+            Fore.YELLOW +
+            "Initializing connection to vader element -------->")
+        # TODO: Play with vader object some more
+        # vader = self.pipeline.get_by_name("vader")
+        # vader.connect("vader-start", self._on_vader_start)
+        # vader.connect("vader-stop", self._on_vader_stop)
 
-    scarlett.log.debug(Fore.YELLOW + "Initializing Bus -------->")
-    bus = self.pipeline.get_bus()
-    bus.add_signal_watch()
-    scarlett.log.debug(Fore.YELLOW + "Sending Message to Bus ---------->")
-    bus.connect('message::application', self.__application_message__)
+        scarlett.log.debug(Fore.YELLOW + "Initializing Bus -------->")
+        bus = self.pipeline.get_bus()
+        bus.add_signal_watch()
+        scarlett.log.debug(Fore.YELLOW + "Sending Message to Bus ---------->")
+        bus.connect('message::application', self.__application_message__)
 
-    logging.debug('running with %s and %s', args, kwargs)
+        logging.debug('running with %s and %s', args, kwargs)
 
-    ss_listener = threading.Thread(target=self.start_listener)
-    ss_listener.daemon = True
-    ss_listener.start()
+        ss_listener = threading.Thread(target=self.start_listener)
+        ss_listener.daemon = True
+        ss_listener.start()
 
-  # GObject translates all the underscore characters to hyphen
-  # characters so if you have a property called background_color,
-  # its internal and valid name will be background-color.
-  def do_get_property(self, property):
-      if property.name == 'kw-found':
-          return self.kw_found
-      elif property.name == 'failed':
-          return self.failed
-      elif property.name == 'override-parse':
-          return self.override_parse
-      else:
-          raise AttributeError, 'unknown property %s' % property.name
+    # GObject translates all the underscore characters to hyphen
+    # characters so if you have a property called background_color,
+    # its internal and valid name will be background-color.
+    def do_get_property(self, property):
+        if property.name == 'kw-found':
+            return self.kw_found
+        elif property.name == 'failed':
+            return self.failed
+        elif property.name == 'override-parse':
+            return self.override_parse
+        else:
+            raise AttributeError('unknown property %s' % property.name)
 
-  def do_set_property(self, property, value):
-       if property == 'kw-found':
-           self.kw_found = value
-       elif property == 'failed':
-           self.failed = value
-       elif property == 'override-parse':
-           self.override_parse = value
-       else:
-           raise AttributeError, 'unknown property %s' % property
+    def do_set_property(self, property, value):
+        if property == 'kw-found':
+            self.kw_found = value
+        elif property == 'failed':
+            self.failed = value
+        elif property == 'override-parse':
+            self.override_parse = value
+        else:
+            raise AttributeError('unknown property %s' % property)
 
-  def start_listener(self):
-      logging.debug('running with %s and %s', self.args, self.kwargs)
+    def start_listener(self):
+        logging.debug('running with %s and %s', self.args, self.kwargs)
 
-      # register service start
-      listener_connect = scarlett_event('service_state',
-        data=CORE_OBJECT
-       )
+        # register service start
+        listener_connect = scarlett_event(
+              'service_state',
+              data=CORE_OBJECT
+        )
 
-      # idle_emit since this is something with low priority
-      gobject.idle_add(gobject.GObject.emit,self,'listener-started', listener_connect)
-      # OLD # self.emit('listener-started', listener_connect)
+        # idle_emit since this is something with low priority
+        gobject.idle_add(
+            gobject.GObject.emit,
+            'listener-started', listener_connect
+        )
+        # OLD # self.emit('listener-started', listener_connect)
 
-      logging.debug('Starting')
+        logging.debug('Starting')
 
-      self.pipeline.set_state(gst.STATE_PLAYING)
+        self.pipeline.set_state(gst.STATE_PLAYING)
 
-      scarlett.log.debug(Fore.YELLOW +
-                         'KEYWORD: ' +
-                         self.config.get('scarlett','owner'))
+        scarlett.log.debug(
+            Fore.YELLOW +
+            'KEYWORD: ' +
+            self.config.get('scarlett', 'owner')
+        )
 
-      self.loop = gobject.MainLoop()
-      self.loop.run()
+        self.loop = gobject.MainLoop()
+        self.loop.run()
 
-      logging.debug('Exiting')
+        logging.debug('Exiting')
 
     def stop(self):
         self.pipeline.set_state(gst.STATE_NULL)
@@ -391,7 +421,7 @@ class GstlistenerFSM(gobject.GObject):
             return [
                 'alsasrc device=' +
                 self.ps_device,
-                'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0',
+                'queue silent=false leaky=2 max-size-buffers=0 max-size-time=0 max-size-bytes=0', # noqa
                 'audioconvert',
                 'audioresample',
                 'audio/x-raw-int, rate=16000, width=16, depth=16, channels=1',
@@ -414,7 +444,7 @@ class GstlistenerFSM(gobject.GObject):
     def _get_vader_definition(self):
         scarlett.log.debug(Fore.YELLOW + "Inside _get_vader_definition")
         """Return ``vader`` definition for :func:`gst.parse_launch`."""
-        # source: https://github.com/bossjones/eshayari/blob/master/eshayari/application.py
+        # source: https://github.com/bossjones/eshayari/blob/master/eshayari/application.py # noqa
         # Convert noise level from spin button range [0,32768] to gstreamer
         # element's range [0,1]. Likewise, convert silence from spin button's
         # milliseconds to gstreamer element's nanoseconds.
@@ -455,7 +485,7 @@ class GstlistenerFSM(gobject.GObject):
         struct.set_value('uttid', uttid)
         listener.post_message(gst.message_new_application(listener, struct))
 
-    def __partial_result__(self, listner, text, uttid):
+    def __partial_result__(self, listener, text, uttid):
         """We're inside __partial_result__"""
         scarlett.log.debug(Fore.YELLOW + "Inside __partial_result__")
         struct = gst.Structure('partial_result')
@@ -485,16 +515,18 @@ class GstlistenerFSM(gobject.GObject):
             self.run_cmd(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == gst.MESSAGE_EOS:
             pass
-            # DISABLE # TODO: SEE IF WE NEED THIS # self.pipeline.set_state(gst.STATE_NULL)
+            # TODO: SEE IF WE NEED THIS
+            # self.pipeline.set_state(gst.STATE_NULL)
         elif msgtype == gst.MESSAGE_ERROR:
             (err, debug) = msgtype.parse_error()
             scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
             pass
-            # DISABLE # TODO: SEE IF WE NEED THIS # self.pipeline.set_state(gst.STATE_NULL)
-            # DISABLE # TODO: SEE IF WE NEED THIS # (err, debug) = msgtype.parse_error()
-            # DISABLE # TODO: SEE IF WE NEED THIS # scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
-
-
+            # TODO: SEE IF WE NEED THIS
+            # self.pipeline.set_state(gst.STATE_NULL)
+            # TODO: SEE IF WE NEED THIS
+            # (err, debug) = msgtype.parse_error()
+            # TODO: SEE IF WE NEED THIS
+            #  scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
 
 # Register to be able to emit signals
 gobject.type_register(GstlistenerFSM)
