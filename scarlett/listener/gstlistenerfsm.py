@@ -217,11 +217,11 @@ class GstlistenerFSM(gobject.GObject):
     # characters so if you have a property called background_color,
     # its internal and valid name will be background-color.
     def do_get_property(self, property):
-        if property.name == 'kw-found':
+        if property.kw_found == 'kw-found':
             return self.kw_found
-        elif property.name == 'failed':
+        elif property.failed == 'failed':
             return self.failed
-        elif property.name == 'override-parse':
+        elif property.overrid_parse == 'override-parse':
             return self.override_parse
         else:
             raise AttributeError('unknown property %s' % property.name)
