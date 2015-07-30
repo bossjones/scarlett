@@ -50,23 +50,6 @@ def read_requirements(filename):
 requirements = read_requirements('requirements.txt')
 test_requirements = read_requirements('requirements_dev.txt')
 
-# Build manpages if we're making a source distribution tarball.
-# if 'sdist' in sys.argv:
-# Go into the docs directory and build the manpage.
-###     docdir = os.path.join(os.path.dirname(__file__), 'docs')
-###     curdir = os.getcwd()
-# os.chdir(docdir)
-# try:
-###         subprocess.check_call(['make', 'man'])
-# finally:
-# os.chdir(curdir)
-###
-# Copy resulting manpages.
-###     mandir = os.path.join(os.path.dirname(__file__), 'man')
-# if os.path.exists(mandir):
-# shutil.rmtree(mandir)
-###     shutil.copytree(os.path.join(docdir, '_build', 'man'), mandir)
-
 setup(
     name="scarlett",
     version=version,
@@ -90,15 +73,9 @@ setup(
     install_requires=[
     ],
     scripts=[
-        'bin/scarlett',
         'bin/scarlett_improved',
-        'bin/scarlett_test',
-        'bin/scarlett_echo_client_test.py',
-        'bin/scarlett_worker_cb_test.py',
-        'bin/catwav',
-        'bin/silence',
-        'bin/resample_for_ps',
-        'bin/pad_wav'],
+        'bin/scarlett_test'
+    ],
     license="MIT",
     platforms="Posix; MacOS X",
     zip_safe=False,

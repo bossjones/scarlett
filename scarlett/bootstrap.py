@@ -135,22 +135,7 @@ def setup_core_feature(ss, mod_name):
             Fore.RED + "Error loading {}.".format(core_feature_name))
         return False
 
-    scarlett.log.debug(
-       Fore.RED + "core modules: {}".format(
-           modules)
-    )
-
     for module_loader, mod_name, ispkg in modules:
-
-        scarlett.log.debug(
-           Fore.RED + "mod_name: {}".format(
-               mod_name)
-        )
-
-        scarlett.log.debug(
-           Fore.RED + "ispkg: {}".format(
-               ispkg)
-        )
 
         if mod_name not in sys.modules and mod_name == potential_paths:
             try:
