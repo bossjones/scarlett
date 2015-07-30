@@ -144,7 +144,7 @@ class GstlistenerFSM(gobject.GObject):
         self.machine = Machine(
             model=self,
             # TODO: Fix this, its def not working
-            states=scarlett.brain.GstlistenerFSM.GstlistenerFSM.states,
+            states=self.states,
             initial='initalize')
 
         # startup transition
