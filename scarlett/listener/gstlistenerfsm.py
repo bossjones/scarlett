@@ -8,10 +8,14 @@ import gobject
 gobject.threads_init()
 import dbus
 import dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
-dbus_loop = DBusGMainLoop(set_as_default=True)
+
+# TODO: Figure out if we need this or not, re dbus threading
+# from dbus.mainloop.glib import DBusGMainLoop
+# dbus_loop = DBusGMainLoop(set_as_default=True)
 # dsession = SessionBus(mainloop=dbus_loop)
+
 dbus.mainloop.glib.threads_init()
+
 import gst
 import os
 import threading
@@ -48,7 +52,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 def setup_core(ss):
 
-    logging.info("attempting to setup GstlistenerFSM")
+    # logging.info("attempting to setup GstlistenerFSM")
 
     global _INSTANCE
 
@@ -58,6 +62,14 @@ def setup_core(ss):
 
 
 class GstlistenerFSM(gobject.GObject):
+
+    """GstListener with FSM. Preforms pocketsphinx speech recognition.
+
+    :param uri: URI to the HTML file to be displayed.
+    :type uri: str
+
+    """
+
     __gproperties__ = {
         'override_parse': (
             gobject.TYPE_STRING,  # type
@@ -71,6 +83,8 @@ class GstlistenerFSM(gobject.GObject):
             gobject.TYPE_INT,  # type
             'Failed',  # nick name
             'Number of times recognition failed',  # description
+            0,  # min value
+            5,  # max value
             0,  # default value
             gobject.PARAM_READWRITE
         ),
@@ -78,6 +92,8 @@ class GstlistenerFSM(gobject.GObject):
             gobject.TYPE_INT,  # type
             'Keyword Match',  # nick name
             'int value for keyword',  # description
+            0,  # min value
+            5,  # max value
             0,  # default value
             gobject.PARAM_READWRITE
         )
@@ -190,7 +206,7 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(Fore.YELLOW + "Sending Message to Bus ---------->")
         bus.connect('message::application', self.__application_message__)
 
-        logging.debug('running with %s and %s', args, kwargs)
+        # logging.debug('running with %s and %s', args, kwargs)
 
         # TODO: Uncomment this when we're ready to try this
         ss_listener = threading.Thread(target=self.start_listener)
@@ -221,7 +237,7 @@ class GstlistenerFSM(gobject.GObject):
             raise AttributeError('unknown property %s' % property)
 
     def start_listener(self):
-        logging.debug('running with %s and %s', self.args, self.kwargs)
+        # logging.debug('running with %s and %s', self.args, self.kwargs)
 
         # register service start
         listener_connect = scarlett_event(
@@ -236,7 +252,7 @@ class GstlistenerFSM(gobject.GObject):
         )
         # OLD # self.emit('listener-started', listener_connect)
 
-        logging.debug('Starting')
+        # logging.debug('Starting')
 
         self.pipeline.set_state(gst.STATE_PLAYING)
 
@@ -249,7 +265,7 @@ class GstlistenerFSM(gobject.GObject):
         self.loop = gobject.MainLoop()
         self.loop.run()
 
-        logging.debug('Exiting')
+        # logging.debug('Exiting')
 
     def stop(self):
         self.pipeline.set_state(gst.STATE_NULL)
@@ -329,7 +345,7 @@ class GstlistenerFSM(gobject.GObject):
             self.do_set_property('kw-found', current_kw_identified)
             scarlett.log.debug(
                 Fore.RED +
-                "AFTER run_cmd, self.keyword_identified = %i" %
+                "AFTER run_cmd, self.kw_found = %i" %
                 (self.do_get_property('kw-found')))
 
     def hello(self):
