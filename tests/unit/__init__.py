@@ -14,6 +14,7 @@ import logging
 import scarlett
 import scarlett.bootstrap
 
+
 class ScarlettTestCase(unittest.TestCase):
 
     """Base test class for ScarlettSystem
@@ -83,6 +84,7 @@ class MockScarlettWithConfigTestCase(ScarlettTestCase):
         self.config_patch.stop()
         self.has_config_patch.stop()
         self.environ_patch.stop()
+
 
 class MockLoggingHandler(logging.Handler):
 

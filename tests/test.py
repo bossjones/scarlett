@@ -25,7 +25,6 @@ import scarlett
 #from IPython.core.debugger import Tracer
 
 
-
 def main():
     description = ("Runs scarlett unit and/or integration tests. "
                    "Arguments will be passed on to nosetests. "
