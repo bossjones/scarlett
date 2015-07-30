@@ -49,7 +49,6 @@ _INSTANCE = None
 logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-9s) %(message)s',)
 
-
 def setup_core(ss):
 
     # logging.info("attempting to setup GstlistenerFSM")
@@ -64,10 +63,6 @@ def setup_core(ss):
 class GstlistenerFSM(gobject.GObject):
 
     """GstListener with FSM. Preforms pocketsphinx speech recognition.
-
-    :param uri: URI to the HTML file to be displayed.
-    :type uri: str
-
     """
 
     __gproperties__ = {
@@ -138,7 +133,7 @@ class GstlistenerFSM(gobject.GObject):
         self.config = scarlett.config
 
         # TODO: Fix this, its def not working
-        self.name = scarlett.listener.gstlistenerfsm.SCARLETT_ROLE
+        self.name = 'GstlistenerFSM'
 
         # Initalize the state machine
         self.machine = Machine(
@@ -180,7 +175,7 @@ class GstlistenerFSM(gobject.GObject):
 
         # default, use what we have set
         self.parse_launch_array = self._get_pocketsphinx_definition(
-            self.do_get_property('override-parse'))
+            self.override_parse)
 
         scarlett.log.debug(
             Fore.YELLOW +
@@ -217,16 +212,23 @@ class GstlistenerFSM(gobject.GObject):
     # characters so if you have a property called background_color,
     # its internal and valid name will be background-color.
     def do_get_property(self, property):
-        if property.kw_found == 'kw-found':
+
+        logging.debug('property ISSSSSS: %s', property)
+
+        if property.name == 'kw-found':
             return self.kw_found
-        elif property.failed == 'failed':
+        elif property.name == 'failed':
             return self.failed
-        elif property.overrid_parse == 'override-parse':
+        elif property.name == 'override-parse':
             return self.override_parse
         else:
             raise AttributeError('unknown property %s' % property.name)
 
     def do_set_property(self, property, value):
+
+        logging.debug('property ISSSSSS: %s', property)
+        logging.debug('value ISSSSSS: %s', value)
+
         if property == 'kw-found':
             self.kw_found = value
         elif property == 'failed':
