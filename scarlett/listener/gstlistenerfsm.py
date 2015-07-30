@@ -123,16 +123,15 @@ class GstlistenerFSM(gobject.GObject):
     def __init__(self, *args, **kwargs):
 
         gobject.GObject.__init__(self)
+
+        # managed by gproperties
         self.override_parse = ''
         self.failed = 0
         self.kw_found = 0
 
         self.wit_thread = None
         self.loop = None
-
         self.config = scarlett.config
-
-        # TODO: Fix this, its def not working
         self.name = 'GstlistenerFSM'
 
         # Initalize the state machine
@@ -204,7 +203,7 @@ class GstlistenerFSM(gobject.GObject):
         # logging.debug('running with %s and %s', args, kwargs)
 
         # TODO: Uncomment this when we're ready to try this
-        ss_listener = threading.Thread(target=self.start_listener)
+        ss_listener = threading.Thread(name='Scarlett Listener',target=self.start_listener)
         ss_listener.daemon = True
         ss_listener.start()
 
@@ -212,9 +211,6 @@ class GstlistenerFSM(gobject.GObject):
     # characters so if you have a property called background_color,
     # its internal and valid name will be background-color.
     def do_get_property(self, property):
-
-        logging.debug('property ISSSSSS: %s', property)
-
         if property.name == 'kw-found':
             return self.kw_found
         elif property.name == 'failed':
@@ -225,10 +221,6 @@ class GstlistenerFSM(gobject.GObject):
             raise AttributeError('unknown property %s' % property.name)
 
     def do_set_property(self, property, value):
-
-        logging.debug('property ISSSSSS: %s', property)
-        logging.debug('value ISSSSSS: %s', value)
-
         if property == 'kw-found':
             self.kw_found = value
         elif property == 'failed':
@@ -239,8 +231,8 @@ class GstlistenerFSM(gobject.GObject):
             raise AttributeError('unknown property %s' % property)
 
     def start_listener(self):
-        # logging.debug('running with %s and %s', self.args, self.kwargs)
         global CORE_OBJECT
+
         # register service start
         listener_connect = scarlett_event(
               'service_state',
@@ -252,9 +244,6 @@ class GstlistenerFSM(gobject.GObject):
             self.emit,
             'gst-started', listener_connect
         )
-        # OLD # self.emit('listener-started', listener_connect)
-
-        # logging.debug('Starting')
 
         self.pipeline.set_state(gst.STATE_PLAYING)
 
@@ -266,8 +255,6 @@ class GstlistenerFSM(gobject.GObject):
 
         self.loop = gobject.MainLoop()
         self.loop.run()
-
-        # logging.debug('Exiting')
 
     def stop(self):
         self.pipeline.set_state(gst.STATE_NULL)
@@ -514,12 +501,6 @@ class GstlistenerFSM(gobject.GObject):
             (err, debug) = msgtype.parse_error()
             scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
             pass
-            # TODO: SEE IF WE NEED THIS
-            # self.pipeline.set_state(gst.STATE_NULL)
-            # TODO: SEE IF WE NEED THIS
-            # (err, debug) = msgtype.parse_error()
-            # TODO: SEE IF WE NEED THIS
-            #  scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
 
 # Register to be able to emit signals
 gobject.type_register(GstlistenerFSM)

@@ -158,11 +158,6 @@ def setup_core_feature(ss, mod_name):
                 # eg: scarlett.brain.scarlettbrainfsm
                 loaded_mod = importlib.import_module(potential_paths)
 
-                # Load class from imported module
-                # eg: ScarlettBrainFSM
-                class_name = loaded_mod
-                print class_name
-
                 loaded_class = getattr(loaded_mod, 'setup_core')(ss)
 
                 # Create an instance of the class
@@ -304,12 +299,9 @@ def system_boot(ss=None):
 
     # TODO: set this to ('brain','listener')
     _core_features_to_register = ('listener',)
-    print _core_features_to_register
 
     _core_features_to_register = [
         x for x in _core_features_to_register if isinstance(x, basestring)]
-
-    print _core_features_to_register
 
     for scarlett_core in _core_features_to_register:
         setup_core_feature(ss, scarlett_core)
