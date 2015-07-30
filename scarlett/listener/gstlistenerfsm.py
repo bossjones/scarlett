@@ -206,7 +206,7 @@ class GstlistenerFSM(gobject.GObject):
         # TODO: Uncomment this when we're ready to try this
         ss_listener = threading.Thread(target=self.start_listener)
         ss_listener.daemon = True
-        ss_listener.start_listener()
+        ss_listener.start()
 
     # GObject translates all the underscore characters to hyphen
     # characters so if you have a property called background_color,
@@ -240,7 +240,7 @@ class GstlistenerFSM(gobject.GObject):
 
     def start_listener(self):
         # logging.debug('running with %s and %s', self.args, self.kwargs)
-
+        global CORE_OBJECT
         # register service start
         listener_connect = scarlett_event(
               'service_state',
@@ -250,7 +250,7 @@ class GstlistenerFSM(gobject.GObject):
         # idle_emit since this is something with low priority
         gobject.idle_add(
             self.emit,
-            'listener-started', listener_connect
+            'gst-started', listener_connect
         )
         # OLD # self.emit('listener-started', listener_connect)
 
