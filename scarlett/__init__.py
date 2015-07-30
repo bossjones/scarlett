@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from scarlett.core.config import Config, ScarlettConfigLocations
-#### DISABLED UNTIL READY # import scarlett.plugin
 import datetime
 import os
 import platform
@@ -19,7 +18,8 @@ try:
     import gobject
     # Initialize gtk threading
     gobject.threads_init()
-    # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
+    # If the keyword argument set_as_default is given and is true, set the new
+    # main loop as the default for all new Connection or Bus instances.
     threads_init()
     DBusGMainLoop(set_as_default=True)
     import pygst
@@ -43,9 +43,9 @@ import ast
 # drops you down into pdb if exception is thrown
 import sys
 
-__author__  = 'Malcolm Jones'
-__email__   = 'bossjones@theblacktonystark.com'
-__version__ = '0.4.0'
+__author__ = 'Malcolm Jones'
+__email__ = 'bossjones@theblacktonystark.com'
+__version__ = '0.5.0'
 Version = __version__  # for backware compatibility
 
 # http://bugs.python.org/issue7980
@@ -110,10 +110,13 @@ def set_stream_logger(name, level=logging.DEBUG, format_string=None):
     logger.addHandler(fh)
     log = logger
 
+
 class ScarlettSystemException(dbus.DBusException):
     _dbus_error_name = 'org.scarlettapp.scarlettbotexception'
 
+
 class ScarlettSystem(dbus.service.Object):
+
     """ Actual scarlett bot object that has a brain, voice, etc """
 
     DBUS_NAME = 'org.scarlettapp.scarlettdaemon'
@@ -126,20 +129,21 @@ class ScarlettSystem(dbus.service.Object):
         bus_name = dbus.service.BusName(
             ScarlettSystem.DBUS_NAME,
             bus=dbus.SessionBus()
-            )
+        )
 
         dbus.service.Object.__init__(
             self,
             bus_name,
             ScarlettSystem.DBUS_PATH
-            )
+        )
 
         self.loop = None
         # DISABLED FOR NOW # self.pool = pool = create_worker_pool()
 
-        # These will later be populated w/ scarlett core objects in the ./bin/scarlett_improved
-        self.brain   = None
-        self.player  = None
+        # These will later be populated w/ scarlett core objects in the
+        # ./bin/scarlett_improved
+        self.brain = None
+        self.player = None
         self.speaker = None
 
         scarlett.set_stream_logger('scarlett')
@@ -150,37 +154,37 @@ class ScarlettSystem(dbus.service.Object):
                                            PyGst {pygst_version}
                                            Gobject {gobject_version}
                                            '''.format(
-                                            version=__version__,
-                                            platform=sys.platform,
-                                            pymajor=sys.version_info.major,
-                                            pyminor=sys.version_info.minor,
-                                            pymicro=sys.version_info.micro,
-                                            pygst_version=pygst._pygst_version,
-                                            gobject_version=gobject.gobject.glib_version
-                                            ))
+            version=__version__,
+            platform=sys.platform,
+            pymajor=sys.version_info.major,
+            pyminor=sys.version_info.minor,
+            pymicro=sys.version_info.micro,
+            pygst_version=pygst._pygst_version,
+            gobject_version=gobject.gobject.glib_version
+        ))
 
         scarlett.log.debug(
             Fore.GREEN +
             "VERSION INFO: \n\n" +
             self.scarlett_version_info
-            )
+        )
 
         # reserved for things like scarlett's brain, listener, player, speaker
         self.base_services = []
 
         self.features = []
 
-        ### DISABLED FOR NOW # self._brain = ScarlettBrainImproved(
-        ### DISABLED FOR NOW #     host=scarlett.config.get('redis', 'host'),
-        ### DISABLED FOR NOW #     port=scarlett.config.get('redis', 'port'),
-        ### DISABLED FOR NOW #     db=scarlett.config.get('redis', 'db')
-        ### DISABLED FOR NOW #     )
+        # DISABLED FOR NOW # self._brain = ScarlettBrainImproved(
+        # DISABLED FOR NOW #     host=scarlett.config.get('redis', 'host'),
+        # DISABLED FOR NOW #     port=scarlett.config.get('redis', 'port'),
+        # DISABLED FOR NOW #     db=scarlett.config.get('redis', 'db')
+        # DISABLED FOR NOW #     )
 
         #scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
 
-        #scarlett.basics.voice.play_block('pi-listening')
+        # scarlett.basics.voice.play_block('pi-listening')
 
-        #scarlett_says.say_block("helllllllllllloooo")
+        # scarlett_says.say_block("helllllllllllloooo")
 
         #self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
@@ -207,16 +211,24 @@ class ScarlettSystem(dbus.service.Object):
         event = ast.literal_eval(message)
 
         scarlett.log.debug(Fore.GREEN + "Bus:Handling %s",
-            event['event_type'])
+                           event['event_type'])
 
         if event['event_type'] == 'service_state':
-           scarlett.log.debug(Fore.GREEN +
-                "RECIEVED: {} from time-started: {}".format(event['event_type'],event['data']))
+            scarlett.log.debug(Fore.GREEN +
+                               "RECIEVED: {} from time-started: {}".format(
+                                event['event_type'], event['data'])
+                               )
+        elif event['event_type'] == 'listener_hyp':
+            # TODO: Turn this into self.commander.check_cmd(hyp)
+            scarlett.log.debug(Fore.GREEN +
+                               "RECIEVED: {} from listener-hyp: {}".format(
+                                event['event_type'], event['data'])
+                               )
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
 
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
-        in_signature='', out_signature='')
+                         in_signature='', out_signature='')
     def main(self):
         """Main method used to start scarlett application."""
         # All PyGTK applications must have a gtk.main(). Control ends here
@@ -228,16 +240,16 @@ class ScarlettSystem(dbus.service.Object):
         self.loop = gobject.MainLoop()
 
         try:
-          self.loop.run()
+            self.loop.run()
         except KeyboardInterrupt:
             self.Exit()
 
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
-        in_signature='', out_signature='')
+                         in_signature='', out_signature='')
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         self.remove_from_connection()
-        self.loop.quit() # OLD # gobject.mainloop.quit()
+        self.loop.quit()  # OLD # gobject.mainloop.quit()
 
     @dbus.service.method("org.scarlettapp.scarlettdaemon",
                          in_signature='', out_signature='')
@@ -245,7 +257,3 @@ class ScarlettSystem(dbus.service.Object):
         scarlett.log.debug(Fore.YELLOW + "Exit signal occurred")
         self.remove_from_connection()
         self.loop.quit()
-
-
-
-

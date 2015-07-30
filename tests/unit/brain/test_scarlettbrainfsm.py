@@ -6,6 +6,7 @@ import sys
 from tests.unit import unittest, ScarlettTestCase
 from nose.plugins.attrib import attr
 
+
 class ScarlettBrainFsmTestCase(ScarlettTestCase):
 
     def setUp(self):
@@ -14,6 +15,7 @@ class ScarlettBrainFsmTestCase(ScarlettTestCase):
     @attr(brain=True, redis=True, threading=True)
     def test_scarlett_attributes(self):
         pass
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromName(__name__)

@@ -18,13 +18,14 @@ try:
     import gobject
     # Initialize gtk threading
     gobject.threads_init()
-    # If the keyword argument set_as_default is given and is true, set the new main loop as the default for all new Connection or Bus instances.
+    # If the keyword argument set_as_default is given and is true, set the new
+    # main loop as the default for all new Connection or Bus instances.
     threads_init()
     DBusGMainLoop(set_as_default=True)
     import pygst
     pygst.require('0.10')
-    #gobject.threads_init()
-    #threads_init()
+    # gobject.threads_init()
+    # threads_init()
     import scarlett
     from scarlett.constants import *
     from scarlett import __version__
@@ -40,7 +41,8 @@ import logging
 import argparse
 import sys
 # will use this to trace when functions begin and end
-# see details from: http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
+# see details from:
+# http://stackoverflow.com/questions/308999/what-does-functools-wraps-do
 import textwrap
 from functools import wraps
 import time
@@ -57,10 +59,16 @@ import scarlett.util as util
 # drops you down into pdb if exception is thrown
 import sys
 from IPython.core import ultratb
-sys.excepthook = ultratb.FormattedTB(mode='Verbose',
-     color_scheme='Linux', call_pdb=True, ostream=sys.__stdout__)
+sys.excepthook = ultratb.FormattedTB(
+                        mode='Verbose',
+                        color_scheme='Linux',
+                        call_pdb=True,
+                        ostream=sys.__stdout__
+)
 
 # trace decorator
+
+
 def trace(func):
     """Tracing wrapper to log when function enter/exit happens.
     :param func: Function to wrap
@@ -76,15 +84,20 @@ def trace(func):
 
 # TODO: Add a callback to make changes to brain object
 # TODO: Add a callback to run scarlett_says.say_block("BLAH")
-# source: http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
+# source:
+# http://www.pygtk.org/articles/subclassing-gobject/sub-classing-gobject-in-python.htm
 
 # TODO: Evaluate all dbus CLI setting options
-# source: http://stackoverflow.com/questions/5819667/help-me-setup-a-cron-job-on-ubuntu
+# source:
+# http://stackoverflow.com/questions/5819667/help-me-setup-a-cron-job-on-ubuntu
+
 
 class ScarlettBotException(dbus.DBusException):
     _dbus_error_name = 'org.scarlettapp.scarlettbotexception'
 
+
 class ScarlettBot(dbus.service.Object):
+
     """ Actual scarlett bot object that has a brain, voice, etc """
 
     DBUS_NAME = 'org.scarlettapp.scarlettdaemon'
@@ -101,13 +114,13 @@ class ScarlettBot(dbus.service.Object):
         bus_name = dbus.service.BusName(
             'org.scarlettapp.scarlettdaemon',
             bus=dbus.SessionBus()
-            )
+        )
 
         dbus.service.Object.__init__(
             self,
             bus_name,
             '/org/scarlettapp/scarlettdaemon'
-            )
+        )
 
         self.loop = None
         # DISABLED FOR NOW # self.pool = pool = create_worker_pool()
@@ -120,40 +133,41 @@ class ScarlettBot(dbus.service.Object):
                                            PyGst {pygst_version}
                                            Gobject {gobject_version}
                                            '''.format(
-                                            version=__version__,
-                                            platform=sys.platform,
-                                            pymajor=sys.version_info.major,
-                                            pyminor=sys.version_info.minor,
-                                            pymicro=sys.version_info.micro,
-                                            pygst_version=pygst._pygst_version,
-                                            gobject_version=gobject.gobject.glib_version
-                                            ))
+            version=__version__,
+            platform=sys.platform,
+            pymajor=sys.version_info.major,
+            pyminor=sys.version_info.minor,
+            pymicro=sys.version_info.micro,
+            pygst_version=pygst._pygst_version,
+            gobject_version=gobject.gobject.glib_version
+        ))
 
         scarlett.log.debug(
             Fore.GREEN +
             "VERSION INFO: \n\n" +
             self.scarlett_version_info
-            )
+        )
 
         self._brain = ScarlettBrainImproved(
             host=scarlett.config.get('redis', 'host'),
             port=scarlett.config.get('redis', 'port'),
             db=scarlett.config.get('redis', 'db')
-            )
+        )
 
         # enable services
         if scarlett_cli_args.enable_feature == "time":
             from scarlett.features.time import FeatureTime
             self.time = FeatureTime()
             self.time.connect(
-            'time-started', self.scarlett_event_cb)
+                'time-started', self.scarlett_event_cb)
             self.time.start()
 
         scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
 
+        # TODO: play_block pi-listening from emitted signal
         scarlett.basics.voice.play_block('pi-listening')
 
-        #scarlett_says.say_block("helllllllllllloooo")
+        # scarlett_says.say_block("helllllllllllloooo")
 
         #self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
 
@@ -177,17 +191,16 @@ class ScarlettBot(dbus.service.Object):
         event = ast.literal_eval(message)
 
         scarlett.log.debug(Fore.GREEN + "Bus:Handling %s",
-            event['event_type'])
+                           event['event_type'])
 
         if event['event_type'] == 'service_state':
-           scarlett.log.debug(Fore.GREEN +
-                "RECIEVED: service_state from time-started: {}".format(event[    'data']))
+            scarlett.log.debug(Fore.GREEN +
+                               "RECIEVED: service_state from time-started: {}".format(event['data']))
         else:
-            raise ValueError('Unknown scarlettTime message: {}'.format(event)    )
-
+            raise ValueError('Unknown scarlettTime message: {}'.format(event))
 
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
-        in_signature='', out_signature='')
+                         in_signature='', out_signature='')
     def main(self):
         """Main method used to start scarlett application."""
         # All PyGTK applications must have a gtk.main(). Control ends here
@@ -199,16 +212,16 @@ class ScarlettBot(dbus.service.Object):
         self.loop = gobject.MainLoop()
 
         try:
-          self.loop.run()
+            self.loop.run()
         except KeyboardInterrupt:
             self.Exit()
 
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
-        in_signature='', out_signature='')
+                         in_signature='', out_signature='')
     def destroy(self):
         scarlett.log.debug(Fore.YELLOW + "Destroy signal occurred")
         self.remove_from_connection()
-        self.loop.quit() # OLD # gobject.mainloop.quit()
+        self.loop.quit()  # OLD # gobject.mainloop.quit()
 
     @dbus.service.method("org.scarlettapp.scarlettdaemon",
                          in_signature='', out_signature='')
@@ -217,17 +230,20 @@ class ScarlettBot(dbus.service.Object):
         self.remove_from_connection()
         self.loop.quit()
 
+
 def set_dbus_launch_shell():
-    # source: http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
+    # source:
+    # http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
     p = subprocess.Popen('dbus-launch',
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
 
     for var in p.stdout:
-      sp = var.split('=', 1)
-      print sp
-      os.environ[sp[0]] = sp[1][:-1]
+        sp = var.split('=', 1)
+        print sp
+        os.environ[sp[0]] = sp[1][:-1]
+
 
 def main():
     """Launch application."""
@@ -243,7 +259,8 @@ def main():
         # TOD: figure out if this is really needed or not
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-        #self.loop.quit()
+        # self.loop.quit()
+        # TODO: make voice play_free emit signal to voice class
         scarlett.basics.voice.play_free()
         scarlett_daemon.Exit()
 
@@ -254,13 +271,15 @@ def main():
 
     try:
 
-       scarlett_daemon.main()
+        scarlett_daemon.main()
 
     finally:
 
-       scarlett.basics.voice.play_free()
+        scarlett.basics.voice.play_free()
+
 
 class JobPriority(object):
+
     """ Provides priorities for bus events. """
     # pylint: disable=no-init,too-few-public-methods
 
@@ -303,7 +322,7 @@ def create_worker_pool():
             # Catch any exception our service/event_listener might throw
             # We do not want to crash our ThreadPool
             scarlett.log.exception(Fore.RED +
-                "BusHandler:Exception doing job")
+                                   "BusHandler:Exception doing job")
 
     def busy_callback(worker_count, current_jobs, pending_jobs_count):
         """ Callback to be called when the pool queue gets too big. """
@@ -315,11 +334,10 @@ def create_worker_pool():
 
         for start, job in current_jobs:
             scarlett.log.warning(Fore.YELLOW +
-                "WorkerPool:Current job from %s: %s",
-                            util.datetime_to_str(start), job)
+                                 "WorkerPool:Current job from %s: %s",
+                                 util.datetime_to_str(start), job)
 
     return util.ThreadPool(job_handler, MIN_WORKER_THREAD, busy_callback)
-
 
 
 # If the program is run directly or passed as an argument to the python
@@ -328,12 +346,13 @@ if __name__ == "__main__":
     # Set up and parse command-line args.
     global scarlett_cli_args
     parser = argparse.ArgumentParser()
-    parser.add_argument("--detect-session-bus", action="store_true", default=False)
+    parser.add_argument(
+        "--detect-session-bus", action="store_true", default=False)
     parser.add_argument("--enable-feature", default="time")
 
     scarlett_cli_args = parser.parse_args()
 
     if scarlett_cli_args.detect_session_bus:
-       set_dbus_launch_shell()
+        set_dbus_launch_shell()
 
     main()
