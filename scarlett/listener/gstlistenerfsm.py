@@ -384,10 +384,6 @@ class GstlistenerFSM(gobject.GObject):
         scarlett.log.debug(Fore.YELLOW + "Inside get_pipeline")
         return self.pipeline
 
-    def get_voice(self):
-        scarlett.log.debug(Fore.YELLOW + "Inside get_voice")
-        return self.voice
-
     def get_pipeline_state(self):
         return self.pipeline.get_state()
 
@@ -495,8 +491,6 @@ class GstlistenerFSM(gobject.GObject):
             self.run_cmd(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == gst.MESSAGE_EOS:
             pass
-            # TODO: SEE IF WE NEED THIS
-            # self.pipeline.set_state(gst.STATE_NULL)
         elif msgtype == gst.MESSAGE_ERROR:
             (err, debug) = msgtype.parse_error()
             scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)

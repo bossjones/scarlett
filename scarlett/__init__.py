@@ -43,7 +43,7 @@ import sys
 
 __author__ = 'Malcolm Jones'
 __email__ = 'bossjones@theblacktonystark.com'
-__version__ = '0.5.0'
+__version__ = '0.6.0'
 Version = __version__  # for backware compatibility
 
 # http://bugs.python.org/issue7980
@@ -212,6 +212,11 @@ class ScarlettSystem(dbus.service.Object):
             # TODO: Turn this into self.commander.check_cmd(hyp)
             scarlett.log.debug(Fore.GREEN +
                                "RECIEVED: {} from listener-hyp: {}".format(
+                                event['event_type'], event['data'])
+                               )
+        elif event['event_type'] == 'scarlett_speak':
+            scarlett.log.debug(Fore.GREEN +
+                               "RECIEVED: {} from scarlett-speak: {}".format(
                                 event['event_type'], event['data'])
                                )
         else:

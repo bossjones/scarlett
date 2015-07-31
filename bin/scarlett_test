@@ -30,20 +30,14 @@ try:
     DBusGMainLoop(set_as_default=True)
     import pygst
     pygst.require('0.10')
-    # gobject.threads_init()
-    # threads_init()
     import scarlett
     from scarlett.constants import *
     from scarlett import __version__
     from scarlett import ScarlettSystem
-    import scarlett.basics.voice
-    from scarlett.basics.voice import Voice
     import scarlett.bootstrap
-    from scarlett.listener.gstlisteneri import GstListenerImproved
-    from scarlett.basics.talk import ScarlettTalk
-    import scarlett.basics.say as scarlett_says
 except:
     gobjectnotimported = True
+    print 'Error importing main modules in scarlett_test'
 
 import logging
 import argparse
@@ -55,7 +49,6 @@ from functools import wraps
 import time
 import pprint
 import redis
-from scarlett.brain.scarlettbraini import ScarlettBrainImproved
 
 import ast
 

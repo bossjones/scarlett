@@ -58,7 +58,7 @@ CORE_MODULES = {
     },
     'speaker': {
         'module_path': 'scarlett.basics.',
-        'module_name': 'voice'
+        'module_name': 'speakerfsm'
     },
     'listener': {
         'module_path': 'scarlett.listener.',
@@ -116,10 +116,18 @@ def setup_core_feature(ss, mod_name):
     global CORE_MODULES
 
     core_feature_name = mod_name
+    scarlett.log.debug(
+            Fore.RED + "core_feature_name {}.".format(core_feature_name))
+
     # folder_name = folder_name_to_str(core_feature_name)
     # module_name = module_name_to_str(core_feature_name)
     module_paths = module_path_to_str(core_feature_name)
     potential_paths = potential_path_to_str(core_feature_name)
+
+    scarlett.log.debug(
+            Fore.RED + "module_paths {}.".format(module_paths))
+    scarlett.log.debug(
+            Fore.RED + "potential_paths {}.".format(potential_paths))
 
     if core_feature_name == 'brain':
         modules = pkgutil.iter_modules(scarlett.brain.__path__, module_paths)
@@ -130,12 +138,19 @@ def setup_core_feature(ss, mod_name):
     elif core_feature_name == 'listener':
         modules = pkgutil.iter_modules(
             scarlett.listener.__path__, module_paths)
+        scarlett.log.debug(
+            Fore.RED + "modules {}.".format(modules))
     else:
         scarlett.log.debug(
             Fore.RED + "Error loading {}.".format(core_feature_name))
         return False
 
     for module_loader, mod_name, ispkg in modules:
+        scarlett.log.debug(
+            Fore.RED + "mod_name {}.".format(mod_name))
+
+        scarlett.log.debug(
+            Fore.RED + "module_loader {}.".format(module_loader))
 
         if mod_name not in sys.modules and mod_name == potential_paths:
             try:
@@ -283,7 +298,7 @@ def system_boot(ss=None):
     # End: Enable scarlett features
 
     # TODO: set this to ('brain','listener')
-    _core_features_to_register = ('listener',)
+    _core_features_to_register = ('speaker',)
 
     _core_features_to_register = [
         x for x in _core_features_to_register if isinstance(x, basestring)]
