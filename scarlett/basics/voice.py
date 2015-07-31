@@ -32,6 +32,8 @@ __PLAYER__ = None
 
 # Connect End Of Stream handler on bus
 main_loop = gobject.MainLoop()
+
+
 def eos_handler(bus, message):
     __PLAYER__.set_state(gst.STATE_READY)
     main_loop.quit()
@@ -90,6 +92,7 @@ def play_free():
         __PLAYER__.set_state(gst.STATE_NULL)
         __PLAYER__ = None
 
+
 class Voice(ScarlettBasics):
 
     def __init__(self, brain):
@@ -103,9 +106,11 @@ class Voice(ScarlettBasics):
     def speak(self, text, speed=150):
         text = ''.join(e for e in text if e.isalpha() or e.isspace())
         if self.sudo_enabled:
-            subprocess.Popen('sudo espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
+            subprocess.Popen(
+                'sudo espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
         else:
-            subprocess.Popen('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
+            subprocess.Popen(
+                'espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
 
     def greetings_play(self):
         self.speak(
@@ -113,4 +118,3 @@ class Voice(ScarlettBasics):
 
     def read(self, text):
         self.speak(text, self.reading_speed)
-

@@ -25,13 +25,17 @@ __ESPEAK__ = None
 
 # Connect End Of Stream handler on bus
 main_loop = gobject.MainLoop()
+
+
 def eos_handler(bus, message):
     __ESPEAK__.set_state(gst.STATE_READY)
     main_loop.quit()
 
+
 def gstmessage_cb(bus, message, __ESPEAK__):
     if message.type in (gst.MESSAGE_EOS, gst.MESSAGE_ERROR):
         __ESPEAK__.set_state(gst.STATE_NULL)
+
 
 def say(sound):
     """
@@ -60,19 +64,18 @@ def say(sound):
     # Play file
     source = __ESPEAK__.get_by_name("source")
 
-    ####################################################################################
+    ##########################################################################
     # all writable properties(including text) make sense only at start playing;
     # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
     # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
     # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
-    ####################################################################################
+    ##########################################################################
     source.props.pitch = 50
     source.props.rate = 100
     source.props.voice = "en+f3"
     source.props.text = _('{}'.format(sound))
 
     #subprocess.Popen('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
-
 
     __ESPEAK__.set_state(gst.STATE_PLAYING)
 
