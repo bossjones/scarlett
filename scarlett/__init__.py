@@ -36,8 +36,6 @@ import time
 import pprint
 
 import redis
-from scarlett.brain.scarlettbraini import ScarlettBrainImproved
-
 import ast
 
 # drops you down into pdb if exception is thrown
@@ -173,14 +171,6 @@ class ScarlettSystem(dbus.service.Object):
         self.base_services = []
 
         self.features = []
-
-        # DISABLED FOR NOW # self._brain = ScarlettBrainImproved(
-        # DISABLED FOR NOW #     host=scarlett.config.get('redis', 'host'),
-        # DISABLED FOR NOW #     port=scarlett.config.get('redis', 'port'),
-        # DISABLED FOR NOW #     db=scarlett.config.get('redis', 'db')
-        # DISABLED FOR NOW #     )
-
-        #scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
 
         # scarlett.basics.voice.play_block('pi-listening')
 
