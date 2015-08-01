@@ -224,6 +224,11 @@ class ScarlettSystem(dbus.service.Object):
                                "RECIEVED: {} from listener-hyp: {}".format(
                                 event['event_type'], event['data'])
                                )
+        elif event['event_type'] == 'scarlett_speak':
+            scarlett.log.debug(Fore.GREEN +
+                               "RECIEVED: {} from scarlett-speak: {}".format(
+                                event['event_type'], event['data'])
+                               )
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
 
