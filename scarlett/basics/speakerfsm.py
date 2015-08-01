@@ -259,15 +259,15 @@ class SpeakerFSM(gobject.GObject):
             return override_parse
 
 
-def stop(self):
-    self.pipeline.set_state(gst.STATE_NULL)
+    def stop(self):
+        self.pipeline.set_state(gst.STATE_NULL)
 
-    if self.loop is not None:
-        self.loop.quit()
+        if self.loop is not None:
+            self.loop.quit()
 
 
-def hello(self):
-    print 'hello hello hello!'
+    def hello(self):
+        print 'hello hello hello!'
 
 # def say(sound):
 #     """
