@@ -13,3 +13,4 @@ pulsar==0.9.1
 #greenlet
 #taba
 transitions==0.2.5
+colorlog

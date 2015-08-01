@@ -31,6 +31,7 @@ from transitions import Machine
 from scarlett.events import scarlett_event
 
 from gettext import gettext as _
+from Queue import Queue
 import time
 
 # Create a gtreamer espeak
@@ -45,12 +46,12 @@ CORE_OBJECT = 'SpeakerFSM'
 _INSTANCE = None
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-9s) %(message)s',)
+                    format='(%(threadName)-9s) [%(module)s] %(message)s',)
 
 
 def setup_core(ss):
 
-    # logging.info("attempting to setup GstlistenerFSM")
+    logging.info("attempting to setup GstlistenerFSM")
 
     global _INSTANCE
 
@@ -93,6 +94,14 @@ class SpeakerFSM(gobject.GObject):
             False,  # default value
             gobject.PARAM_READWRITE
         ),
+        'action': (
+            gobject.TYPE_STRING,  # type
+            'Speech Action',  # nick name
+            # description
+            'Set if speaker should be running or waiting',
+            'scarlett_no_speak',  # default value
+            gobject.PARAM_READWRITE
+        )
     }
 
     __gsignals__ = {
@@ -132,6 +141,7 @@ class SpeakerFSM(gobject.GObject):
         self.config = scarlett.config
         self.name = 'SpeakerFSM'
         self.canceled = False
+        self.queue = Queue()
 
         # scarlett_speak, scarlett_no_speak
         self.action = 'scarlett_no_speak'
@@ -168,7 +178,7 @@ class SpeakerFSM(gobject.GObject):
         bus.connect('message::error', self.eos_handler)
 
         ss_speaker = threading.Thread(
-            name='Scarlett Speaker', target=self.start_speaker)
+            name='Scarlett Speaker', target=self.go)
         ss_speaker.daemon = True
         ss_speaker.start()
 
@@ -203,7 +213,7 @@ class SpeakerFSM(gobject.GObject):
         else:
             raise AttributeError('unknown property %s' % property)
 
-    def start_speaker(self):
+    def go(self):
         global CORE_OBJECT
 
         # register service start
@@ -218,13 +228,16 @@ class SpeakerFSM(gobject.GObject):
             'speaker-started', speaker_connect
         )
 
-        # Thread loop
-        while not self.canceled:
-            if self.action == 'scarlett_no_speak':
+        while True:
+            # always expect action and text in tuple
+            event_action, event_text = self.queue.get()
+            if event_action == 'scarlett_speak_end':
+                self.stop()
+                return
+            elif event_action == 'scarlett_no_speak':
                 time.sleep(.1)
                 continue
-            # Wait queue
-            elif self.action == 'scarlett_speak':
+            elif event_action == 'scarlett_speak':
                 self.espeak_pipeline.set_state(gst.STATE_READY)
 
                 source = self.espeak_pipeline.get_by_name("source")
@@ -246,7 +259,82 @@ class SpeakerFSM(gobject.GObject):
                 # set back to no speak after finished
                 self.action = 'scarlett_no_speak'
 
-        self.stop()
+    def event_speak(self, event):
+        """ Listens for new events on the EventBus and puts them
+            in the process queue. """
+        self.queue.put(event)
+
+    # def speak(self, tts):
+    #     self.do_set_property('speech-text',tts)
+    #     self.espeak_pipeline.set_state(gst.STATE_READY)
+
+    #     source = self.espeak_pipeline.get_by_name("source")
+    #     ###############################################################
+    #     # all writable properties(including text) make sense only at start playing;
+    #     # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
+    #     # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
+    #     # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
+    #     ###############################################################
+    #     source.props.pitch = 50
+    #     source.props.rate = 100
+    #     source.props.voice = "en+f3"
+    #     source.props.text = _('{}'.format(self.speech_text))
+    #     self.espeak_pipeline.set_state(gst.STATE_PLAYING)
+
+    #     self.loop = gobject.MainLoop()
+    #     self.loop.run()
+
+    #     # set back to no speak after finished
+    #     self.action = 'scarlett_no_speak'
+
+    # def start_speaker(self, is_canceled, action, tts):
+    #     global CORE_OBJECT
+
+    #     # register service start
+    #     speaker_connect = scarlett_event(
+    #         'service_state',
+    #         data=CORE_OBJECT
+    #     )
+
+    #     # idle_emit since this is something with low priority
+    #     gobject.idle_add(
+    #         self.emit,
+    #         'speaker-started', speaker_connect
+    #     )
+
+    #     # Thread loop
+    #     while not self.canceled:
+    #         self.do_set_property('canceled', is_canceled)
+    #         self.do_set_property('action',action)
+    #         self.do_set_property('speech-text',tts)
+
+    #         if self.action == 'scarlett_no_speak':
+    #             time.sleep(.1)
+    #             continue
+    #         # Wait queue
+    #         elif self.action == 'scarlett_speak':
+    #             self.espeak_pipeline.set_state(gst.STATE_READY)
+
+    #             source = self.espeak_pipeline.get_by_name("source")
+    #             ###############################################################
+    #             # all writable properties(including text) make sense only at start playing;
+    #             # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
+    #             # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
+    #             # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
+    #             ###############################################################
+    #             source.props.pitch = 50
+    #             source.props.rate = 100
+    #             source.props.voice = "en+f3"
+    #             source.props.text = _('{}'.format(self.speech_text))
+    #             self.espeak_pipeline.set_state(gst.STATE_PLAYING)
+
+    #             self.loop = gobject.MainLoop()
+    #             self.loop.run()
+
+    #             # set back to no speak after finished
+    #             self.action = 'scarlett_no_speak'
+
+    #     self.stop()
 
     def _get_espeak_definition(self, override_parse):
         """Return ``espeak`` definition for :func:`gst.parse_launch`."""

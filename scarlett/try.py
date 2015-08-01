@@ -24,9 +24,6 @@ sys.excepthook = ultratb.FormattedTB(mode='Verbose',
 from colorlog import ColoredFormatter
 
 import logging
-# logging.basicConfig(level=logger.debug,
-#                     format='(%(threadName)-9s) %(message)s',)
-
 
 def setup_logger():
     """Return a logger with a default ColoredFormatter."""
@@ -147,6 +144,7 @@ def main():
 
             except ImportError:
                 logging.error('Failed to import')
+                raise
 
 if __name__ == '__main__':
     main()
