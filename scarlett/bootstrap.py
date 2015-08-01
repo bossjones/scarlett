@@ -58,7 +58,7 @@ CORE_MODULES = {
     },
     'speaker': {
         'module_path': 'scarlett.basics.',
-        'module_name': 'voice'
+        'module_name': 'speakerfsm'
     },
     'listener': {
         'module_path': 'scarlett.listener.',
@@ -298,7 +298,7 @@ def system_boot(ss=None):
     # End: Enable scarlett features
 
     # TODO: set this to ('brain','listener')
-    _core_features_to_register = ('listener',)
+    _core_features_to_register = ('brain','listener','speaker')
 
     _core_features_to_register = [
         x for x in _core_features_to_register if isinstance(x, basestring)]

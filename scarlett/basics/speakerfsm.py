@@ -157,7 +157,7 @@ class SpeakerFSM(gobject.GObject):
         self.parse_launch_array = self._get_espeak_definition(
             self.override_parse)
 
-        self.self.espeak_pipeline = gst.parse_launch(
+        self.espeak_pipeline = gst.parse_launch(
             ' ! '.join(self.parse_launch_array))
 
         # Connect End Of Stream handler on bus
