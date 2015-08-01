@@ -27,6 +27,7 @@ import logging
 # logging.basicConfig(level=logger.debug,
 #                     format='(%(threadName)-9s) %(message)s',)
 
+
 def setup_logger():
     """Return a logger with a default ColoredFormatter."""
     formatter = ColoredFormatter(
@@ -41,10 +42,11 @@ def setup_logger():
             'CRITICAL': 'red',
         },
         secondary_log_colors={
-                'message': {
-                        'ERROR':    'red',
-                        'CRITICAL': 'red'
-                }
+            'message': {
+                'ERROR':    'red',
+                'CRITICAL': 'red',
+                'DEBUG': 'yellow'
+            }
         },
         style='%'
     )
@@ -56,6 +58,7 @@ def setup_logger():
     logger.setLevel(logging.DEBUG)
 
     return logger
+
 
 def main():
     """Create and use a logger."""
@@ -72,11 +75,11 @@ def main():
         },
         'speaker': {
             'module_path': 'scarlett.basics.',
-            'module_name': 'voice'
+            'module_name': 'speakerfsm'
         },
         'listener': {
             'module_path': 'scarlett.listener.',
-            'module_name': 'gstlisteneri'
+            'module_name': 'gstlistenerfsm'
         }
     }
 
@@ -138,12 +141,12 @@ def main():
                 instance = loaded_class
                 logger.debug(instance)
 
-                #Tracer()()
+                # Tracer()()
 
                 instance.hello()
 
             except ImportError:
-                logging.info('helllloooooooo')
+                logging.error('Failed to import')
 
 if __name__ == '__main__':
     main()
