@@ -148,9 +148,10 @@ def setup_core_feature(ss, mod_name):
     for module_loader, mod_name, ispkg in modules:
         scarlett.log.debug(
             Fore.RED + "mod_name {}.".format(mod_name))
-
         scarlett.log.debug(
             Fore.RED + "module_loader {}.".format(module_loader))
+        scarlett.log.debug(
+            Fore.RED + "ispkg {}.".format(ispkg))
 
         if mod_name not in sys.modules and mod_name == potential_paths:
             try:
@@ -298,7 +299,8 @@ def system_boot(ss=None):
     # End: Enable scarlett features
 
     # TODO: set this to ('brain','listener')
-    _core_features_to_register = ('speaker',)
+    ### _core_features_to_register = ('speaker',)
+    _core_features_to_register = ("brain",)
 
     _core_features_to_register = [
         x for x in _core_features_to_register if isinstance(x, basestring)]
