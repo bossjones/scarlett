@@ -265,6 +265,10 @@ def stop(self):
     if self.loop is not None:
         self.loop.quit()
 
+
+def hello(self):
+    print 'hello hello hello!'
+
 # def say(sound):
 #     """
 #     Play a sound.
