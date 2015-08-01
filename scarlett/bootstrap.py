@@ -298,7 +298,7 @@ def system_boot(ss=None):
     # End: Enable scarlett features
 
     # TODO: set this to ('brain','listener')
-    _core_features_to_register = ('brain','listener','speaker')
+    _core_features_to_register = ('brain','listener',)
 
     _core_features_to_register = [
         x for x in _core_features_to_register if isinstance(x, basestring)]
