@@ -23,16 +23,22 @@ sys.excepthook = ultratb.FormattedTB(mode='Verbose',
 
 from colorlog import ColoredFormatter
 
-formatter = ColoredFormatter(
-        "%(log_color)s%(levelname)-8s%(reset)s %(message_log_color)s%(message)s",
+import logging
+# logging.basicConfig(level=logger.debug,
+#                     format='(%(threadName)-9s) %(message)s',)
+
+def setup_logger():
+    """Return a logger with a default ColoredFormatter."""
+    formatter = ColoredFormatter(
+        "(%(threadName)-9s) %(log_color)s%(levelname)-8s%(reset)s %(message_log_color)s%(message)s",
         datefmt=None,
         reset=True,
         log_colors={
-                'DEBUG':    'cyan',
-                'INFO':     'green',
-                'WARNING':  'yellow',
-                'ERROR':    'red',
-                'CRITICAL': 'red,bg_white',
+            'DEBUG':    'cyan',
+            'INFO':     'green',
+            'WARNING':  'yellow',
+            'ERROR':    'red',
+            'CRITICAL': 'red',
         },
         secondary_log_colors={
                 'message': {
@@ -41,97 +47,103 @@ formatter = ColoredFormatter(
                 }
         },
         style='%'
-)
+    )
 
-import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-9s) %(message)s',)
+    logger = logging.getLogger(__name__)
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
 
-CORE_MODULES = {
-    'brain': {
-        'module_path': 'scarlett.brain.',
-        'module_name': 'scarlettbrainfsm'
-    },
-    'player': {
-        'module_path': 'scarlett.basics.',
-        'module_name': 'say'
-    },
-    'speaker': {
-        'module_path': 'scarlett.basics.',
-        'module_name': 'voice'
-    },
-    'listener': {
-        'module_path': 'scarlett.listener.',
-        'module_name': 'gstlisteneri'
+    return logger
+
+def main():
+    """Create and use a logger."""
+    logger = setup_logger()
+
+    CORE_MODULES = {
+        'brain': {
+            'module_path': 'scarlett.brain.',
+            'module_name': 'scarlettbrainfsm'
+        },
+        'player': {
+            'module_path': 'scarlett.basics.',
+            'module_name': 'say'
+        },
+        'speaker': {
+            'module_path': 'scarlett.basics.',
+            'module_name': 'voice'
+        },
+        'listener': {
+            'module_path': 'scarlett.listener.',
+            'module_name': 'gstlisteneri'
+        }
     }
-}
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--core-feature", default="brain")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--core-feature", default="brain")
 
-scarlett_cli_args = parser.parse_args()
+    scarlett_cli_args = parser.parse_args()
 
-feature_name = scarlett_cli_args.core_feature
+    feature_name = scarlett_cli_args.core_feature
 
-# scarlett.brain.scarlettbrainfsm.scarlettbraini
-folder_name = CORE_MODULES[feature_name]['module_path'].split('.')[1]
-module_name = CORE_MODULES[feature_name]['module_name']
+    # scarlett.brain.scarlettbrainfsm.scarlettbraini
+    folder_name = CORE_MODULES[feature_name]['module_path'].split('.')[1]
+    module_name = CORE_MODULES[feature_name]['module_name']
 
-module_paths = '{}'.format(CORE_MODULES[feature_name]['module_path'])
-potential_paths = 'scarlett.{}.{}'.format(folder_name, module_name)
+    module_paths = '{}'.format(CORE_MODULES[feature_name]['module_path'])
+    potential_paths = 'scarlett.{}.{}'.format(folder_name, module_name)
 
-if feature_name == 'brain':
-    modules = pkgutil.iter_modules(scarlett.brain.__path__, module_paths)
-elif feature_name == 'speaker':
-    modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
-elif feature_name == 'player':
-    modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
-elif feature_name == 'listener':
-    modules = pkgutil.iter_modules(
-        scarlett.listener.__path__, module_paths)
-else:
-    logging.debug("Error loading {}.".format(feature_name))
+    if feature_name == 'brain':
+        modules = pkgutil.iter_modules(scarlett.brain.__path__, module_paths)
+    elif feature_name == 'speaker':
+        modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
+    elif feature_name == 'player':
+        modules = pkgutil.iter_modules(scarlett.basics.__path__, module_paths)
+    elif feature_name == 'listener':
+        modules = pkgutil.iter_modules(
+            scarlett.listener.__path__, module_paths)
+    else:
+        logger.debug("Error loading {}.".format(feature_name))
 
-if feature_name == 'brain':
-    # modules = pkgutil.iter_modules(path)
-    modules = pkgutil.iter_modules(
-        scarlett.brain.__path__, CORE_MODULES[feature_name]['module_path'])
+    for module_loader, mod_name, ispkg in modules:
 
-for module_loader, mod_name, ispkg in modules:
+        if mod_name not in sys.modules and mod_name == potential_paths:
 
-    if mod_name not in sys.modules and mod_name == potential_paths:
+            logger.debug("potential_paths: " + potential_paths + "\n")
+            logger.debug("modules: ")
+            logger.debug(modules)
+            logger.debug("\n")
 
-        print "potential_paths: " + potential_paths + "\n"
-        print "modules: "
-        print modules
-        print "\n"
+            logger.debug("mod_name: \n")
+            logger.debug(mod_name)
+            logger.debug("\n")
 
-        print "mod_name: \n"
-        print mod_name
-        print "\n"
+            logger.debug(mod_name == potential_paths)
+            logger.debug(mod_name)
+            logger.debug(potential_paths)
+            try:
+                # Import module
+                # eg: scarlett.brain.scarlettbrainfsm
+                loaded_mod = importlib.import_module(potential_paths)
 
-        print mod_name == potential_paths
-        print mod_name
-        print potential_paths
-        try:
-            # Import module
-            # eg: scarlett.brain.scarlettbrainfsm
-            loaded_mod = importlib.import_module(potential_paths)
+                # Load class from imported module
+                # eg: ScarlettBrainFSM
+                class_name = loaded_mod
+                logger.debug(class_name)
 
-            # Load class from imported module
-            # eg: ScarlettBrainFSM
-            class_name = loaded_mod
-            print class_name
+                loaded_class = getattr(loaded_mod, 'setup_core')(None)
 
-            loaded_class = getattr(loaded_mod, 'setup_core')(None)
+                # Create an instance of the class
+                instance = loaded_class
+                logger.debug(instance)
 
-            # Create an instance of the class
-            instance = loaded_class
-            print instance
+                #Tracer()()
 
-            #Tracer()()
+                instance.hello()
 
-            instance.hello()
+            except ImportError:
+                logging.info('helllloooooooo')
 
-        except ImportError:
-            print 'helllloooooooo'
+if __name__ == '__main__':
+    main()
