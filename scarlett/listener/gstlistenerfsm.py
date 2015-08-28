@@ -100,6 +100,11 @@ class GstlistenerFSM(gobject.GObject):
             gobject.TYPE_NONE,
             (gobject.TYPE_STRING,)
             ),
+        'gst-listening': (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_STRING,)
+            ),
         'kw-found-ps': (
             gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE,
@@ -233,16 +238,15 @@ class GstlistenerFSM(gobject.GObject):
     def start_listener(self):
         global CORE_OBJECT
 
-        # register service start
-        listener_connect = scarlett_event(
+        listener_state = scarlett_event(
               'service_state',
-              data=CORE_OBJECT
+              data='Scarlett is listening'
         )
 
         # idle_emit since this is something with low priority
         gobject.idle_add(
             self.emit,
-            'gst-started', listener_connect
+            'gst-started', listener_state
         )
 
         self.pipeline.set_state(gst.STATE_PLAYING)
@@ -501,6 +505,18 @@ class GstlistenerFSM(gobject.GObject):
             (err, debug) = msgtype.parse_error()
             scarlett.log.debug(Fore.RED + "Error: %s" % err, debug)
             pass
+
+    def start(self):
+        listener_connect = scarlett_event(
+              'service_state',
+              data=CORE_OBJECT
+        )
+
+        # idle_emit since this is something with low priority
+        gobject.idle_add(
+            self.emit,
+            'gst-started', listener_connect
+        )
 
 # Register to be able to emit signals
 gobject.type_register(GstlistenerFSM)
