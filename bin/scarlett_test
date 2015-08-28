@@ -112,7 +112,7 @@ if __name__ == "__main__":
         # TOD: figure out if this is really needed or not
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-        scarlett.basics.voice.play_free()
+        #scarlett.basics.voice.play_free()
         scarlett_daemon.Exit()
 
     signal.signal(signal.SIGINT, sigint_handler)
@@ -126,4 +126,6 @@ if __name__ == "__main__":
 
     finally:
 
-        scarlett.basics.voice.play_free()
+        print 'I would free the voice resource here'
+
+        # scarlett.basics.voice.play_free()
