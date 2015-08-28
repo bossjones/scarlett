@@ -13,7 +13,40 @@ import importlib
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-import scarlett
+import signal
+gobjectnotimported = False
+
+try:
+    import dbus
+    import dbus.service
+    from dbus.mainloop.glib import DBusGMainLoop
+    from dbus.mainloop.glib import threads_init
+    import subprocess
+    from subprocess import call
+    import gobject
+    # Initialize gtk threading
+    gobject.threads_init()
+    # If the keyword argument set_as_default is given and is true, set the new
+    # main loop as the default for all new Connection or Bus instances.
+    threads_init()
+    DBusGMainLoop(set_as_default=True)
+    import pygst
+    pygst.require('0.10')
+    # gobject.threads_init()
+    # threads_init()
+    import scarlett
+    from scarlett.constants import *
+    from scarlett import __version__
+    from scarlett import ScarlettSystem
+    #import scarlett.basics.voice
+    #from scarlett.basics.voice import Voice
+    #import scarlett.bootstrap
+    #from scarlett.listener.gstlisteneri import GstListenerImproved
+    #from scarlett.basics.talk import ScarlettTalk
+    #import scarlett.basics.say as scarlett_says
+except:
+    gobjectnotimported = True
+
 import argparse
 
 from IPython.core.debugger import Tracer
@@ -24,6 +57,7 @@ sys.excepthook = ultratb.FormattedTB(mode='Verbose',
 from colorlog import ColoredFormatter
 
 import logging
+
 
 def setup_logger():
     """Return a logger with a default ColoredFormatter."""
@@ -55,6 +89,22 @@ def setup_logger():
     logger.setLevel(logging.DEBUG)
 
     return logger
+
+
+def set_dbus_launch_shell():
+    # source:
+    # http://stackoverflow.com/questions/2143785/python-dbus-session-bus-x11-dependency
+    p = subprocess.Popen('dbus-launch',
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+
+    print "p: {}".format(p)
+
+    for var in p.stdout:
+        sp = var.split('=', 1)
+        print sp
+        os.environ[sp[0]] = sp[1][:-1]
 
 
 def main():
@@ -122,29 +172,42 @@ def main():
             logger.debug(mod_name == potential_paths)
             logger.debug(mod_name)
             logger.debug(potential_paths)
-            try:
+            #try:
                 # Import module
                 # eg: scarlett.brain.scarlettbrainfsm
-                loaded_mod = importlib.import_module(potential_paths)
+            loaded_mod = importlib.import_module(potential_paths)
 
-                # Load class from imported module
-                # eg: ScarlettBrainFSM
-                class_name = loaded_mod
-                logger.debug(class_name)
+            # Load class from imported module
+            # eg: ScarlettBrainFSM
+            class_name = loaded_mod
+            logger.debug(class_name)
 
-                loaded_class = getattr(loaded_mod, 'setup_core')(None)
+            loaded_class = getattr(loaded_mod, 'setup_core')(None)
 
-                # Create an instance of the class
-                instance = loaded_class
-                logger.debug(instance)
+            # Create an instance of the class
+            instance = loaded_class
+            #Tracer()()
+            logger.debug(instance)
+
+            #except ImportError:
+            #    logging.error('Failed to import')
+            #    raise
 
                 # Tracer()()
 
-                instance.hello()
+            instance.start()
+            instance.hello()
 
-            except ImportError:
-                logging.error('Failed to import')
-                raise
+            if feature_name == 'speaker':
+                instance.event_speak(('scarlett_speak',
+                                      'Hello sir. How are you doing this afternoon? I am full lee function nall, andd red ee for your commands'))
+
+            # if instance.exc_info:
+            #    raise instance.exc_info[1], None, instance.exc_info[2]
+            # return instance.result
+
 
 if __name__ == '__main__':
+    set_dbus_launch_shell()
+
     main()
