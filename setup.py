@@ -81,7 +81,8 @@ setup(
         "scarlett.core",
         "scarlett.features",
         "scarlett.brain",
-        "scarlett.listener"
+        "scarlett.listener",
+        "scarlett.util"
 
     ],
     package_dir={"scarlett":

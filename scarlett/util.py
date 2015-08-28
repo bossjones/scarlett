@@ -13,15 +13,46 @@ import Queue
 import threading
 
 from datetime import datetime, timedelta
+import re
+import enum
+import logging
 
-# singleton decorator
-def singleton(myClass):
-    instances = {}
-    def getInstance(*args, **kwargs):
-      if myClass not in instances:
-          instances[myClass] = myClass(*args,**kwargs)
-      return instances[myClass]
-    return getInstance
+MIN_WORKER_THREAD = 2
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-9s) [%(module)s] %(message)s',)
+
+DATE_STR_FORMAT = "%H:%M:%S %d-%m-%Y"
+
+RE_SANITIZE_FILENAME = re.compile(r'(~|\.\.|/|\\)')
+RE_SANITIZE_PATH = re.compile(r'(~|\.(\.)+)')
+RE_SLUGIFY = re.compile(r'[^A-Za-z0-9_]+')
+
+
+def sanitize_filename(filename):
+    """ Sanitizes a filename by removing .. / and \\. """
+    return RE_SANITIZE_FILENAME.sub("", filename)
+
+
+def sanitize_path(path):
+    """ Sanitizes a path by removing ~ and .. """
+    return RE_SANITIZE_PATH.sub("", path)
+
+
+def slugify(text):
+    """ Slugifies a given text. """
+    text = text.replace(" ", "_")
+
+    return RE_SLUGIFY.sub("", text)
+
+
+def datetime_to_str(dattim):
+    """ Converts datetime to a string format.
+
+    @rtype : str
+    """
+    return dattim.strftime(DATE_STR_FORMAT)
+
 
 class Stopwatch(object):
 
@@ -114,7 +145,9 @@ def get_local_ip():
     except socket.error:
         return socket.gethostbyname(socket.gethostname())
 
+
 class ThreadPool(object):
+
     """ A priority queue-based thread pool. """
     # source: https://github.com/balloob/home-assistant/blob/master/homeassistant/util.py
     # pylint: disable=too-many-instance-attributes
@@ -242,9 +275,11 @@ class ThreadPool(object):
 
 
 class PriorityQueueItem(object):
+
     """ Holds a priority and a value. Used within PriorityQueue. """
 
     # pylint: disable=too-few-public-methods
+
     def __init__(self, priority, item):
         self.priority = priority
         self.item = item

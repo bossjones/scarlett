@@ -32,7 +32,6 @@ from scarlett.events import scarlett_event
 
 from gettext import gettext as _
 from Queue import Queue
-import time
 
 # Create a gtreamer espeak
 # __ESPEAK__ = None
@@ -51,7 +50,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 def setup_core(ss):
 
-    logging.info("attempting to setup GstlistenerFSM")
+    logging.info("attempting to setup SpeakerFSM")
 
     global _INSTANCE
 
@@ -59,14 +58,90 @@ def setup_core(ss):
         _INSTANCE = SpeakerFSM()
     return _INSTANCE
 
-# def eos_handler(bus, message):
-#     __ESPEAK__.set_state(gst.STATE_READY)
-#     main_loop.quit()
+# Create a gtreamer espeak
+__ESPEAK__ = None
+
+# Connect End Of Stream handler on bus
+main_loop = gobject.MainLoop()
 
 
-# def gstmessage_cb(bus, message, __ESPEAK__):
-#     if message.type in (gst.MESSAGE_EOS, gst.MESSAGE_ERROR):
-#         __ESPEAK__.set_state(gst.STATE_NULL)
+def eos_handler(bus, message):
+    __ESPEAK__.set_state(gst.STATE_READY)
+    main_loop.quit()
+
+
+def gstmessage_cb(bus, message, __ESPEAK__):
+    if message.type in (gst.MESSAGE_EOS, gst.MESSAGE_ERROR):
+        __ESPEAK__.set_state(gst.STATE_NULL)
+
+
+def say(sound):
+    """
+    Play a sound.
+    """
+    scarlett.log.debug('PWD: ' + PWD)
+    scarlett.log.debug('SOUND: ' + sound)
+    global __ESPEAK__
+
+    # Create espeak once
+    if __ESPEAK__ is None:
+        espk_pipeline = 'espeak name=source ! autoaudiosink'
+        __ESPEAK__ = gst.parse_launch(espk_pipeline)
+
+        # Connect End Of Stream handler on bus
+        bus = __ESPEAK__.get_bus()
+        bus.add_signal_watch()
+        bus.connect('message', gstmessage_cb, __ESPEAK__)
+        bus.connect('message::eos', eos_handler)
+        bus.connect('message::error', eos_handler)
+
+    # Stop previous espeak if any
+    else:
+        __ESPEAK__.set_state(gst.STATE_READY)
+
+    # Play file
+    source = __ESPEAK__.get_by_name("source")
+
+    ##########################################################################
+    # all writable properties(including text) make sense only at start playing;
+    # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
+    # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
+    # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
+    ##########################################################################
+    source.props.pitch = 50
+    source.props.rate = 100
+    source.props.voice = "en+f3"
+    source.props.text = _('{}'.format(sound))
+
+    #subprocess.Popen('espeak -ven+f3 -k5 -s%d "%s" 2>&1' % (speed, text), shell=True).wait()
+
+    __ESPEAK__.set_state(gst.STATE_PLAYING)
+
+
+def say_block(sound):
+    """
+    Play sound but block until end
+    """
+    global main_loop
+
+    # Play sound
+    say(sound)
+
+    # Wait for EOS signal in mail loop
+    main_loop.run()
+
+
+def say_free():
+    """
+    Free espeak resource
+    """
+    global __ESPEAK__
+
+    # Delete espeak
+    if __ESPEAK__ is not None:
+        __ESPEAK__.set_state(gst.STATE_NULL)
+        __ESPEAK__ = None
+
 
 class SpeakerFSM(gobject.GObject):
 
@@ -164,34 +239,16 @@ class SpeakerFSM(gobject.GObject):
         # Check interval, in seconds
         self.interval = 1
 
-        self.parse_launch_array = self._get_espeak_definition(
-            self.override_parse)
+        # self.parse_launch_array = self._get_espeak_definition(
+        #     self.override_parse)
 
-        self.espeak_pipeline = gst.parse_launch(
-            ' ! '.join(self.parse_launch_array))
-
-        # Connect End Of Stream handler on bus
-        bus = self.espeak_pipeline.get_bus()
-        bus.add_signal_watch()
-        bus.connect('message', self.gstmessage_cb, self.espeak_pipeline)
-        bus.connect('message::eos', self.eos_handler)
-        bus.connect('message::error', self.eos_handler)
+        # self.espeak_pipeline = gst.parse_launch(
+        #     ' ! '.join(self.parse_launch_array))
 
         ss_speaker = threading.Thread(
             name='Scarlett Speaker', target=self.go)
         ss_speaker.daemon = True
         ss_speaker.start()
-
-    def eos_handler(self, bus, message):
-        import gst
-        self.espeak_pipeline.set_state(gst.STATE_READY)
-        if self.loop is not None:
-            self.loop.quit()
-
-    def gstmessage_cb(self, bus, message):
-        import gst
-        if message.type in (gst.MESSAGE_EOS, gst.MESSAGE_ERROR):
-            self.espeak_pipeline.set_state(gst.STATE_NULL)
 
     def do_get_property(self, property):
         if property.name == 'speech-test':
@@ -216,10 +273,11 @@ class SpeakerFSM(gobject.GObject):
     def go(self):
         global CORE_OBJECT
 
-        # register service start
+        logging.info("INSIDE START")
+
         speaker_connect = scarlett_event(
-            'service_state',
-            data=CORE_OBJECT
+              'service_state',
+              data=CORE_OBJECT
         )
 
         # idle_emit since this is something with low priority
@@ -238,24 +296,19 @@ class SpeakerFSM(gobject.GObject):
                 time.sleep(.1)
                 continue
             elif event_action == 'scarlett_speak':
-                self.espeak_pipeline.set_state(gst.STATE_READY)
 
-                source = self.espeak_pipeline.get_by_name("source")
-                ###############################################################
-                # all writable properties(including text) make sense only at start playing;
-                # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
-                # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
-                # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
-                ###############################################################
-                source.props.pitch = 50
-                source.props.rate = 100
-                source.props.voice = "en+f3"
-                source.props.text = _('{}'.format(self.speech_text))
-                self.espeak_pipeline.set_state(gst.STATE_PLAYING)
+                speaker_event = scarlett_event(
+                    'scarlett_speak',
+                    data=event_text
+                )
 
-                self.loop = gobject.MainLoop()
-                self.loop.run()
+                gobject.idle_add(
+                    self.emit,
+                    'speaking', speaker_event
+                )
 
+                print "We are speaking!"
+                # Connect End Of Stream handler on bus
                 # set back to no speak after finished
                 self.action = 'scarlett_no_speak'
 
@@ -263,78 +316,6 @@ class SpeakerFSM(gobject.GObject):
         """ Listens for new events on the EventBus and puts them
             in the process queue. """
         self.queue.put(event)
-
-    # def speak(self, tts):
-    #     self.do_set_property('speech-text',tts)
-    #     self.espeak_pipeline.set_state(gst.STATE_READY)
-
-    #     source = self.espeak_pipeline.get_by_name("source")
-    #     ###############################################################
-    #     # all writable properties(including text) make sense only at start playing;
-    #     # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
-    #     # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
-    #     # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
-    #     ###############################################################
-    #     source.props.pitch = 50
-    #     source.props.rate = 100
-    #     source.props.voice = "en+f3"
-    #     source.props.text = _('{}'.format(self.speech_text))
-    #     self.espeak_pipeline.set_state(gst.STATE_PLAYING)
-
-    #     self.loop = gobject.MainLoop()
-    #     self.loop.run()
-
-    #     # set back to no speak after finished
-    #     self.action = 'scarlett_no_speak'
-
-    # def start_speaker(self, is_canceled, action, tts):
-    #     global CORE_OBJECT
-
-    #     # register service start
-    #     speaker_connect = scarlett_event(
-    #         'service_state',
-    #         data=CORE_OBJECT
-    #     )
-
-    #     # idle_emit since this is something with low priority
-    #     gobject.idle_add(
-    #         self.emit,
-    #         'speaker-started', speaker_connect
-    #     )
-
-    #     # Thread loop
-    #     while not self.canceled:
-    #         self.do_set_property('canceled', is_canceled)
-    #         self.do_set_property('action',action)
-    #         self.do_set_property('speech-text',tts)
-
-    #         if self.action == 'scarlett_no_speak':
-    #             time.sleep(.1)
-    #             continue
-    #         # Wait queue
-    #         elif self.action == 'scarlett_speak':
-    #             self.espeak_pipeline.set_state(gst.STATE_READY)
-
-    #             source = self.espeak_pipeline.get_by_name("source")
-    #             ###############################################################
-    #             # all writable properties(including text) make sense only at start playing;
-    #             # to apply new values you need to stop pipe.set_state(gst.STATE_NULL) pipe and
-    #             # start it again with new properties pipe.set_state(gst.STATE_PLAYING).
-    #             # source: http://wiki.sugarlabs.org/go/Activity_Team/gst-plugins-espeak
-    #             ###############################################################
-    #             source.props.pitch = 50
-    #             source.props.rate = 100
-    #             source.props.voice = "en+f3"
-    #             source.props.text = _('{}'.format(self.speech_text))
-    #             self.espeak_pipeline.set_state(gst.STATE_PLAYING)
-
-    #             self.loop = gobject.MainLoop()
-    #             self.loop.run()
-
-    #             # set back to no speak after finished
-    #             self.action = 'scarlett_no_speak'
-
-    #     self.stop()
 
     def _get_espeak_definition(self, override_parse):
         """Return ``espeak`` definition for :func:`gst.parse_launch`."""
@@ -346,13 +327,18 @@ class SpeakerFSM(gobject.GObject):
         else:
             return override_parse
 
+    def start(self):
+        # register service start
+        register_sstart = scarlett_event("service_state",
+                                         data='on'
+                                         )
+        self.emit('speaker-started', register_sstart)
 
     def stop(self):
         self.pipeline.set_state(gst.STATE_NULL)
 
         if self.loop is not None:
             self.loop.quit()
-
 
     def hello(self):
         print 'hello hello hello!'
