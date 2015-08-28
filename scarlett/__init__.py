@@ -4,6 +4,7 @@ from scarlett.core.config import Config, ScarlettConfigLocations
 import datetime
 import os
 import platform
+from colorlog import ColoredFormatter
 import logging
 import logging.config
 import scarlett.errors
@@ -37,6 +38,13 @@ import pprint
 
 import redis
 from scarlett.brain.scarlettbraini import ScarlettBrainImproved
+
+import scarlett.util as util
+
+# Define number of MINIMUM worker threads.
+# During bootstrap of HA (see bootstrap.from_config_dict()) worker threads
+# will be added for each component that polls devices.
+MIN_WORKER_THREAD = 2
 
 import ast
 
@@ -115,6 +123,33 @@ class ScarlettSystemException(dbus.DBusException):
     _dbus_error_name = 'org.scarlettapp.scarlettbotexception'
 
 
+def create_worker_pool():
+    """ Creates a worker pool to be used. """
+
+    def job_handler(job):
+        """ Called whenever a job is available to do. """
+        try:
+            func, arg = job
+            func(arg)
+        except Exception:  # pylint: disable=broad-except
+            # Catch any exception our service/event_listener might throw
+            # We do not want to crash our ThreadPool
+            scarlett.log.exception("BusHandler:Exception doing job")
+
+    def busy_callback(worker_count, current_jobs, pending_jobs_count):
+        """ Callback to be called when the pool queue gets too big. """
+
+        scarlett.log.warning(
+            "WorkerPool:All %d threads are busy and %d jobs pending",
+            worker_count, pending_jobs_count)
+
+        for start, job in current_jobs:
+            scarlett.log.warning("WorkerPool:Current job from %s: %s",
+                                 util.datetime_to_str(start), job)
+
+    return util.ThreadPool(job_handler, MIN_WORKER_THREAD, busy_callback)
+
+
 class ScarlettSystem(dbus.service.Object):
 
     """ Actual scarlett bot object that has a brain, voice, etc """
@@ -174,6 +209,8 @@ class ScarlettSystem(dbus.service.Object):
 
         self.features = []
 
+        self._pool = pool or scarlett.create_worker_pool()
+
         # DISABLED FOR NOW # self._brain = ScarlettBrainImproved(
         # DISABLED FOR NOW #     host=scarlett.config.get('redis', 'host'),
         # DISABLED FOR NOW #     port=scarlett.config.get('redis', 'port'),
@@ -216,18 +253,18 @@ class ScarlettSystem(dbus.service.Object):
         if event['event_type'] == 'service_state':
             scarlett.log.debug(Fore.GREEN +
                                "RECIEVED: {} from time-started: {}".format(
-                                event['event_type'], event['data'])
+                                   event['event_type'], event['data'])
                                )
         elif event['event_type'] == 'listener_hyp':
             # TODO: Turn this into self.commander.check_cmd(hyp)
             scarlett.log.debug(Fore.GREEN +
                                "RECIEVED: {} from listener-hyp: {}".format(
-                                event['event_type'], event['data'])
+                                   event['event_type'], event['data'])
                                )
         elif event['event_type'] == 'scarlett_speak':
             scarlett.log.debug(Fore.GREEN +
                                "RECIEVED: {} from scarlett-speak: {}".format(
-                                event['event_type'], event['data'])
+                                   event['event_type'], event['data'])
                                )
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
