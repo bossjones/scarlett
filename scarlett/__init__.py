@@ -72,6 +72,9 @@ import sys
 
 from colorama import init, Fore, Back, Style
 
+# chg: When we enable this, scarlett runner stops working
+# import scarlett.basics.speakerfsm
+
 # set colorama
 init(autoreset=True)
 
@@ -279,10 +282,11 @@ class ScarlettSystem(dbus.service.Object):
                                )
             # TODO: YOU NEED THIS LOCK TO WORK ETC
             with self._lock:
-                self._pool.add_job(scarlett.constants.EVENT_SERVICE,
-                                   (self._execute_service,
-                                    (scarlett.basics.speakerfsm.say_block,
-                                     event['data'])))
+                scarlett.log.info('Adding job {}'.format(scarlett.constants.EVENT_SERVICE))
+                # self._pool.add_job(scarlett.constants.EVENT_SERVICE,
+                #                    (self._execute_service,
+                #                     (scarlett.basics.speakerfsm.say_block,
+                #                      event['data'])))
 
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
