@@ -8,6 +8,7 @@ from colorlog import ColoredFormatter
 import logging
 import logging.config
 import scarlett.errors
+import threading
 
 # NOTE: take from scarlett_improved
 
@@ -25,8 +26,26 @@ try:
     DBusGMainLoop(set_as_default=True)
     import pygst
     pygst.require('0.10')
-    from scarlett.constants import *
-    from scarlett import __version__
+    import scarlett.constants
+    from scarlett.constants import (
+        EVENT_CALLBACK,
+        EVENT_SERVICE,
+        EVENT_STATE,
+        EVENT_TIME,
+        EVENT_DEFAULT,
+        EVENT_SCARLETT_START,
+        EVENT_SCARLETT_STOP,
+        EVENT_STATE_CHANGED,
+        EVENT_TIME_CHANGED,
+        EVENT_CALL_SERVICE,
+        EVENT_SERVICE_EXECUTED,
+        EVENT_SERVICE_REGISTER,
+        EVENT_PLATFORM_DISCOVERED,
+        EVENT_SCARLETT_SAY,
+        EVENT_BRAIN_UPDATE,
+        EVENT_BRAIN_CHECK
+    )
+
 except:
     gobjectnotimported = True
 
@@ -50,6 +69,11 @@ import ast
 
 # drops you down into pdb if exception is thrown
 import sys
+
+from colorama import init, Fore, Back, Style
+
+# set colorama
+init(autoreset=True)
 
 __author__ = 'Malcolm Jones'
 __email__ = 'bossjones@theblacktonystark.com'
@@ -173,7 +197,6 @@ class ScarlettSystem(dbus.service.Object):
         )
 
         self.loop = None
-        # DISABLED FOR NOW # self.pool = pool = create_worker_pool()
 
         # These will later be populated w/ scarlett core objects in the
         # ./bin/scarlett_improved
@@ -209,21 +232,9 @@ class ScarlettSystem(dbus.service.Object):
 
         self.features = []
 
-        self._pool = pool or scarlett.create_worker_pool()
+        self._lock = threading.Lock()
 
-        # DISABLED FOR NOW # self._brain = ScarlettBrainImproved(
-        # DISABLED FOR NOW #     host=scarlett.config.get('redis', 'host'),
-        # DISABLED FOR NOW #     port=scarlett.config.get('redis', 'port'),
-        # DISABLED FOR NOW #     db=scarlett.config.get('redis', 'db')
-        # DISABLED FOR NOW #     )
-
-        #scarlett.log.debug(Fore.GREEN + "Scarlett Creating Voice Object")
-
-        # scarlett.basics.voice.play_block('pi-listening')
-
-        # scarlett_says.say_block("helllllllllllloooo")
-
-        #self.listener = GstListenerImproved("gst", self._brain, self._voice, False)
+        self._pool = scarlett.create_worker_pool()
 
     def connect_features(self):
         scarlett.log.info(Fore.GREEN + "would connect feature")
@@ -256,18 +267,31 @@ class ScarlettSystem(dbus.service.Object):
                                    event['event_type'], event['data'])
                                )
         elif event['event_type'] == 'listener_hyp':
-            # TODO: Turn this into self.commander.check_cmd(hyp)
             scarlett.log.debug(Fore.GREEN +
                                "RECIEVED: {} from listener-hyp: {}".format(
                                    event['event_type'], event['data'])
                                )
+            # TODO: Turn this into self.commander.check_cmd(hyp)
         elif event['event_type'] == 'scarlett_speak':
             scarlett.log.debug(Fore.GREEN +
                                "RECIEVED: {} from scarlett-speak: {}".format(
                                    event['event_type'], event['data'])
                                )
+            # TODO: YOU NEED THIS LOCK TO WORK ETC
+            with self._lock:
+                self._pool.add_job(scarlett.constants.EVENT_SERVICE,
+                                   (self._execute_service,
+                                    (scarlett.basics.speakerfsm.say_block,
+                                     event['data'])))
+
         else:
             raise ValueError('Unknown scarlettTime message: {}'.format(event))
+
+    def _execute_service(self, service_and_call):
+        """ Executes a service and fires a SERVICE_EXECUTED event. """
+        service, call = service_and_call
+
+        service(call)
 
     @dbus.service.method('org.scarlettapp.scarlettdaemon',
                          in_signature='', out_signature='')

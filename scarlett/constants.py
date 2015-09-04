@@ -18,6 +18,12 @@ PRIORITY_NONE = None
 PRIORITY_LOW = 'LOW'
 PRIORITY_HIGH = 'HIGH'
 
+EVENT_CALLBACK = 0
+EVENT_SERVICE = 1
+EVENT_STATE = 2
+EVENT_TIME = 3
+EVENT_DEFAULT = 4
+
 # Borrowed this constants from HOMEASSISTANT
 # If we're accessing an event that is local vs remote via the bus
 EVENT_SCARLETT_START = "scarlett_start"
@@ -33,7 +39,7 @@ EVENT_BRAIN_UPDATE = "scarlett_brain_update"
 EVENT_BRAIN_CHECK = "scarlett_brain_check"
 
 # event location
-EVENT_LOCAL  = "LOCAL"
+EVENT_LOCAL = "LOCAL"
 EVENT_REMOTE = "REMOTE"
 
 # #### STATES ####

@@ -8,13 +8,14 @@ import socket
 
 from scarlett.constants import DEFAULT_SCARLETT_PORT
 
-import pprint
+#import pprint
+#from datetime import datetime, timedelta
+#import enum
 import Queue
 import threading
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import re
-import enum
 import logging
 
 MIN_WORKER_THREAD = 2

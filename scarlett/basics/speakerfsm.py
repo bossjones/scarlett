@@ -33,6 +33,8 @@ from scarlett.events import scarlett_event
 from gettext import gettext as _
 from Queue import Queue
 
+import ast
+
 # Create a gtreamer espeak
 # __ESPEAK__ = None
 
@@ -79,7 +81,7 @@ def say(sound):
     """
     Play a sound.
     """
-    scarlett.log.debug('PWD: ' + PWD)
+    #scarlett.log.debug('PWD: ' + PWD)
     scarlett.log.debug('SOUND: ' + sound)
     global __ESPEAK__
 
@@ -250,6 +252,18 @@ class SpeakerFSM(gobject.GObject):
         ss_speaker.daemon = True
         ss_speaker.start()
 
+    def do_speaker_started(self, event_obj):
+        _msg = ast.literal_eval(event_obj)
+        logging.info('do_speaker_started data: {}'.format(_msg['data']))
+
+    def do_speaking(self, event_obj):
+        _msg = ast.literal_eval(event_obj)
+        logging.info('do_speaking data: {}'.format(_msg['data']))
+
+    def do_fin_speaking(self, event_obj):
+        _msg = ast.literal_eval(event_obj)
+        logging.info('do_fin_speaking data: {}'.format(_msg['data']))
+
     def do_get_property(self, property):
         if property.name == 'speech-test':
             return self.speech_text
@@ -276,8 +290,8 @@ class SpeakerFSM(gobject.GObject):
         logging.info("INSIDE START")
 
         speaker_connect = scarlett_event(
-              'service_state',
-              data=CORE_OBJECT
+            'service_state',
+            data=CORE_OBJECT
         )
 
         # idle_emit since this is something with low priority
