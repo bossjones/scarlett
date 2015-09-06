@@ -210,11 +210,7 @@ class SpeakerFSM(gobject.GObject):
             data=CORE_OBJECT
         )
 
-        # idle_emit since this is something with low priority
-        gobject.idle_add(
-            self.emit,
-            'speaker-started', speaker_connect
-        )
+        self.emit('speaker-started', speaker_connect)
 
         while True:
             # always expect action and text in tuple
@@ -232,10 +228,7 @@ class SpeakerFSM(gobject.GObject):
                     data=event_text
                 )
 
-                gobject.idle_add(
-                    self.emit,
-                    'speaking', speaker_event
-                )
+                self.emit('speaking', speaker_event)
 
                 print "We are speaking!"
                 # Connect End Of Stream handler on bus
@@ -281,14 +274,14 @@ gobject.type_register(SpeakerFSM)
 __ESPEAK__ = None
 
 # Connect End Of Stream handler on bus
-main_loop = gobject.MainLoop()
+# main_loop = gobject.MainLoop()
 
 
 def eos_handler(bus, message):
     logging.info("inside eos_handler")
 
     __ESPEAK__.set_state(gst.STATE_READY)
-    main_loop.quit()
+    #main_loop.quit()
 
 
 def gstmessage_cb(bus, message, __ESPEAK__):
@@ -342,12 +335,14 @@ def say_block(sound):
     """
     Play sound but block until end
     """
-    global main_loop
+    # global main_loop
 
     # Play sound
     say(sound)
 
-    # Wait for EOS signal in mail loop
+    main_loop = gobject.MainLoop()
+
+    # Wait for EOS signal in main loop
     main_loop.run()
 
     return False
