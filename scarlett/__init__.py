@@ -58,7 +58,7 @@ import pprint
 import redis
 from scarlett.brain.scarlettbraini import ScarlettBrainImproved
 
-import scarlett.util as util
+from scarlett import util
 
 # Define number of MINIMUM worker threads.
 # During bootstrap of HA (see bootstrap.from_config_dict()) worker threads
