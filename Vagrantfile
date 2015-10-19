@@ -2,7 +2,7 @@ Vagrant.configure("2")  do |config|
 
   # base information
   config.vm.box = "scarlettpi-system"
-  config.vm.box_url = "file:///Users/malcolm/scarlettpi-system.box"
+  config.vm.box_url = "file:///Users/malcolm/Downloads/scarlett_9_27_2015.box"
 
   # name
   # CHANGME
